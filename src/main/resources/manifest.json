@@ -1,0 +1,23 @@
+{
+  "Group": "ascendant.core",
+  "Name": "ascendant-difficulty",
+  "Version": "1.0.0",
+  "Main": "ascendant.core.AscendantDifficultyPlugin",
+  "Authors": [
+    {
+      "Name": "KawaiiK4nna"
+    }
+  ],
+  "Website": "",
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Ellie:HyUI": "*"
+  },
+  "OptionalDependencies": {
+    "com.azuredoom:levelingcore": "*",
+    "Ecotale:Ecotale": "*",
+    "Buuz135:MultipleHUD": "*"
+  },
+  "DisabledByDefault": false,
+  "IncludesAssetPack": true
+}

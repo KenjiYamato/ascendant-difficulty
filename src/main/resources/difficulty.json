@@ -1,0 +1,575 @@
+{
+  "base": {
+    "defaultDifficulty": "normal",
+    "allowDifficultyChange": true,
+    "minDamageFactor": 0.001,
+    "playerDistanceRadiusToCheck": 48,
+    "healthScalingTolerance": 0.0001,
+    "minHealthScalingFactor": 0.05,
+    "maxHealthScalingFactor": 300.0,
+    "cashVarianceFactor": 0.23,
+    "allowUIBadge": true,
+    "allowCashReward": true,
+    "allowCashRewardEvenWithPhysical": true,
+    "allowXPReward": true,
+    "allowHealthModifier": true,
+    "allowDamageModifier": true,
+    "allowArmorModifier": true,
+    "allowDropModifier": true
+  },
+  "meta": {
+    "very_easy": {
+      "displayName": "Very Easy",
+      "description": "HP x0.827, Eingehender DMG x0.7, Gegner-Rüstung: aus, XP x0.9, Cash x0.9, Loot: Rate x0.9, Menge x0.9.",
+      "color": "#CFCFCF",
+      "imagePath": "Images/Difficulty/very_easy.png",
+      "iconPath": "Images/Difficulty/very_easy@icon.png"
+    },
+    "easy": {
+      "displayName": "Easy",
+      "description": "HP x0.914, Eingehender DMG x0.85, Gegner-Rüstung: aus, XP x0.95, Cash x0.95, Loot: Rate x0.95, Menge x0.95.",
+      "color": "#A7E6A7",
+      "imagePath": "Images/Difficulty/easy.png",
+      "iconPath": "Images/Difficulty/easy@icon.png"
+    },
+    "normal": {
+      "displayName": "Normal",
+      "description": "HP x1, Eingehender DMG x1, Gegner-Rüstung: aus, XP x1, Cash x1, Loot: Rate x1, Menge x1.",
+      "color": "#FFFFFF",
+      "imagePath": "Images/Difficulty/normal.png",
+      "iconPath": "Images/Difficulty/normal@icon.png"
+    },
+    "challenging": {
+      "displayName": "Challenging",
+      "description": "HP x1.491, Eingehender DMG x1.25, Gegner-Rüstung: 93% Spieler-DMG, XP x1.1, Cash x1.1, Loot: Rate x1.05, Menge x1.08.",
+      "color": "#FFD000",
+      "imagePath": "Images/Difficulty/challenging.png",
+      "iconPath": "Images/Difficulty/challenging@icon.png"
+    },
+    "hard": {
+      "displayName": "Hard",
+      "description": "HP x2.179, Eingehender DMG x1.6, Gegner-Rüstung: 87% Spieler-DMG, XP x1.2, Cash x1.2, Loot: Rate x1.12, Menge x1.18.",
+      "color": "#00FF00",
+      "imagePath": "Images/Difficulty/hard.png",
+      "iconPath": "Images/Difficulty/hard@icon.png"
+    },
+    "expert": {
+      "displayName": "Expert",
+      "description": "HP x3.928, Eingehender DMG x2.35, Gegner-Rüstung: 79% Spieler-DMG, XP x1.35, Cash x1.35, Loot: Rate x1.25, Menge x1.4. Mini-Wall: ab hier brauchst du saubere Builds/Resistenzen.",
+      "color": "#0080FF",
+      "imagePath": "Images/Difficulty/expert.png",
+      "iconPath": "Images/Difficulty/expert@icon.png"
+    },
+    "master": {
+      "displayName": "Master",
+      "description": "HP x6.473, Eingehender DMG x3.1, Gegner-Rüstung: 72% Spieler-DMG, XP x1.55, Cash x1.55, Loot: Rate x1.45, Menge x1.8.",
+      "color": "#8000FF",
+      "imagePath": "Images/Difficulty/master.png",
+      "iconPath": "Images/Difficulty/master@icon.png"
+    },
+    "nightmare": {
+      "displayName": "Nightmare",
+      "description": "HP x9.993, Eingehender DMG x3.9, Gegner-Rüstung: 67% Spieler-DMG, XP x1.8, Cash x1.8, Loot: Rate x1.65, Menge x2.2. Sehr schwer: Fehler werden sofort bestraft.",
+      "color": "#FF2A2A",
+      "imagePath": "Images/Difficulty/nightmare.png",
+      "iconPath": "Images/Difficulty/nightmare@icon.png"
+    },
+    "ascendant": {
+      "displayName": "Ascendant",
+      "description": "HP x12.761, Eingehender DMG x4.5, Gegner-Rüstung: 64% Spieler-DMG, XP x1.2, Cash x1.2, Loot: Rate x1.25, Menge x1.22. Ascendant = Mayhem 1 (Borderlands-Style).",
+      "color": "#8000FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant@icon.png"
+    },
+    "ascendant_I": {
+      "displayName": "Ascendant I",
+      "description": "HP x19.699, Eingehender DMG x4.778, Gegner-Rüstung: 59% Spieler-DMG, XP x1.4, Cash x1.4, Loot: Rate x1.35, Menge x1.46. Ascendant = Mayhem 2.",
+      "color": "#2EE6A6",
+      "imagePath": "Images/Difficulty_ASC/ascendant_1.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_1@icon.png"
+    },
+    "ascendant_II": {
+      "displayName": "Ascendant II",
+      "description": "HP x26.221, Eingehender DMG x5.056, Gegner-Rüstung: 56% Spieler-DMG, XP x1.6, Cash x1.6, Loot: Rate x1.45, Menge x1.7. Ascendant = Mayhem 3.",
+      "color": "#30E0B0",
+      "imagePath": "Images/Difficulty_ASC/ascendant_2.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_2@icon.png"
+    },
+    "ascendant_III": {
+      "displayName": "Ascendant III",
+      "description": "HP x32.466, Eingehender DMG x5.333, Gegner-Rüstung: 54% Spieler-DMG, XP x1.8, Cash x1.8, Loot: Rate x1.575, Menge x2. Ascendant = Mayhem 4.",
+      "color": "#33D9BB",
+      "imagePath": "Images/Difficulty_ASC/ascendant_3.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_3@icon.png"
+    },
+    "ascendant_IV": {
+      "displayName": "Ascendant IV",
+      "description": "HP x52.945, Eingehender DMG x5.611, Gegner-Rüstung: 50% Spieler-DMG, XP x2, Cash x2, Loot: Rate x1.7, Menge x2.3. Ascendant = Mayhem 5.",
+      "color": "#36D3C5",
+      "imagePath": "Images/Difficulty_ASC/ascendant_4.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_4@icon.png"
+    },
+    "ascendant_V": {
+      "displayName": "Ascendant V",
+      "description": "HP x92.892, Eingehender DMG x5.889, Gegner-Rüstung: 45% Spieler-DMG, XP x2.2, Cash x2.2, Loot: Rate x1.85, Menge x2.66. Ascendant = Mayhem 6.",
+      "color": "#38CDCF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_5.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_5@icon.png"
+    },
+    "ascendant_VI": {
+      "displayName": "Ascendant VI",
+      "description": "HP x129.917, Eingehender DMG x6.167, Gegner-Rüstung: 42% Spieler-DMG, XP x2.4, Cash x2.4, Loot: Rate x2, Menge x3.02. Ascendant = Mayhem 7.",
+      "color": "#3BC7DA",
+      "imagePath": "Images/Difficulty_ASC/ascendant_6.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_6@icon.png"
+    },
+    "ascendant_VII": {
+      "displayName": "Ascendant VII",
+      "description": "HP x165.14, Eingehender DMG x6.444, Gegner-Rüstung: 41% Spieler-DMG, XP x2.6, Cash x2.6, Loot: Rate x2.15, Menge x3.38. Ascendant = Mayhem 8.",
+      "color": "#3EC1E4",
+      "imagePath": "Images/Difficulty_ASC/ascendant_7.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_7@icon.png"
+    },
+    "ascendant_VIII": {
+      "displayName": "Ascendant VIII",
+      "description": "HP x210.153, Eingehender DMG x6.722, Gegner-Rüstung: 39% Spieler-DMG, XP x2.8, Cash x2.8, Loot: Rate x2.3, Menge x3.74. Ascendant = Mayhem 9.",
+      "color": "#41BBEE",
+      "imagePath": "Images/Difficulty_ASC/ascendant_8.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_8@icon.png"
+    },
+    "ascendant_IX": {
+      "displayName": "Ascendant IX",
+      "description": "HP x253.51, Eingehender DMG x7, Gegner-Rüstung: 38% Spieler-DMG, XP x3, Cash x3, Loot: Rate x2.45, Menge x4.1. Ascendant = Mayhem 10.",
+      "color": "#44B5F8",
+      "imagePath": "Images/Difficulty_ASC/ascendant_9.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_9@icon.png"
+    },
+    "ascendant_X": {
+      "displayName": "Ascendant X",
+      "description": "HP x280.555, Eingehender DMG x7.273, Gegner-Rüstung: 37% Spieler-DMG, XP x3.045, Cash x3.045, Loot: Rate x2.5, Menge x4.182. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#47AFFF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_10.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_10@icon.png"
+    },
+    "ascendant_XI": {
+      "displayName": "Ascendant XI",
+      "description": "HP x300, Eingehender DMG x7.545, Gegner-Rüstung: 35% Spieler-DMG, XP x3.091, Cash x3.091, Loot: Rate x2.55, Menge x4.264. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#4A9BFF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_11.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_11@icon.png"
+    },
+    "ascendant_XII": {
+      "displayName": "Ascendant XII",
+      "description": "HP x300, Eingehender DMG x7.818, Gegner-Rüstung: 31% Spieler-DMG, XP x3.136, Cash x3.136, Loot: Rate x2.6, Menge x4.345. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#4D87FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_12.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_12@icon.png"
+    },
+    "ascendant_XIII": {
+      "displayName": "Ascendant XIII",
+      "description": "HP x300, Eingehender DMG x8.091, Gegner-Rüstung: 28% Spieler-DMG, XP x3.182, Cash x3.182, Loot: Rate x2.65, Menge x4.427. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#5073FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_13.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_13@icon.png"
+    },
+    "ascendant_XIV": {
+      "displayName": "Ascendant XIV",
+      "description": "HP x300, Eingehender DMG x8.364, Gegner-Rüstung: 25% Spieler-DMG, XP x3.227, Cash x3.227, Loot: Rate x2.7, Menge x4.509. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#535FFF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_14.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_14@icon.png"
+    },
+    "ascendant_XV": {
+      "displayName": "Ascendant XV",
+      "description": "HP x300, Eingehender DMG x8.636, Gegner-Rüstung: 22% Spieler-DMG, XP x3.273, Cash x3.273, Loot: Rate x2.75, Menge x4.591. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#564BFF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_15.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_15@icon.png"
+    },
+    "ascendant_XVI": {
+      "displayName": "Ascendant XVI",
+      "description": "HP x300, Eingehender DMG x8.909, Gegner-Rüstung: 19% Spieler-DMG, XP x3.318, Cash x3.318, Loot: Rate x2.8, Menge x4.673. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#5937FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_16.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_16@icon.png"
+    },
+    "ascendant_XVII": {
+      "displayName": "Ascendant XVII",
+      "description": "HP x300, Eingehender DMG x9.182, Gegner-Rüstung: 17% Spieler-DMG, XP x3.364, Cash x3.364, Loot: Rate x2.85, Menge x4.755. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#5C23FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_17.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_17@icon.png"
+    },
+    "ascendant_XVIII": {
+      "displayName": "Ascendant XVIII",
+      "description": "HP x300, Eingehender DMG x9.455, Gegner-Rüstung: 15% Spieler-DMG, XP x3.409, Cash x3.409, Loot: Rate x2.9, Menge x4.836. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#600FFF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_18.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_18@icon.png"
+    },
+    "ascendant_XIX": {
+      "displayName": "Ascendant XIX",
+      "description": "HP x300, Eingehender DMG x9.727, Gegner-Rüstung: 14% Spieler-DMG, XP x3.455, Cash x3.455, Loot: Rate x2.95, Menge x4.918. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#6A00FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_19.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_19@icon.png"
+    },
+    "ascendant_XX": {
+      "displayName": "Ascendant XX",
+      "description": "HP x300, Eingehender DMG x10, Gegner-Rüstung: 12% Spieler-DMG, XP x3.5, Cash x3.5, Loot: Rate x3, Menge x5. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+      "color": "#8000FF",
+      "imagePath": "Images/Difficulty_ASC/ascendant_20.png",
+      "iconPath": "Images/Difficulty_ASC/ascendant_20@icon.png"
+    }
+  },
+  "tiers": {
+    "very_easy": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "damage_multiplier": 0.7,
+      "armor_multiplier": 0.0,
+      "drop_rate_multiplier": 0.9,
+      "drop_quantity_multiplier": 0.9,
+      "drop_quality_multiplier": 0.0,
+      "xp_multiplier": 0.9,
+      "cash_multiplier": 0.9,
+      "health_multiplier": 0.827
+    },
+    "easy": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 0.914,
+      "damage_multiplier": 0.85,
+      "armor_multiplier": 0.0,
+      "drop_rate_multiplier": 0.95,
+      "drop_quantity_multiplier": 0.95,
+      "drop_quality_multiplier": 0.0,
+      "xp_multiplier": 0.95,
+      "cash_multiplier": 0.95
+    },
+    "normal": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 1.0,
+      "damage_multiplier": 1.0,
+      "armor_multiplier": 0.0,
+      "drop_rate_multiplier": 1.0,
+      "drop_quantity_multiplier": 1.0,
+      "drop_quality_multiplier": 0.0,
+      "xp_multiplier": 1.0,
+      "cash_multiplier": 1.0
+    },
+    "challenging": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 1.491,
+      "damage_multiplier": 1.25,
+      "armor_multiplier": 0.073,
+      "drop_rate_multiplier": 1.05,
+      "drop_quantity_multiplier": 1.08,
+      "drop_quality_multiplier": 0.03,
+      "xp_multiplier": 1.1,
+      "cash_multiplier": 1.1
+    },
+    "hard": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 2.179,
+      "damage_multiplier": 1.6,
+      "armor_multiplier": 0.147,
+      "drop_rate_multiplier": 1.12,
+      "drop_quantity_multiplier": 1.18,
+      "drop_quality_multiplier": 0.06,
+      "xp_multiplier": 1.2,
+      "cash_multiplier": 1.2
+    },
+    "expert": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 3.928,
+      "damage_multiplier": 2.35,
+      "armor_multiplier": 0.273,
+      "drop_rate_multiplier": 1.25,
+      "drop_quantity_multiplier": 1.4,
+      "drop_quality_multiplier": 0.1,
+      "xp_multiplier": 1.35,
+      "cash_multiplier": 1.35
+    },
+    "master": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 6.473,
+      "damage_multiplier": 3.1,
+      "armor_multiplier": 0.39,
+      "drop_rate_multiplier": 1.45,
+      "drop_quantity_multiplier": 1.8,
+      "drop_quality_multiplier": 0.14,
+      "xp_multiplier": 1.55,
+      "cash_multiplier": 1.55
+    },
+    "nightmare": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 9.993,
+      "damage_multiplier": 3.9,
+      "armor_multiplier": 0.501,
+      "drop_rate_multiplier": 1.65,
+      "drop_quantity_multiplier": 2.2,
+      "drop_quality_multiplier": 0.18,
+      "xp_multiplier": 1.8,
+      "cash_multiplier": 1.8
+    },
+    "ascendant": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 12.761,
+      "damage_multiplier": 4.5,
+      "armor_multiplier": 0.567,
+      "drop_rate_multiplier": 1.25,
+      "drop_quantity_multiplier": 1.22,
+      "drop_quality_multiplier": 0.15,
+      "xp_multiplier": 1.2,
+      "cash_multiplier": 1.2
+    },
+    "ascendant_I": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 19.699,
+      "damage_multiplier": 4.778,
+      "armor_multiplier": 0.692,
+      "drop_rate_multiplier": 1.35,
+      "drop_quantity_multiplier": 1.46,
+      "drop_quality_multiplier": 0.172,
+      "xp_multiplier": 1.4,
+      "cash_multiplier": 1.4
+    },
+    "ascendant_II": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 26.221,
+      "damage_multiplier": 5.056,
+      "armor_multiplier": 0.78,
+      "drop_rate_multiplier": 1.45,
+      "drop_quantity_multiplier": 1.7,
+      "drop_quality_multiplier": 0.194,
+      "xp_multiplier": 1.6,
+      "cash_multiplier": 1.6
+    },
+    "ascendant_III": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 32.466,
+      "damage_multiplier": 5.333,
+      "armor_multiplier": 0.848,
+      "drop_rate_multiplier": 1.575,
+      "drop_quantity_multiplier": 2.0,
+      "drop_quality_multiplier": 0.217,
+      "xp_multiplier": 1.8,
+      "cash_multiplier": 1.8
+    },
+    "ascendant_IV": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 52.945,
+      "damage_multiplier": 5.611,
+      "armor_multiplier": 1.015,
+      "drop_rate_multiplier": 1.7,
+      "drop_quantity_multiplier": 2.3,
+      "drop_quality_multiplier": 0.239,
+      "xp_multiplier": 2.0,
+      "cash_multiplier": 2.0
+    },
+    "ascendant_V": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 92.892,
+      "damage_multiplier": 5.889,
+      "armor_multiplier": 1.225,
+      "drop_rate_multiplier": 1.85,
+      "drop_quantity_multiplier": 2.66,
+      "drop_quality_multiplier": 0.261,
+      "xp_multiplier": 2.2,
+      "cash_multiplier": 2.2
+    },
+    "ascendant_VI": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 129.917,
+      "damage_multiplier": 6.167,
+      "armor_multiplier": 1.36,
+      "drop_rate_multiplier": 2.0,
+      "drop_quantity_multiplier": 3.02,
+      "drop_quality_multiplier": 0.283,
+      "xp_multiplier": 2.4,
+      "cash_multiplier": 2.4
+    },
+    "ascendant_VII": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 165.14,
+      "damage_multiplier": 6.444,
+      "armor_multiplier": 1.463,
+      "drop_rate_multiplier": 2.15,
+      "drop_quantity_multiplier": 3.38,
+      "drop_quality_multiplier": 0.306,
+      "xp_multiplier": 2.6,
+      "cash_multiplier": 2.6
+    },
+    "ascendant_VIII": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 210.153,
+      "damage_multiplier": 6.722,
+      "armor_multiplier": 1.57,
+      "drop_rate_multiplier": 2.3,
+      "drop_quantity_multiplier": 3.74,
+      "drop_quality_multiplier": 0.328,
+      "xp_multiplier": 2.8,
+      "cash_multiplier": 2.8
+    },
+    "ascendant_IX": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 253.51,
+      "damage_multiplier": 7.0,
+      "armor_multiplier": 1.656,
+      "drop_rate_multiplier": 2.45,
+      "drop_quantity_multiplier": 4.1,
+      "drop_quality_multiplier": 0.35,
+      "xp_multiplier": 3.0,
+      "cash_multiplier": 3.0
+    },
+    "ascendant_X": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 280.555,
+      "damage_multiplier": 7.273,
+      "armor_multiplier": 1.704,
+      "drop_rate_multiplier": 2.5,
+      "drop_quantity_multiplier": 4.182,
+      "drop_quality_multiplier": 0.364,
+      "xp_multiplier": 3.045,
+      "cash_multiplier": 3.045
+    },
+    "ascendant_XI": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 7.545,
+      "armor_multiplier": 1.849,
+      "drop_rate_multiplier": 2.55,
+      "drop_quantity_multiplier": 4.264,
+      "drop_quality_multiplier": 0.377,
+      "xp_multiplier": 3.091,
+      "cash_multiplier": 3.091
+    },
+    "ascendant_XII": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 7.818,
+      "armor_multiplier": 2.21,
+      "drop_rate_multiplier": 2.6,
+      "drop_quantity_multiplier": 4.345,
+      "drop_quality_multiplier": 0.391,
+      "xp_multiplier": 3.136,
+      "cash_multiplier": 3.136
+    },
+    "ascendant_XIII": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 8.091,
+      "armor_multiplier": 2.616,
+      "drop_rate_multiplier": 2.65,
+      "drop_quantity_multiplier": 4.427,
+      "drop_quality_multiplier": 0.405,
+      "xp_multiplier": 3.182,
+      "cash_multiplier": 3.182
+    },
+    "ascendant_XIV": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 8.364,
+      "armor_multiplier": 3.074,
+      "drop_rate_multiplier": 2.7,
+      "drop_quantity_multiplier": 4.509,
+      "drop_quality_multiplier": 0.418,
+      "xp_multiplier": 3.227,
+      "cash_multiplier": 3.227
+    },
+    "ascendant_XV": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 8.636,
+      "armor_multiplier": 3.59,
+      "drop_rate_multiplier": 2.75,
+      "drop_quantity_multiplier": 4.591,
+      "drop_quality_multiplier": 0.432,
+      "xp_multiplier": 3.273,
+      "cash_multiplier": 3.273
+    },
+    "ascendant_XVI": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 8.909,
+      "armor_multiplier": 4.172,
+      "drop_rate_multiplier": 2.8,
+      "drop_quantity_multiplier": 4.673,
+      "drop_quality_multiplier": 0.445,
+      "xp_multiplier": 3.318,
+      "cash_multiplier": 3.318
+    },
+    "ascendant_XVII": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 9.182,
+      "armor_multiplier": 4.827,
+      "drop_rate_multiplier": 2.85,
+      "drop_quantity_multiplier": 4.755,
+      "drop_quality_multiplier": 0.459,
+      "xp_multiplier": 3.364,
+      "cash_multiplier": 3.364
+    },
+    "ascendant_XVIII": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 9.455,
+      "armor_multiplier": 5.565,
+      "drop_rate_multiplier": 2.9,
+      "drop_quantity_multiplier": 4.836,
+      "drop_quality_multiplier": 0.473,
+      "xp_multiplier": 3.409,
+      "cash_multiplier": 3.409
+    },
+    "ascendant_XIX": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 9.727,
+      "armor_multiplier": 6.397,
+      "drop_rate_multiplier": 2.95,
+      "drop_quantity_multiplier": 4.918,
+      "drop_quality_multiplier": 0.486,
+      "xp_multiplier": 3.455,
+      "cash_multiplier": 3.455
+    },
+    "ascendant_XX": {
+      "is_allowed": true,
+      "is_hidden": false,
+      "health_multiplier": 300.0,
+      "damage_multiplier": 10.0,
+      "armor_multiplier": 7.333,
+      "drop_rate_multiplier": 3.0,
+      "drop_quantity_multiplier": 5.0,
+      "drop_quality_multiplier": 0.5,
+      "xp_multiplier": 3.5,
+      "cash_multiplier": 3.5
+    }
+  }
+}

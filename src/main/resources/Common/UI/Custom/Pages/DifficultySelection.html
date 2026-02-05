@@ -1,0 +1,86 @@
+<style>
+    @TierBackgroundDisabled {
+        border: 2px solid #e74c3c11;
+        background-color: #e74c3c11;
+    }
+    @TierBackgroundSelected {
+        background-color: #e67e2244;
+    }
+    @TierBackgroundHovered {
+        background-color: #e74c3c44;
+    }
+    @TierBackgroundPressed {
+        background-color: #e67e2244;
+    }
+</style>
+<div class="page-overlay">
+    <div class="decorated-container" style="anchor-width: 1190; anchor-height: 600;" id="tier-container"
+         data-hyui-title="{{$title}}">
+        <!-- Content Area -->
+        <div style="background-color: #1a1a2e(0.95); anchor: 0; padding: 20; flex-direction: row;">
+            <div style="flex-weight: 1; padding: 15; background-color: #16213e(0.5); flex-direction: row;">
+
+                <div style="anchor-width: 36; anchor-height: 210; margin-right: 8;">
+                    <button id="tierPrev" class="small-secondary-button"
+                            style="anchor-width: 36; anchor-height: 210;{{#if pageIndex==0}}visibility:hidden;{{/if}}{{#if pageIndex>0}}visibility:shown;{{/if}}">
+                        <
+                    </button>
+                </div>
+
+                <div style="background-color: #1a1a2e(0.95); anchor: 0; padding: 20; flex-direction: column;">
+                    <div style="flex-weight: 1; padding: 15; background-color: #16213e(0.5); flex-direction: column;">
+
+                        <div style="flex-direction: column;">
+                            <p style="color:#ffffff; font-size: 22">Select your desired Difficulty</p>
+                            <div style="flex-direction: row;">
+                                {{#each difficulty-tiers}}
+                                <div style="flex-direction: column; {{#if !isAllowed}}@TierBackgroundDisabled{{/if}}"
+                                     data-hyui-default-bg="{{#if !isAllowed}}@TierBackgroundDisabled{{/if}}">
+                                    <button id="tier-button-{{$tierId}}" class="custom-button"
+                                            style=" padding:6px; anchor-width: 260; anchor-height: 450;"
+                                            data-hyui-default-bg="{{#if isAllowed}}{{#if currentTierId == tierId}}@TierBackgroundSelected{{/if}}{{#if currentTierId != tierId}}@TierBackgroundDefault{{/if}}{{else}}@TierBackgroundDisabled{{/if}}"
+                                            data-hyui-hovered-bg="@TierBackgroundHovered"
+                                            data-hyui-pressed-bg="@TierBackgroundPressed">
+                                        <div style="flex-direction: column;">
+                                            <div style="background-color: #2a2a3e; anchor-width: 260; padding:6px; align-items: center; justify-content: center">
+                                                <div style="background-image:url('{{$imagePath}}'); anchor-width: 248; anchor-height: 248;"></div>
+                                            </div>
+                                            <p>Tier details:</p>
+                                            <p style="color:#ffffff">Difficulty: <b>{{$displayName}}</b></p>
+                                            <p style="color:#e74c3c">Health: <b>{{$maxHealth}}</b></p>
+                                            <p style="color:#e67e22">Damage: <b>{{$baseDamage}}</b></p>
+                                            <p style="color:#95a5a6">Armor: <b>{{$armor}}</b></p>
+                                            <p style="color:#f1c40f">XP/Cash: <b>{{$xp}}/{{$cash}}</b></p>
+                                            <p style="color:#1abc9c">Drop-Rate: <b>{{$dropRate}}</b></p>
+                                            <p style="color:#3498db">Drop-Amount: <b>{{$dropQuantity}}</b></p>
+                                            <p style="color:#9b59b6">Drop-Quality: <b>{{$dropQuality}}</b></p>
+                                            {{#if currentTierId == tierId}}
+                                            <div style="border:2px solid #95a5a677; background-color: #e67e2277; anchor-width: 260; anchor-top: 8; padding:6px; align-items: center; justify-content: center">
+                                                <p style="text-align:center;">Currently selected</p>
+                                            </div>
+                                            {{/if}}
+
+                                            {{#if !isAllowed}}
+                                            <div style="@TierBackgroundDisabled; anchor-width: 260; anchor-top: 8; padding:6px; align-items: center; justify-content: center">
+                                                <p style="text-align:center;">Disabled</p>
+                                            </div>
+                                            {{/if}}
+                                        </div>
+                                    </button>
+                                </div>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="anchor-width: 36; anchor-height: 210; margin-right: 8;">
+                    <button id="tierNext" class="small-secondary-button"
+                            style="anchor-width: 36; anchor-height: 210; {{#if pageIndex>=pageIndexMax}}visibility:hidden;{{/if}}{{#if pageIndex<pageIndexMax}}visibility:shown;{{/if}}">
+                        >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
