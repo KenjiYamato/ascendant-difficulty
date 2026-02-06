@@ -6,12 +6,7 @@ import com.google.gson.JsonParser;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public final class DifficultySettings {
     public static final List<String> DEFAULT_TIERS = List.of(
@@ -122,39 +117,6 @@ public final class DifficultySettings {
         }
     }
 
-    public Map<String, Double> base() {
-        return Collections.unmodifiableMap(this.base);
-    }
-
-    public Map<String, Map<String, Double>> tiers() {
-        return Collections.unmodifiableMap(this.tiers);
-    }
-
-    public double get(String tier, String key) {
-        if (!KEYS.contains(key)) {
-            return this.base.getOrDefault(key, 1.0);
-        }
-        Map<String, Double> tierValues = this.tiers.get(tier);
-        if (tierValues != null && tierValues.containsKey(key)) {
-            return tierValues.get(key);
-        }
-        return this.base.getOrDefault(key, 1.0);
-    }
-
-    public boolean getBoolean(String tier, String key) {
-        if (KEY_IS_ALLOWED.equals(key)) {
-            return this.tiersIsAllowed.getOrDefault(tier, this.baseIsAllowed);
-        }
-        if (KEY_IS_HIDDEN.equals(key)) {
-            return this.tiersIsHidden.getOrDefault(tier, this.baseIsHidden);
-        }
-        return false;
-    }
-
-    public Map<String, Double> getTier(String tier) {
-        return this.tiers.getOrDefault(tier, Collections.emptyMap());
-    }
-
     private static Map<String, Double> readSection(JsonObject section, double defaultValue) {
         Map<String, Double> result = new LinkedHashMap<>();
         if (section == null) {
@@ -247,5 +209,38 @@ public final class DifficultySettings {
             }
         }
         return sb.toString();
+    }
+
+    public Map<String, Double> base() {
+        return Collections.unmodifiableMap(this.base);
+    }
+
+    public Map<String, Map<String, Double>> tiers() {
+        return Collections.unmodifiableMap(this.tiers);
+    }
+
+    public double get(String tier, String key) {
+        if (!KEYS.contains(key)) {
+            return this.base.getOrDefault(key, 1.0);
+        }
+        Map<String, Double> tierValues = this.tiers.get(tier);
+        if (tierValues != null && tierValues.containsKey(key)) {
+            return tierValues.get(key);
+        }
+        return this.base.getOrDefault(key, 1.0);
+    }
+
+    public boolean getBoolean(String tier, String key) {
+        if (KEY_IS_ALLOWED.equals(key)) {
+            return this.tiersIsAllowed.getOrDefault(tier, this.baseIsAllowed);
+        }
+        if (KEY_IS_HIDDEN.equals(key)) {
+            return this.tiersIsHidden.getOrDefault(tier, this.baseIsHidden);
+        }
+        return false;
+    }
+
+    public Map<String, Double> getTier(String tier) {
+        return this.tiers.getOrDefault(tier, Collections.emptyMap());
     }
 }

@@ -1,31 +1,22 @@
 package ascendant.core.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class DifficultyManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private static final Object INIT_LOCK = new Object();
+    private static final Map<UUID, String> playerOverrides = new ConcurrentHashMap<>();
     private static volatile boolean initialized = false;
-
     private static DifficultyConfig config;
     private static DifficultySettings settings;
-    private static final Map<UUID, String> playerOverrides = new ConcurrentHashMap<>();
 
     private DifficultyManager() {
     }
@@ -69,7 +60,7 @@ public final class DifficultyManager {
         ensureInitialized();
 
         String override = playerOverrides.get(playerUuid);
-        if (override != null && isValidTier(override)) {
+        if (isValidTier(override)) {
             return override;
         }
 

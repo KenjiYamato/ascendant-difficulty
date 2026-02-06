@@ -5,7 +5,6 @@ import ascendant.core.config.DifficultyManager;
 import ascendant.core.util.DamageRef;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.dependency.Dependency;
 import com.hypixel.hytale.component.dependency.Order;
@@ -13,18 +12,17 @@ import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.server.core.entity.Entity;
-import com.hypixel.hytale.server.core.entity.EntityUtils;
-import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
-import com.hypixel.hytale.server.core.modules.entity.damage.*;
+import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
+import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
+import com.hypixel.hytale.server.core.modules.entity.damage.DamageModule;
+import com.hypixel.hytale.server.core.modules.entity.damage.DamageSystems;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
 
@@ -68,7 +66,7 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
             @Nonnull Damage damage
     ) {
-        if(!_allowDamageModifier) {
+        if (!_allowDamageModifier) {
             return;
         }
         DamageContext ctx = buildContext(index, chunk, store, commandBuffer, damage);
@@ -99,7 +97,7 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         }
 
         double damageMultiplierCfg = DamageRef.resolveTierConfigKeyForUUID(victimUUID, DifficultyIO.SETTING_DAMAGE_MULTIPLIER);
-        if(damageMultiplierCfg <= 0) {
+        if (damageMultiplierCfg <= 0) {
             return null;
         }
 
@@ -109,13 +107,13 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         );
     }
 
-    private record DamageContext(float baseDamage, float damageMultiplier) {
-    }
-
     private float applyDamageMultiplier(float damage, float damageMultiplier) {
         float d = Math.max(0.0f, damage);
         float m = Math.max(0.0f, damageMultiplier);
         float scaled = d * m;
         return Math.max(d * _minDamageFactor, scaled);
+    }
+
+    private record DamageContext(float baseDamage, float damageMultiplier) {
     }
 }

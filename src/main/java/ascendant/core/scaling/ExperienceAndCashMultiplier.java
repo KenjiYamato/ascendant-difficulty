@@ -36,7 +36,7 @@ public final class ExperienceAndCashMultiplier {
         _allowCashRewardEvenWithPhysical = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
         _allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
 
-        if(!_allowCashReward && !_allowXPReward) {
+        if (!_allowCashReward && !_allowXPReward) {
             return;
         }
 
@@ -59,11 +59,11 @@ public final class ExperienceAndCashMultiplier {
                         return;
                     }
 
-                    if(_allowXPReward) {
+                    if (_allowXPReward) {
                         applyXPMultiplier(playerRef, playerUuid, tierId, amount);
                     }
 
-                    if(_allowCashReward) {
+                    if (_allowCashReward) {
                         applyCashMultiplier(playerUuid, tierId, amount);
                     }
                 });

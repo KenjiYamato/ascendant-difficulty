@@ -16,7 +16,10 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class TierSelectCommand extends AbstractPlayerUICommand {
@@ -29,22 +32,6 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
         DifficultyManager.getConfig();
         DifficultyManager.getSettings();
     }
-
-    public record DifficultyTier(
-            String tierId,
-            String displayName,
-            String description,
-            String imagePath,
-            String iconPath,
-            double maxHealth,
-            double baseDamage,
-            double armor,
-            double dropRate,
-            double dropQuantity,
-            double dropQuality,
-            double xp,
-            double cash,
-            boolean isAllowed) {}
 
     @Override
     protected void openOrRefreshPage(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
@@ -96,20 +83,20 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
             String buttonId = "tier-button-" + tier.tierId();
             builder.addEventListener(buttonId, CustomUIEventBindingType.Activating, (ignored, ctx) -> {
                 if (!DifficultyManager.canPlayerSelect()) {
-                    EventNotificationWrapper.sendMajorEventNotification(playerRef,commandContext, tier.displayName(), "Difficulty changes are disabled.");
+                    EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, tier.displayName(), "Difficulty changes are disabled.");
                     openOrRefreshPage(playerRef, store, playerUuid, commandContext);
                     return;
                 }
 
                 if (!tier.isAllowed()) {
-                    EventNotificationWrapper.sendMinorEventNotification(playerRef,commandContext, "Selected tier is disabled.");
-                openOrRefreshPage(playerRef, store, playerUuid, commandContext);
-                return;
-            }
+                    EventNotificationWrapper.sendMinorEventNotification(playerRef, commandContext, "Selected tier is disabled.");
+                    openOrRefreshPage(playerRef, store, playerUuid, commandContext);
+                    return;
+                }
 
-            DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
-            EventNotificationWrapper.sendMajorEventNotification(playerRef,commandContext, tier.displayName(), "selected difficulty");
-            DifficultyBadge.updateForPlayer(playerRef);
+                DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
+                EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, tier.displayName(), "selected difficulty");
+                DifficultyBadge.updateForPlayer(playerRef);
 
                 openOrRefreshPage(playerRef, store, playerUuid, commandContext);
             });
@@ -168,5 +155,22 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
             }
         }
         return tierIds;
+    }
+
+    public record DifficultyTier(
+            String tierId,
+            String displayName,
+            String description,
+            String imagePath,
+            String iconPath,
+            double maxHealth,
+            double baseDamage,
+            double armor,
+            double dropRate,
+            double dropQuantity,
+            double dropQuality,
+            double xp,
+            double cash,
+            boolean isAllowed) {
     }
 }

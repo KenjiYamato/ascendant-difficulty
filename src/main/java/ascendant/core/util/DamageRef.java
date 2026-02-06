@@ -61,7 +61,7 @@ public class DamageRef {
     @SuppressWarnings("removal")
     public static UUID resolveAttackerPlayerUuid(Damage damage, Store<EntityStore> store) {
         Player player = resolveAttacker(damage, store);
-        if(player == null) {
+        if (player == null) {
             return null;
         }
 
@@ -84,10 +84,6 @@ public class DamageRef {
         }
 
         DamageCause cause = damage.getCause();
-        if (cause == null) {
-            return false;
-        }
-
-        return true;
+        return cause != null;
     }
 }

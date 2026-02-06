@@ -3,6 +3,7 @@ package ascendant.core.scaling;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.util.DamageRef;
+import ascendant.core.util.NearestPlayerFinder;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -13,16 +14,13 @@ import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.server.core.entity.Entity;
 import com.hypixel.hytale.server.core.entity.EntityUtils;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageCalculatorSystems.DamageSequence;
-import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import ascendant.core.util.NearestPlayerFinder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,7 +74,7 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
             @Nonnull Damage damage
     ) {
-        if(!_allowArmorModifier) {
+        if (!_allowArmorModifier) {
             return;
         }
         DamageContext ctx = buildContext(index, chunk, store, commandBuffer, damage);
@@ -102,7 +100,7 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         }
 
         DamageSequence seq =
-                (DamageSequence) damage.getIfPresentMetaObject(DamageCalculatorSystems.DAMAGE_SEQUENCE);
+                damage.getIfPresentMetaObject(DamageCalculatorSystems.DAMAGE_SEQUENCE);
         if (seq == null) {
             return null;
         }
@@ -135,13 +133,13 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         );
     }
 
-    private record DamageContext(float baseDamage, float armorMultiplier) {
-    }
-
     private float applyArmor(float damage, float armorMultiplier) {
         float d = Math.max(0.0f, damage);
         float m = Math.max(0.0f, armorMultiplier);
         float reduced = d / (1.0f + m);
         return Math.max(d * _minDamageFactor, reduced);
+    }
+
+    private record DamageContext(float baseDamage, float armorMultiplier) {
     }
 }

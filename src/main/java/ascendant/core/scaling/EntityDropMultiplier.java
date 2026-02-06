@@ -39,7 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
 
     @Nonnull
-    private static final Query<EntityStore> QUERY = Query.and(new Query[]{NPCEntity.getComponentType(), TransformComponent.getComponentType(), HeadRotation.getComponentType(), Query.not(Player.getComponentType())});
+    private static final Query<EntityStore> QUERY = Query.and(NPCEntity.getComponentType(), TransformComponent.getComponentType(), HeadRotation.getComponentType(), Query.not(Player.getComponentType()));
 
     private final float _fallbackRadiusSq;
     private final boolean _allowDropModifier;
@@ -49,6 +49,109 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
         float r = (float) Math.max(0.0, radius);
         _fallbackRadiusSq = r * r;
         _allowDropModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DROP_MODIFIER);
+    }
+
+    @Nonnull
+    private static List<ItemStack> _applyDropRate(@Nonnull List<ItemStack> in, float multiplier) {
+        if (multiplier <= 0.0f) {
+            return List.of();
+        }
+        if (multiplier == 1.0f) {
+            return in;
+        }
+
+        ThreadLocalRandom rng = ThreadLocalRandom.current();
+        List<ItemStack> out = new ArrayList<>(in.size());
+
+        if (multiplier < 1.0f) {
+            for (ItemStack s : in) {
+                if (s == null || s.isEmpty()) {
+                    continue;
+                }
+                if (rng.nextFloat() <= multiplier) {
+                    out.add(s);
+                }
+            }
+            return out;
+        }
+
+        int guaranteedCopies = (int) Math.floor(multiplier);
+        float fractional = multiplier - guaranteedCopies;
+
+        for (ItemStack s : in) {
+            if (s == null || s.isEmpty()) {
+                continue;
+            }
+
+            for (int i = 0; i < guaranteedCopies; i++) {
+                out.add(s);
+            }
+
+            if (fractional > 0.0f && rng.nextFloat() < fractional) {
+                out.add(s);
+            }
+        }
+
+        return out;
+    }
+
+    @Nonnull
+    private static List<ItemStack> _applyDropQuantity(@Nonnull List<ItemStack> in, float multiplier) {
+        if (multiplier <= 0.0f) {
+            return List.of();
+        }
+        if (multiplier == 1.0f) {
+            return in;
+        }
+
+        ThreadLocalRandom rng = ThreadLocalRandom.current();
+        List<ItemStack> out = new ArrayList<>(in.size());
+
+        for (ItemStack s : in) {
+            if (s == null || s.isEmpty()) {
+                continue;
+            }
+
+            int qty = s.getQuantity();
+            if (qty <= 0) {
+                continue;
+            }
+
+            float scaled = qty * multiplier;
+            int base = (int) Math.floor(scaled);
+            float fractional = scaled - base;
+
+            int finalQty = base + ((fractional > 0.0f && rng.nextFloat() < fractional) ? 1 : 0);
+            if (finalQty <= 0) {
+                continue;
+            }
+
+            ItemStack updated = s.withQuantity(finalQty);
+            out.add(updated != null ? updated : s);
+        }
+
+        return out;
+    }
+
+    @Nonnull
+    private static List<ItemStack> _applyDropQuality(@Nonnull List<ItemStack> in, float multiplier) {
+        if (multiplier <= 0.0f) {
+            return List.of();
+        }
+        if (multiplier == 1.0f) {
+            return in;
+        }
+
+        List<ItemStack> out = new ArrayList<>(in.size());
+        for (ItemStack s : in) {
+            if (s == null || s.isEmpty()) {
+                continue;
+            }
+
+            ItemStack updated = ReflectiveItemQualityBridge.scaleQuality(s, multiplier);
+            out.add(updated != null ? updated : s);
+        }
+        return out;
     }
 
     @Nonnull
@@ -164,109 +267,6 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
         return nearest != null ? nearest.getUuid() : null;
     }
 
-    @Nonnull
-    private static List<ItemStack> _applyDropRate(@Nonnull List<ItemStack> in, float multiplier) {
-        if (multiplier <= 0.0f) {
-            return List.of();
-        }
-        if (multiplier == 1.0f) {
-            return in;
-        }
-
-        ThreadLocalRandom rng = ThreadLocalRandom.current();
-        List<ItemStack> out = new ArrayList<>(in.size());
-
-        if (multiplier < 1.0f) {
-            for (ItemStack s : in) {
-                if (s == null || s.isEmpty()) {
-                    continue;
-                }
-                if (rng.nextFloat() <= multiplier) {
-                    out.add(s);
-                }
-            }
-            return out;
-        }
-
-        int guaranteedCopies = (int) Math.floor(multiplier);
-        float fractional = multiplier - guaranteedCopies;
-
-        for (ItemStack s : in) {
-            if (s == null || s.isEmpty()) {
-                continue;
-            }
-
-            for (int i = 0; i < guaranteedCopies; i++) {
-                out.add(s);
-            }
-
-            if (fractional > 0.0f && rng.nextFloat() < fractional) {
-                out.add(s);
-            }
-        }
-
-        return out;
-    }
-
-    @Nonnull
-    private static List<ItemStack> _applyDropQuantity(@Nonnull List<ItemStack> in, float multiplier) {
-        if (multiplier <= 0.0f) {
-            return List.of();
-        }
-        if (multiplier == 1.0f) {
-            return in;
-        }
-
-        ThreadLocalRandom rng = ThreadLocalRandom.current();
-        List<ItemStack> out = new ArrayList<>(in.size());
-
-        for (ItemStack s : in) {
-            if (s == null || s.isEmpty()) {
-                continue;
-            }
-
-            int qty = s.getQuantity();
-            if (qty <= 0) {
-                continue;
-            }
-
-            float scaled = qty * multiplier;
-            int base = (int) Math.floor(scaled);
-            float fractional = scaled - base;
-
-            int finalQty = base + ((fractional > 0.0f && rng.nextFloat() < fractional) ? 1 : 0);
-            if (finalQty <= 0) {
-                continue;
-            }
-
-            ItemStack updated = s.withQuantity(finalQty);
-            out.add(updated != null ? updated : s);
-        }
-
-        return out;
-    }
-
-    @Nonnull
-    private static List<ItemStack> _applyDropQuality(@Nonnull List<ItemStack> in, float multiplier) {
-        if (multiplier <= 0.0f) {
-            return List.of();
-        }
-        if (multiplier == 1.0f) {
-            return in;
-        }
-
-        List<ItemStack> out = new ArrayList<>(in.size());
-        for (ItemStack s : in) {
-            if (s == null || s.isEmpty()) {
-                continue;
-            }
-
-            ItemStack updated = ReflectiveItemQualityBridge.scaleQuality(s, multiplier);
-            out.add(updated != null ? updated : s);
-        }
-        return out;
-    }
-
     private static final class ReflectiveItemQualityBridge {
 
         private static final Method GET_RARITY;
@@ -335,7 +335,7 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
                     return null;
                 }
 
-                Enum<?>[] values = (Enum<?>[]) e.getDeclaringClass().getEnumConstants();
+                Enum<?>[] values = e.getDeclaringClass().getEnumConstants();
                 if (values == null || values.length == 0) {
                     return null;
                 }

@@ -104,7 +104,7 @@ public final class NearestPlayerFinder {
             CommandBuffer<EntityStore> commandBuffer,
             Ref<EntityStore> victimRef,
             float maxRadiusSq
-            ) {
+    ) {
         UUID attacker = DamageRef.resolveAttackerPlayerUuid(damage, store);
         if (attacker != null) {
             return attacker;
@@ -114,7 +114,7 @@ public final class NearestPlayerFinder {
             return null;
         }
 
-        World world = ((EntityStore) commandBuffer.getExternalData()).getWorld();
+        World world = commandBuffer.getExternalData().getWorld();
         Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, victimRef, maxRadiusSq);
         return nearest != null ? nearest.getUuid() : null;
     }

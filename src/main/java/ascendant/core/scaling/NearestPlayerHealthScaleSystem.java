@@ -3,6 +3,7 @@ package ascendant.core.scaling;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.DifficultySettings;
+import ascendant.core.util.NearestPlayerFinder;
 import com.hypixel.hytale.component.AddReason;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Store;
@@ -22,10 +23,8 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier.CalculationType;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import ascendant.core.util.NearestPlayerFinder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
@@ -37,10 +36,10 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
 
     private static final String MOD_KEY = "ascendant.nearestPlayerHealthScale.health_multiplier";
 
-    private float _fallbackRadiusSq;
+    private final float _fallbackRadiusSq;
 
-    private float _minFactor;
-    private float _maxFactor;
+    private final float _minFactor;
+    private final float _maxFactor;
     private float _healthScalingTolerance;
     private boolean _allowHealthModifier;
 
@@ -80,7 +79,7 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
                             @Nonnull AddReason reason,
                             @Nonnull Store<EntityStore> store) {
 
-        if(!_allowHealthModifier) {
+        if (!_allowHealthModifier) {
             return;
         }
 

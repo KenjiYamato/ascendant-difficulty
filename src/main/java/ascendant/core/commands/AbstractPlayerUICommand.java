@@ -12,12 +12,10 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
-
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.hypixel.hytale.server.core.command.commands.player.inventory.InventorySeeCommand.MESSAGE_COMMANDS_ERRORS_PLAYER_NOT_IN_WORLD;
-import static com.hypixel.hytale.server.core.command.system.CommandUtil.requirePermission;
 
 public abstract class AbstractPlayerUICommand extends AbstractAsyncCommand {
 

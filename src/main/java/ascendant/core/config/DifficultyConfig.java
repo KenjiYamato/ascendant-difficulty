@@ -1,10 +1,6 @@
 package ascendant.core.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -18,9 +14,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public final class DifficultyConfig {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path DEFAULT_PATH = Path.of("config", "ascendant", "difficulty.json");
-
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final Path file;
     private JsonObject root;
 
@@ -108,7 +103,8 @@ public final class DifficultyConfig {
     }
 
     public Map<String, Object> asMap() {
-        return GSON.fromJson(this.root, new TypeToken<Map<String, Object>>() {}.getType());
+        return GSON.fromJson(this.root, new TypeToken<Map<String, Object>>() {
+        }.getType());
     }
 
     public Map<String, Object> getSectionAsMap(String path) {
@@ -116,6 +112,7 @@ public final class DifficultyConfig {
         if (section.isEmpty()) {
             return Collections.emptyMap();
         }
-        return GSON.fromJson(section, new TypeToken<Map<String, Object>>() {}.getType());
+        return GSON.fromJson(section, new TypeToken<Map<String, Object>>() {
+        }.getType());
     }
 }
