@@ -15,6 +15,10 @@ public final class LibraryAvailability {
             "Ecotale",
             "com.ecotale.api.EcotaleAPI"
     );
+    private static final boolean MMO_SKILLTREE_PRESENT = _checkAndLog(
+            "MMOSkillTree",
+            "com.ziggfreed.mmoskilltree.api.MMOSkillTreeAPI"
+    );
 
     private LibraryAvailability() {
     }
@@ -25,6 +29,10 @@ public final class LibraryAvailability {
 
     public static boolean isEcotalePresent() {
         return ECOTALE_PRESENT;
+    }
+
+    public static boolean isMMOSkillTreePresent() {
+        return MMO_SKILLTREE_PRESENT;
     }
 
     public static void logMissingDependency(String name, Throwable error) {

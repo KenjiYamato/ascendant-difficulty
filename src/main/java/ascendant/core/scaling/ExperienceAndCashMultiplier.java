@@ -5,19 +5,20 @@ import ascendant.core.config.DifficultyManager;
 import ascendant.core.util.LibraryAvailability;
 import com.azuredoom.levelingcore.api.LevelingCoreApi;
 import com.ecotale.api.EcotaleAPI;
-import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.protocol.packets.interface_.NotificationStyle;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.ziggfreed.mmoskilltree.api.MMOSkillTreeAPI;
+import com.ziggfreed.mmoskilltree.data.SkillType;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-import static com.hypixel.hytale.server.core.util.NotificationUtil.sendNotification;
+import static ascendant.core.config.DifficultyIO.DEFAULT_BASE_DIFFICULTY;
+import static ascendant.core.config.DifficultyMeta.KEY_DISPLAY_NAME;
+import static ascendant.core.config.DifficultyMeta.META_PREFIX;
 
 public final class ExperienceAndCashMultiplier {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
@@ -27,10 +28,10 @@ public final class ExperienceAndCashMultiplier {
     private static boolean _allowCashRewardEvenWithPhysical;
 
     public ExperienceAndCashMultiplier() {
-        registerListener();
+        initialize();
     }
 
-    public static void registerListener() {
+    public static void initialize() {
         _cashVarianceFactor = DifficultyManager.getFromConfig(DifficultyIO.CASH_VARIANCE_FACTOR);
         _allowCashReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD);
         _allowCashRewardEvenWithPhysical = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
@@ -40,64 +41,28 @@ public final class ExperienceAndCashMultiplier {
             return;
         }
 
-        if (!LibraryAvailability.isLevelingCorePresent()) {
+        if (!LibraryAvailability.isMMOSkillTreePresent()) {
             return;
-        }
-
-        try {
-            LevelingCoreApi.getLevelServiceIfPresent().ifPresent(levelService -> {
-                levelService.registerXpGainListener((UUID playerUuid, long amount) -> {
-                    if (amount <= 0.0) {
-                        return;
-                    }
-                    assert playerUuid != null;
-                    PlayerRef playerRef = Universe.get().getPlayer(playerUuid);
-                    assert playerRef != null;
-
-                    String tierId = DifficultyManager.getDifficulty(playerUuid);
-                    if (tierId == null) {
-                        return;
-                    }
-
-                    if (_allowXPReward) {
-                        applyXPMultiplier(playerRef, playerUuid, tierId, amount);
-                    }
-
-                    if (_allowCashReward) {
-                        applyCashMultiplier(playerUuid, tierId, amount);
-                    }
-                });
-            });
-        } catch (NoClassDefFoundError error) {
-            LibraryAvailability.logMissingDependency("LevelingCore", error);
         }
     }
 
-    public static void applyXPMultiplier(@Nonnull PlayerRef playerRef, @Nonnull UUID playerUuid, String tierId, long amount) {
-        if (!LibraryAvailability.isLevelingCorePresent()) {
-            return;
-        }
-
+    private static MultiplierResult getMultiplierXPAmount(String tierId, long amount) {
         double xpMultiplier = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_XP_MULTIPLIER);
         if (xpMultiplier <= 0.0 || xpMultiplier == 1.0) {
-            return;
+            return new MultiplierResult(amount, 0L, 0L, tierId);
         }
-        long finalAmount = (long) (amount * xpMultiplier - amount);
-        long percentOfAmount = (long) ((xpMultiplier - 1.0) * 100);
-        if (finalAmount <= 0.0) {
-            return;
+        long extraAmount = (long) (amount * xpMultiplier - amount);
+        if (extraAmount <= 0L) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
         }
-        sendNotification(playerRef.getPacketHandler(), finalAmount + "XP (+" + percentOfAmount + "%)", NotificationStyle.Warning);
+        long percent = Math.round((xpMultiplier - 1.0) * 100.0);
+        return new MultiplierResult(amount, extraAmount, percent, tierId);
     }
 
-    public static void applyCashMultiplier(@Nonnull UUID playerUuid, String tierId, long amount) {
-        if (!LibraryAvailability.isEcotalePresent()) {
-            return;
-        }
-
+    private static MultiplierResult getMultiplierCashAmount(String tierId, long amount) {
         double cashMultiplier = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
         if (cashMultiplier <= 0.0) {
-            return;
+            return new MultiplierResult(amount, 0L, 0L, tierId);
         }
 
         double variance = _cashVarianceFactor;
@@ -105,42 +70,130 @@ public final class ExperienceAndCashMultiplier {
         double max = cashMultiplier + variance;
 
         double factor = min + (Math.random() * (max - min));
-        long finalAmount = (long) Math.max(1L, Math.floor((double) amount / 10 * factor));
-        if (finalAmount <= 0.0) {
+        long extraAmount = (long) Math.max(1L, Math.floor((double) amount / 10 * factor));
+        if (extraAmount <= 0.0) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+
+        long percent = (long) ((cashMultiplier - 1.0) * 100);
+        return new MultiplierResult(amount, extraAmount, percent, tierId);
+    }
+
+    public static MultiplierResult applyLevelingCoreXPMultiplier(@Nonnull PlayerRef playerRef, long amount) {
+        if (!LibraryAvailability.isLevelingCorePresent() || !_allowXPReward) {
+            return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
+        }
+
+        UUID playerUuid = playerRef.getUuid();
+        String tierId = DifficultyManager.getDifficulty(playerUuid);
+        if (tierId == null) {
+            return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
+        }
+
+        MultiplierResult result = getMultiplierXPAmount(tierId, amount);
+
+        if (result.isZero()) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+
+        long extraXp = result.extraAmount();
+
+        try {
+            LevelingCoreApi.getLevelServiceIfPresent().ifPresent(levelService -> {
+                levelService.addXp(playerUuid, extraXp);
+                //sendNotification(playerRef.getPacketHandler(), extraXp + "XP (+" + percent + "%)", NotificationStyle.Warning);
+            });
+        } catch (NoClassDefFoundError error) {
+            LibraryAvailability.logMissingDependency("Ecotale", error);
+        }
+        return result;
+    }
+
+    public static void applyEcotaleCashMultiplier(@Nonnull PlayerRef playerRef, long amount) {
+        if (!LibraryAvailability.isEcotalePresent() || !_allowCashReward) {
             return;
         }
 
-        long percentOfAmount = (long) ((cashMultiplier - 1.0) * 100);
+        UUID playerUuid = playerRef.getUuid();
+        String tierId = DifficultyManager.getDifficulty(playerUuid);
+        if (tierId == null) {
+            return;
+        }
+
+        MultiplierResult result = getMultiplierCashAmount(tierId, amount);
+
+        if (result.isZero()) {
+            return;
+        }
+
+        long extraCash = result.extraAmount();
+        long percent = result.percent();
 
         try {
-            if (EcotaleAPI.isAvailable()) {
-                if (!EcotaleAPI.isPhysicalCoinsAvailable() || _allowCashRewardEvenWithPhysical) {
-                    EcotaleAPI.deposit(playerUuid, finalAmount, "Transfer for Difficulty (+" + percentOfAmount + "%)");
-                }
+            if (!EcotaleAPI.isPhysicalCoinsAvailable() || _allowCashRewardEvenWithPhysical) {
+                EcotaleAPI.deposit(playerUuid, extraCash, "Transfer for Difficulty (+" + percent + "%)");
             }
         } catch (NoClassDefFoundError error) {
             LibraryAvailability.logMissingDependency("Ecotale", error);
         }
     }
 
-    public static void applyCashMultiplier(@Nonnull UUID playerUuid, float cashMultiplier, @Nonnull Ref<EntityStore> entityRef, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
-        if (!LibraryAvailability.isEcotalePresent()) {
-            return;
+    public static MultiplierResult applyMMOSkillTreeXPMultiplier(@Nonnull PlayerRef playerRef, long amount, String skillName, String rawMessage) {
+        if (!LibraryAvailability.isMMOSkillTreePresent() || !_allowXPReward) {
+            return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
+        UUID playerUuid = playerRef.getUuid();
+        String tierId = DifficultyManager.getDifficulty(playerUuid);
+        if (tierId == null) {
+            return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
+        }
+
+        MultiplierResult result = getMultiplierXPAmount(tierId, amount);
+        if (result.isZero()) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+
+        String displayName = getDisplayNameFromMultiplierResult(result);
+        if (rawMessage.contains(displayName)) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+
+        if (result.isZero()) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+
+        long extraXp = result.extraAmount();
+
         try {
-            if (EcotaleAPI.isAvailable()) {
-                if (EcotaleAPI.isPhysicalCoinsAvailable()) {
-                    // drop rate multiplier already got physical coins
-                    /*
-                     * PhysicalCoinsProvider coins = EcotaleAPI.getPhysicalCoins();
-                     * long finalCoinsAmount = xxx * cashMultiplier;
-                     * coins.dropCoinsAtEntity(entityRef, store, commandBuffer, finalCoinsAmount);
-                     * */
-                }
+            Ref<EntityStore> storeRef = playerRef.getReference();
+            if (storeRef == null) {
+                return new MultiplierResult(amount, 0L, 0L, tierId);
             }
+            Store<EntityStore> store = storeRef.getStore();
+            SkillType skillType = SkillType.valueOf(skillName.toUpperCase().replace(' ', '_'));
+            MMOSkillTreeAPI.addXp(store, storeRef, skillType, extraXp);
+            //sendNotification(playerRef.getPacketHandler(), extraXp + "XP (+" + percent + "%)", NotificationStyle.Warning);
         } catch (NoClassDefFoundError error) {
-            LibraryAvailability.logMissingDependency("Ecotale", error);
+            LibraryAvailability.logMissingDependency("MMOSkillTree", error);
+        }
+        return result;
+    }
+
+    public static String getDisplayNameFromMultiplierResult(ExperienceAndCashMultiplier.MultiplierResult multiplierResult) {
+        String tierId = multiplierResult.tierId();
+        String base = META_PREFIX + tierId + ".";
+        return DifficultyManager.getConfig().getString(base + KEY_DISPLAY_NAME, tierId);
+    }
+
+    public record MultiplierResult(
+            long originalAmount,
+            long extraAmount,
+            long percent,
+            String tierId
+    ) {
+        public boolean isZero() {
+            return extraAmount <= 0L;
         }
     }
 }

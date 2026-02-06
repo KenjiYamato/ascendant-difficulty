@@ -197,14 +197,10 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
         double dropRateCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_RATE_MULTIPLIER);
         double dropQtyCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER);
         double dropQualityCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER);
-        double cashMultiplierCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
 
         float dropRateMult = (float) Math.max(0.0, dropRateCfg);
         float dropQtyMult = (float) Math.max(0.0, dropQtyCfg);
         float dropQualityMult = (float) Math.max(0.0, dropQualityCfg);
-        float cashMultiplier = (float) Math.max(0.0, cashMultiplierCfg);
-
-        ExperienceAndCashMultiplier.applyCashMultiplier(playerUuid, cashMultiplier, ref, store, commandBuffer);
 
         List<ItemStack> itemsToDrop = new ObjectArrayList<>();
 

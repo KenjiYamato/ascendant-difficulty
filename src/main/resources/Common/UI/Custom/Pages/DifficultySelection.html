@@ -14,14 +14,14 @@
     }
 </style>
 <div class="page-overlay">
-    <div class="decorated-container" style="anchor-width: 1190; anchor-height: 600;" id="tier-container"
-         data-hyui-title="{{$title}}">
+    <div class="decorated-container" data-hyui-title="{{$title}}" id="tier-container"
+         style="anchor-width: 1190; anchor-height: 600;">
         <!-- Content Area -->
         <div style="background-color: #1a1a2e(0.95); anchor: 0; padding: 20; flex-direction: row;">
             <div style="flex-weight: 1; padding: 15; background-color: #16213e(0.5); flex-direction: row;">
 
                 <div style="anchor-width: 36; anchor-height: 210; margin-right: 8;">
-                    <button id="tierPrev" class="small-secondary-button"
+                    <button class="small-secondary-button" id="tierPrev"
                             style="anchor-width: 36; anchor-height: 210;{{#if pageIndex==0}}visibility:hidden;{{/if}}{{#if pageIndex>0}}visibility:shown;{{/if}}">
                         <
                     </button>
@@ -34,13 +34,13 @@
                             <p style="color:#ffffff; font-size: 22">Select your desired Difficulty</p>
                             <div style="flex-direction: row;">
                                 {{#each difficulty-tiers}}
-                                <div style="flex-direction: column; {{#if !isAllowed}}@TierBackgroundDisabled{{/if}}"
-                                     data-hyui-default-bg="{{#if !isAllowed}}@TierBackgroundDisabled{{/if}}">
-                                    <button id="tier-button-{{$tierId}}" class="custom-button"
-                                            style=" padding:6px; anchor-width: 260; anchor-height: 450;"
-                                            data-hyui-default-bg="{{#if isAllowed}}{{#if currentTierId == tierId}}@TierBackgroundSelected{{/if}}{{#if currentTierId != tierId}}@TierBackgroundDefault{{/if}}{{else}}@TierBackgroundDisabled{{/if}}"
+                                <div data-hyui-default-bg="{{#if !isAllowed}}@TierBackgroundDisabled{{/if}}"
+                                     style="flex-direction: column; {{#if !isAllowed}}@TierBackgroundDisabled{{/if}}">
+                                    <button class="custom-button" data-hyui-default-bg="{{#if isAllowed}}{{#if currentTierId == tierId}}@TierBackgroundSelected{{/if}}{{#if currentTierId != tierId}}@TierBackgroundDefault{{/if}}{{else}}@TierBackgroundDisabled{{/if}}"
                                             data-hyui-hovered-bg="@TierBackgroundHovered"
-                                            data-hyui-pressed-bg="@TierBackgroundPressed">
+                                            data-hyui-pressed-bg="@TierBackgroundPressed"
+                                            id="tier-button-{{$tierId}}"
+                                            style=" padding:6px; anchor-width: 260; anchor-height: 450;">
                                         <div style="flex-direction: column;">
                                             <div style="background-color: #2a2a3e; anchor-width: 260; padding:6px; align-items: center; justify-content: center">
                                                 <div style="background-image:url('{{$imagePath}}'); anchor-width: 248; anchor-height: 248;"></div>
@@ -75,7 +75,7 @@
                 </div>
 
                 <div style="anchor-width: 36; anchor-height: 210; margin-right: 8;">
-                    <button id="tierNext" class="small-secondary-button"
+                    <button class="small-secondary-button" id="tierNext"
                             style="anchor-width: 36; anchor-height: 210; {{#if pageIndex>=pageIndexMax}}visibility:hidden;{{/if}}{{#if pageIndex<pageIndexMax}}visibility:shown;{{/if}}">
                         >
                     </button>

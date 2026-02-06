@@ -1,5 +1,6 @@
 package ascendant.core;
 
+import ascendant.core.adapter.NotificationsAdapter;
 import ascendant.core.commands.TierSelectCommand;
 import ascendant.core.config.DifficultyConfig;
 import ascendant.core.config.DifficultyIO;
@@ -40,7 +41,7 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         // drop
         this.getEntityStoreRegistry().registerSystem(new EntityDropMultiplier());
         // experience
-        ExperienceAndCashMultiplier.registerListener();
+        ExperienceAndCashMultiplier.initialize();
         //CosmeticDamageNumbersAdapter.register();
         // badge
         this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, (playerReadyEvent) -> {
@@ -50,6 +51,8 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, (playerDisconnectEvent) -> {
             DifficultyBadge.onPlayerDisconnect(playerDisconnectEvent);
         });
+        // MMOXP adapter
+        NotificationsAdapter.register();
 
     }
 

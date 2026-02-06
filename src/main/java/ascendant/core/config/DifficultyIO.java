@@ -29,6 +29,7 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allowDamageModifier";
     public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allowArmorModifier";
     public static final String PATH_ALLOW_DROP_MODIFIER = "base.allowDropModifier";
+    public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allowDebugLogging";
 
     public static final String SETTING_BASE_DAMAGE_RANDOM_PERCENTAGE_MODIFIER = "baseDamageRandomPercentageModifier";
     public static final String SETTING_HEALTH_MULTIPLIER = "health_multiplier";
@@ -65,6 +66,7 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_DAMAGE_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_ARMOR_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
+    public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
 
     public static final ConfigKey<String> DEFAULT_DIFFICULTY =
             ConfigKey.ofString(PATH_DEFAULT_DIFFICULTY, DEFAULT_BASE_DIFFICULTY);
@@ -98,6 +100,8 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_ARMOR_MODIFIER, DEFAULT_ALLOW_ARMOR_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DROP_MODIFIER =
             ConfigKey.ofBoolean(PATH_ALLOW_DROP_MODIFIER, DEFAULT_ALLOW_DROP_MODIFIER);
+    public static final ConfigKey<Boolean> ALLOW_DEBUG_LOGGING =
+            ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
 
     private DifficultyIO() {
     }

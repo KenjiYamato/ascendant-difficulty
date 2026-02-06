@@ -15,7 +15,8 @@
     "allowHealthModifier": true,
     "allowDamageModifier": true,
     "allowArmorModifier": true,
-    "allowDropModifier": true
+    "allowDropModifier": true,
+    "allowDebugLogging": false
   },
   "meta": {
     "very_easy": {
