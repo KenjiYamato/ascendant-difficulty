@@ -21,7 +21,8 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     // Project ID: 1431415 HyUI
-    // Project ID: 1414678 levelingcore
+    // Project ID: 1414678 LevelingCore
+    // Project ID: 1431313 MMOSkillTree
     implementation(project.fileTree("libs") { include("*.jar") })
 }
 

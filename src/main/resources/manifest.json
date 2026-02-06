@@ -14,9 +14,10 @@
     "Ellie:HyUI": "*"
   },
   "OptionalDependencies": {
+    "Buuz135:MultipleHUD": "*",
     "com.azuredoom:levelingcore": "*",
     "Ecotale:Ecotale": "*",
-    "Buuz135:MultipleHUD": "*"
+    "Ziggfreed:MMOSkillTree": "*"
   },
   "DisabledByDefault": false,
   "IncludesAssetPack": true

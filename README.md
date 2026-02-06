@@ -29,7 +29,8 @@ Player overrides are stored in `config/ascendant/difficulty-players.json`.
 - Permission: `ascendant.difficulty`
 
 ## Integrations
-- XP: LevelingCore (XP gain listener).
-- Cash: Ecotale (deposits per kill/drop).
+- XP: LevelingCore (multiply)
+- XP: MMOSkillTree (multiply)
+- Cash: Ecotale (deposits per kill depends on LevelingCore xp)
 
 If the APIs are missing, only the core difficulty features run.
