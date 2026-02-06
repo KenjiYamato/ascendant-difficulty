@@ -3,7 +3,7 @@
     "defaultDifficulty": "normal",
     "allowDifficultyChange": true,
     "minDamageFactor": 0.001,
-    "playerDistanceRadiusToCheck": 48,
+    "playerDistanceRadiusToCheck": 128.0,
     "healthScalingTolerance": 0.0001,
     "minHealthScalingFactor": 0.05,
     "maxHealthScalingFactor": 300.0,

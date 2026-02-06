@@ -1,5 +1,6 @@
 package ascendant.core.scaling;
 
+import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.DifficultySettings;
 import com.hypixel.hytale.component.AddReason;
@@ -9,10 +10,8 @@ import com.hypixel.hytale.component.dependency.Dependency;
 import com.hypixel.hytale.component.dependency.Order;
 import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatsModule;
@@ -23,6 +22,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier.CalculationType;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import ascendant.core.util.NearestPlayerFinder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,13 +45,11 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
     private boolean _allowHealthModifier;
 
     public NearestPlayerHealthScaleSystem() {
-
-        this(48.0f, 0.05f, 100.0f);
-        double radius = DifficultyManager.getConfig().getDouble("base.playerDistanceRadiusToCheck", 48.0);
-        double minHealthScalingFactor = DifficultyManager.getConfig().getDouble("base.minHealthScalingFactor", 0.05);
-        double maxHealthScalingFactor = DifficultyManager.getConfig().getDouble("base.maxHealthScalingFactor", 300.0);
-        double healthScalingTolerance = (float) DifficultyManager.getConfig().getDouble("base.healthScalingTolerance", 0.0001);
-        _allowHealthModifier = DifficultyManager.getConfig().getBoolean("base.allowHealthModifier", true);
+        double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
+        double minHealthScalingFactor = DifficultyManager.getFromConfig(DifficultyIO.MIN_HEALTH_SCALING_FACTOR);
+        double maxHealthScalingFactor = DifficultyManager.getFromConfig(DifficultyIO.MAX_HEALTH_SCALING_FACTOR);
+        double healthScalingTolerance = DifficultyManager.getFromConfig(DifficultyIO.HEALTH_SCALING_TOLERANCE);
+        _allowHealthModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_HEALTH_MODIFIER);
         float r = (float) Math.max(0.0, radius);
         _fallbackRadiusSq = r * r;
         _minFactor = (float) minHealthScalingFactor;
@@ -102,7 +100,8 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
             return;
         }
 
-        Player nearest = _findNearestPlayer(store, holder);
+        World world = store.getExternalData().getWorld();
+        Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, holder, _fallbackRadiusSq);
         if (nearest == null) {
             return;
         }
@@ -111,7 +110,7 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         String tier = DifficultyManager.getDifficulty(playerUuid);
         DifficultySettings settings = DifficultyManager.getSettings();
 
-        float factor = _clampFactor((float) settings.get(tier, "health_multiplier"));
+        float factor = _clampFactor((float) settings.get(tier, DifficultyIO.SETTING_HEALTH_MULTIPLIER));
 
         EntityStatValue healthValue = statMap.get(healthIndex);
         if (healthValue == null) {
@@ -153,64 +152,6 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         if (f < _minFactor) return _minFactor;
         if (f > _maxFactor) return _maxFactor;
         return f;
-    }
-
-    @Nullable
-    private Player _findNearestPlayer(@Nonnull Store<EntityStore> store, @Nonnull Holder<EntityStore> holder) {
-        if (_fallbackRadiusSq <= 0.0f) {
-            return null;
-        }
-
-        World world = store.getExternalData().getWorld();
-        Vector3d victimPos = _getPosition(holder);
-        if (victimPos == null) {
-            return null;
-        }
-
-        Player nearest = null;
-        double best = Double.MAX_VALUE;
-
-        for (Player p : world.getPlayers()) {
-            com.hypixel.hytale.component.Ref<EntityStore> pref = p.getReference();
-            if (pref == null || !pref.isValid()) {
-                continue;
-            }
-
-            Vector3d ppos = _getPosition(store, pref);
-            if (ppos == null) {
-                continue;
-            }
-
-            double d2 = _distanceSq(ppos, victimPos);
-            if (d2 <= (double) _fallbackRadiusSq && d2 < best) {
-                best = d2;
-                nearest = p;
-            }
-        }
-
-        return nearest;
-    }
-
-    @Nullable
-    private Vector3d _getPosition(@Nonnull Holder<EntityStore> holder) {
-        TransformComponent tc = holder.getComponent(TransformComponent.getComponentType());
-        return tc != null ? tc.getPosition() : null;
-    }
-
-    @Nullable
-    private Vector3d _getPosition(@Nonnull Store<EntityStore> store, @Nonnull com.hypixel.hytale.component.Ref<EntityStore> ref) {
-        TransformComponent tc = store.getComponent(ref, TransformComponent.getComponentType());
-        if (tc == null) {
-            return null;
-        }
-        return tc.getPosition();
-    }
-
-    private double _distanceSq(@Nonnull Vector3d a, @Nonnull Vector3d b) {
-        double dx = a.getX() - b.getX();
-        double dy = a.getY() - b.getY();
-        double dz = a.getZ() - b.getZ();
-        return dx * dx + dy * dy + dz * dz;
     }
 
     private static final class ReflectiveStatModifierBridge {

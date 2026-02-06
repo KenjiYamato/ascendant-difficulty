@@ -1,6 +1,8 @@
 package ascendant.core.scaling;
 
+import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.util.NearestPlayerFinder;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
@@ -43,10 +45,10 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
     private final boolean _allowDropModifier;
 
     public EntityDropMultiplier() {
-        double radius = DifficultyManager.getConfig().getDouble("base.playerDistanceRadiusToCheck", 48.0);
+        double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
         float r = (float) Math.max(0.0, radius);
         _fallbackRadiusSq = r * r;
-        _allowDropModifier = DifficultyManager.getConfig().getBoolean("base.allowDropModifier", true);
+        _allowDropModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DROP_MODIFIER);
     }
 
     @Nonnull
@@ -89,10 +91,10 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
             return;
         }
 
-        double dropRateCfg = DifficultyManager.getSettings().get(tierId, "drop_rate_multiplier");
-        double dropQtyCfg = DifficultyManager.getSettings().get(tierId, "drop_quantity_multiplier");
-        double dropQualityCfg = DifficultyManager.getSettings().get(tierId, "drop_quality_multiplier");
-        double cashMultiplierCfg = DifficultyManager.getSettings().get(tierId, "cash_multiplier");
+        double dropRateCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_RATE_MULTIPLIER);
+        double dropQtyCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER);
+        double dropQualityCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER);
+        double cashMultiplierCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
 
         float dropRateMult = (float) Math.max(0.0, dropRateCfg);
         float dropQtyMult = (float) Math.max(0.0, dropQtyCfg);
@@ -158,52 +160,8 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
         }
 
         World world = store.getExternalData().getWorld();
-        Player nearest = _findNearestPlayer(world, store, victimRef);
+        Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, victimRef, _fallbackRadiusSq);
         return nearest != null ? nearest.getUuid() : null;
-    }
-
-    @Nullable
-    private Player _findNearestPlayer(@Nonnull World world, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> victimRef) {
-        Vector3d victimPos = _getPosition(store, victimRef);
-        if (victimPos == null) {
-            return null;
-        }
-
-        Player nearest = null;
-        double best = Double.MAX_VALUE;
-
-        for (Player p : world.getPlayers()) {
-            Ref<EntityStore> pref = p.getReference();
-            if (pref == null || !pref.isValid()) {
-                continue;
-            }
-
-            Vector3d ppos = _getPosition(store, pref);
-            if (ppos == null) {
-                continue;
-            }
-
-            double d2 = _distanceSq(ppos, victimPos);
-            if (d2 <= (double) _fallbackRadiusSq && d2 < best) {
-                best = d2;
-                nearest = p;
-            }
-        }
-
-        return nearest;
-    }
-
-    @Nullable
-    private Vector3d _getPosition(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref) {
-        TransformComponent tc = store.getComponent(ref, TransformComponent.getComponentType());
-        return tc != null ? tc.getPosition() : null;
-    }
-
-    private double _distanceSq(@Nonnull Vector3d a, @Nonnull Vector3d b) {
-        double dx = a.getX() - b.getX();
-        double dy = a.getY() - b.getY();
-        double dz = a.getZ() - b.getZ();
-        return dx * dx + dy * dy + dz * dz;
     }
 
     @Nonnull

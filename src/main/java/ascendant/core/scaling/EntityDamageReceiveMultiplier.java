@@ -1,6 +1,8 @@
 package ascendant.core.scaling;
 
+import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.util.DamageRef;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -11,17 +13,16 @@ import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.entity.Entity;
 import com.hypixel.hytale.server.core.entity.EntityUtils;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageCalculatorSystems.DamageSequence;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import ascendant.core.util.NearestPlayerFinder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,12 +45,12 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
                 new SystemGroupDependency(Order.BEFORE, DamageModule.get().getInspectDamageGroup()),
                 new SystemDependency(Order.BEFORE, DamageSystems.ApplyDamage.class)
         );
-        double radius = DifficultyManager.getConfig().getDouble("base.playerDistanceRadiusToCheck", 48.0);
+        double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
         float r = (float) Math.max(0.0, radius);
         _fallbackRadiusSq = r * r;
-        double minDamageFactor = DifficultyManager.getConfig().getDouble("base.minDamageFactor", 0.001);
+        double minDamageFactor = DifficultyManager.getFromConfig(DifficultyIO.MIN_DAMAGE_FACTOR);
         _minDamageFactor = (float) Math.max(0.0, minDamageFactor);
-        _allowArmorModifier = DifficultyManager.getConfig().getBoolean("base.allowArmorModifier", true);
+        _allowArmorModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_ARMOR_MODIFIER);
     }
 
     @Nonnull
@@ -96,12 +97,7 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
             CommandBuffer<EntityStore> commandBuffer,
             Damage damage
     ) {
-        if (damage.getAmount() <= 0.0f) {
-            return null;
-        }
-
-        DamageCause cause = damage.getCause();
-        if (cause == null || cause.doesBypassResistances()) {
+        if (!DamageRef.checkInvalidDamage(damage)) {
             return null;
         }
 
@@ -117,11 +113,11 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         }
 
         LivingEntity victim = (LivingEntity) EntityUtils.getEntity(index, chunk);
-        if (victim == null) {
+        if (victim == null || victim instanceof Player) {
             return null;
         }
 
-        UUID playerUuid = _resolveRelevantPlayerUuid(damage, store, commandBuffer, victimRef);
+        UUID playerUuid = NearestPlayerFinder.resolveRelevantPlayerUuid(damage, store, commandBuffer, victimRef, _fallbackRadiusSq);
         if (playerUuid == null) {
             return null;
         }
@@ -131,102 +127,12 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
             return null;
         }
 
-        double armorCfg = DifficultyManager.getSettings().get(tierId, "armor_multiplier");
+        double armorCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_ARMOR_MULTIPLIER);
 
         return new DamageContext(
                 damage.getAmount(),
                 (float) Math.max(0.0, armorCfg)
         );
-    }
-
-    @Nullable
-    @SuppressWarnings("removal")
-    private UUID _resolveRelevantPlayerUuid(
-            Damage damage,
-            Store<EntityStore> store,
-            CommandBuffer<EntityStore> commandBuffer,
-            Ref<EntityStore> victimRef
-    ) {
-        UUID attacker = _resolveAttackerPlayerUuid(damage, store);
-        if (attacker != null) {
-            return attacker;
-        }
-
-        if (_fallbackRadiusSq <= 0.0f) {
-            return null;
-        }
-
-        World world = ((EntityStore) commandBuffer.getExternalData()).getWorld();
-        Player nearest = _findNearestPlayer(world, store, victimRef);
-        return nearest != null ? nearest.getUuid() : null;
-    }
-
-    @Nullable
-    @SuppressWarnings("removal")
-    private UUID _resolveAttackerPlayerUuid(Damage damage, Store<EntityStore> store) {
-        if (!(damage.getSource() instanceof Damage.EntitySource src)) {
-            return null;
-        }
-
-        Ref<EntityStore> ref = src.getRef();
-        if (!ref.isValid()) {
-            return null;
-        }
-
-        Entity attacker = EntityUtils.getEntity(ref, store);
-        if (!(attacker instanceof Player player)) {
-            return null;
-        }
-
-        return player.getUuid();
-    }
-
-    @Nullable
-    @SuppressWarnings("removal")
-    private Player _findNearestPlayer(World world, Store<EntityStore> store, Ref<EntityStore> victimRef) {
-        Vector3d victimPos = _getPosition(store, victimRef);
-        if (victimPos == null) {
-            return null;
-        }
-
-        Player nearest = null;
-        double best = Double.MAX_VALUE;
-
-        for (Player p : world.getPlayers()) {
-            Ref<EntityStore> pref = p.getReference();
-            if (pref == null || !pref.isValid()) {
-                continue;
-            }
-
-            Vector3d ppos = _getPosition(store, pref);
-            if (ppos == null) {
-                continue;
-            }
-
-            double d2 = _distanceSq(ppos, victimPos);
-            if (d2 <= (double) _fallbackRadiusSq && d2 < best) {
-                best = d2;
-                nearest = p;
-            }
-        }
-
-        return nearest;
-    }
-
-    @Nullable
-    private Vector3d _getPosition(Store<EntityStore> store, Ref<EntityStore> ref) {
-        TransformComponent tc = (TransformComponent) store.getComponent(ref, TransformComponent.getComponentType());
-        if (tc == null) {
-            return null;
-        }
-        return tc.getPosition();
-    }
-
-    private double _distanceSq(Vector3d a, Vector3d b) {
-        double dx = a.getX() - b.getX();
-        double dy = a.getY() - b.getY();
-        double dz = a.getZ() - b.getZ();
-        return dx * dx + dy * dy + dz * dz;
     }
 
     private record DamageContext(float baseDamage, float armorMultiplier) {

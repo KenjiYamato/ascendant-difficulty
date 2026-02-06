@@ -28,25 +28,25 @@ public final class DifficultySettings {
     );
 
     public static final Set<String> KEYS = Set.of(
-            "baseDamageRandomPercentageModifier",
-            "health_multiplier",
-            "maxSpeed",
-            "wanderRadius",
-            "viewRange",
-            "hearingRange",
-            "combatRelativeTurnSpeed",
-            "armor_multiplier",
-            "damage_multiplier",
-            "knockbackResistance",
-            "regeneration",
-            "drop_rate_multiplier",
-            "drop_quantity_multiplier",
-            "drop_quality_multiplier",
-            "xp_multiplier",
-            "cash_multiplier"
+            DifficultyIO.SETTING_BASE_DAMAGE_RANDOM_PERCENTAGE_MODIFIER,
+            DifficultyIO.SETTING_HEALTH_MULTIPLIER,
+            DifficultyIO.SETTING_MAX_SPEED,
+            DifficultyIO.SETTING_WANDER_RADIUS,
+            DifficultyIO.SETTING_VIEW_RANGE,
+            DifficultyIO.SETTING_HEARING_RANGE,
+            DifficultyIO.SETTING_COMBAT_RELATIVE_TURN_SPEED,
+            DifficultyIO.SETTING_ARMOR_MULTIPLIER,
+            DifficultyIO.SETTING_DAMAGE_MULTIPLIER,
+            DifficultyIO.SETTING_KNOCKBACK_RESISTANCE,
+            DifficultyIO.SETTING_REGENERATION,
+            DifficultyIO.SETTING_DROP_RATE_MULTIPLIER,
+            DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER,
+            DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER,
+            DifficultyIO.SETTING_XP_MULTIPLIER,
+            DifficultyIO.SETTING_CASH_MULTIPLIER
     );
-    private static final String KEY_IS_ALLOWED = "is_allowed";
-    private static final String KEY_IS_HIDDEN = "is_hidden";
+    private static final String KEY_IS_ALLOWED = DifficultyIO.SETTING_IS_ALLOWED;
+    private static final String KEY_IS_HIDDEN = DifficultyIO.SETTING_IS_HIDDEN;
 
     private final Map<String, Double> base;
     private final Map<String, Map<String, Double>> tiers;

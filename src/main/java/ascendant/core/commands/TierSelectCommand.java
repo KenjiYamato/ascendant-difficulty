@@ -1,55 +1,34 @@
 package ascendant.core.commands;
 
-import ascendant.core.config.DifficultyConfig;
+import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.config.DifficultyMeta;
 import ascendant.core.config.DifficultySettings;
 import ascendant.core.ui.DifficultyBadge;
+import ascendant.core.util.EventNotificationWrapper;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.hypixel.hytale.server.core.util.EventTitleUtil;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class TierSelectCommand extends AbstractPlayerUICommand {
     private static final int TIERS_PER_PAGE = 4;
 
-    private final DifficultyConfig difficultyConfig;
-    private volatile DifficultySettings difficultySettings;
     private final Map<UUID, Integer> pageIndexByPlayer = new ConcurrentHashMap<>();
 
     public TierSelectCommand(String commandName, String commandDescription, String commandPermission) {
         super(commandName, commandDescription, commandPermission);
-        this.difficultyConfig = loadOrCreateConfig();
-        this.difficultySettings = DifficultySettings.fromConfig(this.difficultyConfig);
+        DifficultyManager.getConfig();
+        DifficultyManager.getSettings();
     }
-
-    private static DifficultyConfig loadOrCreateConfig() {
-        try {
-            return ascendant.core.config.DifficultyIO.loadOrCreateConfig();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to loadOrCreate difficulty config at " + DifficultyConfig.DEFAULT_PATH + ": " + e.getMessage(), e);
-        }
-    }
-
-    private static final String META_PREFIX = "meta.";
-    private static final String META_DISPLAY_NAME = "displayName";
-    private static final String META_DESCRIPTION = "description";
-    private static final String META_IMAGE_PATH = "imagePath";
-    private static final String META_ICON_PATH = "iconPath";
-    private static final String DEFAULT_IMAGE_PATH = "Images/Difficulty/normal.png";
-    private static final String DEFAULT_ICON_PATH = "Images/Difficulty/normal@icon.png";
-
 
     public record DifficultyTier(
             String tierId,
@@ -71,7 +50,7 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
     protected void openOrRefreshPage(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         TemplateProcessor template = new TemplateProcessor();
         List<String> tierIds = visibleTierIds();
-        String currentTierId = ascendant.core.config.DifficultyManager.getDifficulty(playerUuid);
+        String currentTierId = DifficultyManager.getDifficulty(playerUuid);
         int pageIndex = pageIndexByPlayer.getOrDefault(playerUuid, 0);
         int maxPage = Math.max(0, (tierIds.size() - 1) / TIERS_PER_PAGE);
         if (pageIndex > maxPage) {
@@ -117,20 +96,20 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
             String buttonId = "tier-button-" + tier.tierId();
             builder.addEventListener(buttonId, CustomUIEventBindingType.Activating, (ignored, ctx) -> {
                 if (!DifficultyManager.canPlayerSelect()) {
-                    sendMajorEventNotification(playerRef,commandContext, tier.displayName(), "Difficulty changes are disabled.");
+                    EventNotificationWrapper.sendMajorEventNotification(playerRef,commandContext, tier.displayName(), "Difficulty changes are disabled.");
                     openOrRefreshPage(playerRef, store, playerUuid, commandContext);
                     return;
                 }
 
                 if (!tier.isAllowed()) {
-                    sendMinorEventNotification(playerRef,commandContext, "Selected tier is disabled.");
-                    openOrRefreshPage(playerRef, store, playerUuid, commandContext);
-                    return;
-                }
+                    EventNotificationWrapper.sendMinorEventNotification(playerRef,commandContext, "Selected tier is disabled.");
+                openOrRefreshPage(playerRef, store, playerUuid, commandContext);
+                return;
+            }
 
-                ascendant.core.config.DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
-                sendMajorEventNotification(playerRef,commandContext, tier.displayName(), "selected difficulty");
-                DifficultyBadge.updateForPlayer(playerRef);
+            DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
+            EventNotificationWrapper.sendMajorEventNotification(playerRef,commandContext, tier.displayName(), "selected difficulty");
+            DifficultyBadge.updateForPlayer(playerRef);
 
                 openOrRefreshPage(playerRef, store, playerUuid, commandContext);
             });
@@ -139,56 +118,33 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
         builder.open(store);
     }
 
-    private void sendMinorEventNotification(@NonNullDecl PlayerRef playerRef, @NonNullDecl CommandContext commandContext, @NonNullDecl String minorMessage) {
-        sendEventNotification(playerRef,commandContext, "", minorMessage, false, null);
-    }
-
-    private void sendMajorEventNotification(@NonNullDecl PlayerRef playerRef, @NonNullDecl CommandContext commandContext, @NonNullDecl String majorMessage, @NonNullDecl String minorMessage) {
-        sendEventNotification(playerRef,commandContext, majorMessage, minorMessage, true, null);
-    }
-
-    private void sendEventNotification(@NonNullDecl PlayerRef playerRef, @NonNullDecl CommandContext commandContext, @NonNullDecl String majorMessage, @NonNullDecl String minorMessage, boolean isMajor, String icon) {
-        Objects.requireNonNull(commandContext.senderAs(Player.class).getWorld()).execute(() -> {
-            EventTitleUtil.showEventTitleToPlayer(
-                    playerRef,
-                    Message.raw(majorMessage),
-                    Message.raw(minorMessage),
-                    isMajor,
-                    icon,
-                    0.8F,
-                    0.3F,
-                    0.3F
-            );
-        });
-    }
-
     private List<DifficultyTier> buildDifficultyTiersPage(List<String> tierIds, int pageIndex) {
         int from = Math.max(0, pageIndex * TIERS_PER_PAGE);
         int to = Math.min(tierIds.size(), from + TIERS_PER_PAGE);
 
+        DifficultySettings settings = DifficultyManager.getSettings();
+        var config = DifficultyManager.getConfig();
+
         List<DifficultyTier> tiers = new ArrayList<>(Math.max(0, to - from));
         for (int i = from; i < to; i++) {
             String tierId = tierIds.get(i);
-            String metaBase = META_PREFIX + tierId + ".";
-            String displayName = difficultyConfig.getString(metaBase + META_DISPLAY_NAME, tierId);
-            String description = difficultyConfig.getString(metaBase + META_DESCRIPTION, "");
-            String imagePath = difficultyConfig.getString(metaBase + META_IMAGE_PATH, DEFAULT_IMAGE_PATH);
-            String iconPath = difficultyConfig.getString(metaBase + META_ICON_PATH, DEFAULT_ICON_PATH);
-            double maxHealth = difficultySettings.get(tierId, "health_multiplier");
-            double baseDamage = difficultySettings.get(tierId, "damage_multiplier");
-            double armor = difficultySettings.get(tierId, "armor_multiplier");
-            double dropRate = difficultySettings.get(tierId, "drop_rate_multiplier");
-            double dropQuantity = difficultySettings.get(tierId, "drop_quantity_multiplier");
-            double dropQuality = difficultySettings.get(tierId, "drop_quality_multiplier");
-            double xp = difficultySettings.get(tierId, "xp_multiplier");
-            double cash = difficultySettings.get(tierId, "cash_multiplier");
-            boolean isAllowed = difficultySettings.getBoolean(tierId, "is_allowed");
+            DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(config, tierId);
+            String resolvedTierId = meta.tierId();
+            double maxHealth = settings.get(resolvedTierId, DifficultyIO.SETTING_HEALTH_MULTIPLIER);
+            double baseDamage = settings.get(resolvedTierId, DifficultyIO.SETTING_DAMAGE_MULTIPLIER);
+            double armor = settings.get(resolvedTierId, DifficultyIO.SETTING_ARMOR_MULTIPLIER);
+            double dropRate = settings.get(resolvedTierId, DifficultyIO.SETTING_DROP_RATE_MULTIPLIER);
+            double dropQuantity = settings.get(resolvedTierId, DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER);
+            double dropQuality = settings.get(resolvedTierId, DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER);
+            double xp = settings.get(resolvedTierId, DifficultyIO.SETTING_XP_MULTIPLIER);
+            double cash = settings.get(resolvedTierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
+            boolean isAllowed = settings.getBoolean(resolvedTierId, DifficultyIO.SETTING_IS_ALLOWED);
             tiers.add(new DifficultyTier(
-                    tierId,
-                    displayName,
-                    description,
-                    imagePath,
-                    iconPath,
+                    resolvedTierId,
+                    meta.displayName(),
+                    meta.description(),
+                    meta.imagePath(),
+                    meta.iconPath(),
                     maxHealth,
                     baseDamage,
                     armor,
@@ -204,9 +160,10 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
     }
 
     private List<String> visibleTierIds() {
+        DifficultySettings settings = DifficultyManager.getSettings();
         List<String> tierIds = new ArrayList<>();
-        for (String tierId : difficultySettings.tiers().keySet()) {
-            if (!difficultySettings.getBoolean(tierId, "is_hidden")) {
+        for (String tierId : settings.tiers().keySet()) {
+            if (!settings.getBoolean(tierId, DifficultyIO.SETTING_IS_HIDDEN)) {
                 tierIds.add(tierId);
             }
         }

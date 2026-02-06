@@ -51,10 +51,16 @@ public final class DifficultyManager {
         return config;
     }
 
+    public static <T> T getFromConfig(ConfigKey<T> key) {
+        Objects.requireNonNull(key, "key");
+        ensureInitialized();
+        return key.read(config);
+    }
+
     // Global switch from config: base.allowDifficultyChange
     public static boolean canPlayerSelect() {
         ensureInitialized();
-        return config.getBoolean(DifficultyIO.PATH_ALLOW_CHANGE, true);
+        return getFromConfig(DifficultyIO.ALLOW_CHANGE);
     }
 
     // Resolved difficulty = player override -> default -> first available tier.
@@ -67,7 +73,7 @@ public final class DifficultyManager {
             return override;
         }
 
-        String fallback = config.getString(DifficultyIO.PATH_DEFAULT_DIFFICULTY, DifficultyIO.DEFAULT_TIER_ID);
+        String fallback = getFromConfig(DifficultyIO.DEFAULT_DIFFICULTY);
         if (isValidTier(fallback)) {
             return fallback;
         }
@@ -147,7 +153,7 @@ public final class DifficultyManager {
         if (!ids.isEmpty()) {
             return ids.iterator().next();
         }
-        return DifficultyIO.DEFAULT_TIER_ID;
+        return DifficultyIO.DEFAULT_BASE_DIFFICULTY;
     }
 
     private static void loadOverrides() {

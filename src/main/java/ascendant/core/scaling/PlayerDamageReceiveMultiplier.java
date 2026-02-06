@@ -1,6 +1,8 @@
 package ascendant.core.scaling;
 
+import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.util.DamageRef;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -22,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
 
@@ -35,12 +38,11 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         _dependencies = Set.of(
                 new SystemGroupDependency(Order.AFTER, DamageModule.get().getGatherDamageGroup()),
                 new SystemGroupDependency(Order.AFTER, DamageModule.get().getFilterDamageGroup()),
-                new SystemGroupDependency(Order.BEFORE, DamageModule.get().getInspectDamageGroup()),
                 new SystemDependency(Order.BEFORE, DamageSystems.ApplyDamage.class)
         );
-        double minDamageFactor = DifficultyManager.getConfig().getDouble("base.minDamageFactor", 0.001);
+        double minDamageFactor = DifficultyManager.getFromConfig(DifficultyIO.MIN_DAMAGE_FACTOR);
         _minDamageFactor = (float) minDamageFactor;
-        _allowDamageModifier = DifficultyManager.getConfig().getBoolean("base.allowDamageModifier", true);
+        _allowDamageModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DAMAGE_MODIFIER);
     }
 
     @Nonnull
@@ -75,7 +77,6 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         }
 
         float afterMultiplier = applyDamageMultiplier(ctx.baseDamage, ctx.damageMultiplier);
-
         damage.setAmount(afterMultiplier);
     }
 
@@ -88,36 +89,19 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
             CommandBuffer<EntityStore> commandBuffer,
             Damage damage
     ) {
-        if (damage.getAmount() <= 0.0f) {
+        if (!DamageRef.checkInvalidDamage(damage)) {
             return null;
         }
 
-        DamageCause cause = damage.getCause();
-        if (cause == null) {
+        UUID victimUUID = DamageRef.resolveVictimUUID(index, chunk, store);
+        if (victimUUID == null) {
             return null;
         }
 
-        Ref<EntityStore> victimRef = chunk.getReferenceTo(index);
-        if (!victimRef.isValid()) {
+        double damageMultiplierCfg = DamageRef.resolveTierConfigKeyForUUID(victimUUID, DifficultyIO.SETTING_DAMAGE_MULTIPLIER);
+        if(damageMultiplierCfg <= 0) {
             return null;
         }
-
-        Entity victim = EntityUtils.getEntity(victimRef, store);
-        if (!(victim instanceof Player)) {
-            return null;
-        }
-
-        UUID playerUuid = victim.getUuid();
-        if (playerUuid == null) {
-            return null;
-        }
-
-        String tierId = DifficultyManager.getDifficulty(playerUuid);
-        if (tierId == null) {
-            return null;
-        }
-
-        double damageMultiplierCfg = DifficultyManager.getSettings().get(tierId, "damage_multiplier");
 
         return new DamageContext(
                 damage.getAmount(),

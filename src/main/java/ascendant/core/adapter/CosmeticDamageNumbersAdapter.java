@@ -1,5 +1,6 @@
-package ascendant.core.scaling;
+package ascendant.core.adapter;
 
+import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import com.hypixel.hytale.protocol.Packet;
 import com.hypixel.hytale.protocol.packets.player.DamageInfo;
@@ -13,7 +14,6 @@ import javax.annotation.Nonnull;
 @Deprecated
 public final class CosmeticDamageNumbersAdapter {
 
-    private static final String SETTINGS_KEY = "health_multiplier";
     private static volatile PacketFilter _registered;
 
     private CosmeticDamageNumbersAdapter() {
@@ -47,7 +47,7 @@ public final class CosmeticDamageNumbersAdapter {
             return;
         }
 
-        double hmCfg = DifficultyManager.getSettings().get(tierId, SETTINGS_KEY);
+        double hmCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_HEALTH_MULTIPLIER);
         float hm = (float) Math.max(0.0, hmCfg);
         if (hm <= 0.0f || nearlyEquals(hm, 1.0f)) {
             return;
