@@ -14,7 +14,7 @@ public final class DifficultyIO {
     public static final Path PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
 
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
-    public static final String PATH_ALLOW_CHANGE = "base.allowDifficultyChange";
+    public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allowDifficultyChange";
     public static final String PATH_ALLOW_BADGE = "base.allowUIBadge";
     public static final String PATH_MIN_DAMAGE_FACTOR = "base.minDamageFactor";
     public static final String PATH_PLAYER_DISTANCE_RADIUS_TO_CHECK = "base.playerDistanceRadiusToCheck";
@@ -51,7 +51,7 @@ public final class DifficultyIO {
     public static final String SETTING_IS_HIDDEN = "is_hidden";
 
     public static final String DEFAULT_BASE_DIFFICULTY = "normal";
-    public static final boolean DEFAULT_ALLOW_CHANGE = true;
+    public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE = true;
     public static final double DEFAULT_MIN_DAMAGE_FACTOR = 0.001;
     public static final double DEFAULT_PLAYER_DISTANCE_RADIUS_TO_CHECK = 128.0;
     public static final double DEFAULT_HEALTH_SCALING_TOLERANCE = 0.0001;
@@ -70,8 +70,8 @@ public final class DifficultyIO {
 
     public static final ConfigKey<String> DEFAULT_DIFFICULTY =
             ConfigKey.ofString(PATH_DEFAULT_DIFFICULTY, DEFAULT_BASE_DIFFICULTY);
-    public static final ConfigKey<Boolean> ALLOW_CHANGE =
-            ConfigKey.ofBoolean(PATH_ALLOW_CHANGE, DEFAULT_ALLOW_CHANGE);
+    public static final ConfigKey<Boolean> ALLOW_DIFFICULTY_CHANGE =
+            ConfigKey.ofBoolean(PATH_ALLOW_DIFFICULTY_CHANGE, DEFAULT_ALLOW_DIFFICULTY_CHANGE);
     public static final ConfigKey<Boolean> ALLOW_BADGE =
             ConfigKey.ofBoolean(PATH_ALLOW_BADGE, DEFAULT_ALLOW_BADGE);
     public static final ConfigKey<Double> MIN_DAMAGE_FACTOR =

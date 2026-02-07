@@ -49,9 +49,9 @@ public final class DifficultyManager {
     }
 
     // Global switch from config: base.allowDifficultyChange
-    public static boolean canPlayerSelect() {
+    public static boolean allowDifficultyChange() {
         ensureInitialized();
-        return getFromConfig(DifficultyIO.ALLOW_CHANGE);
+        return getFromConfig(DifficultyIO.ALLOW_DIFFICULTY_CHANGE);
     }
 
     // Resolved difficulty = player override -> default -> first available tier.
@@ -76,7 +76,7 @@ public final class DifficultyManager {
     public static void setPlayerDifficultyOverride(UUID playerUuid, String tierId) {
         Objects.requireNonNull(playerUuid, "playerUuid");
         ensureInitialized();
-        if (!canPlayerSelect()) {
+        if (!allowDifficultyChange()) {
             return;
         }
         if (tierId == null || tierId.isBlank()) {

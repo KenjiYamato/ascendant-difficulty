@@ -1,5 +1,6 @@
 package ascendant.core;
 
+import ascendant.core.adapter.KillFeedAdapter;
 import ascendant.core.adapter.NotificationsAdapter;
 import ascendant.core.commands.TierSelectCommand;
 import ascendant.core.config.DifficultyConfig;
@@ -51,8 +52,10 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, (playerDisconnectEvent) -> {
             DifficultyBadge.onPlayerDisconnect(playerDisconnectEvent);
         });
-        // MMOXP adapter
+        // Notifications adapter PACKET_ID = 212
         NotificationsAdapter.register();
+        // KillFeed adapter PACKET_ID = 213;
+        KillFeedAdapter.register();
 
     }
 

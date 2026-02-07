@@ -46,17 +46,17 @@ public abstract class AbstractPlayerUICommand extends AbstractAsyncCommand {
 
         return CompletableFuture.runAsync(() -> {
             PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
-            if (playerRef == null) {
+            if (playerRef == null || player.getUuid() == null) {
                 return;
             }
-            openOrRefreshPage(playerRef, store, player.getUuid(), commandContext);
+            openOrUpdateUi(playerRef, store, player.getUuid(), commandContext);
         }, world);
     }
 
     /**
      * Called on the world thread.
      */
-    protected abstract void openOrRefreshPage(
+    protected abstract void openOrUpdateUi(
             @Nonnull PlayerRef playerRef,
             @Nonnull Store<EntityStore> store,
             @Nonnull UUID playerUuid,
