@@ -35,7 +35,7 @@ public final class DifficultyBadge {
 
     public static void updateForPlayer(PlayerRef _playerRef) {
         UUID playerUuid = _playerRef.getUuid();
-        if (_hudByPlayer.containsKey(playerUuid) && _hyUIHudByPlayer.containsKey(playerUuid)) {
+        if (_hudByPlayer.containsKey(playerUuid) || _hyUIHudByPlayer.containsKey(playerUuid)) {
             removeUIForPlayerUUID(playerUuid);
         }
         _showForPlayer(_playerRef);
@@ -52,9 +52,11 @@ public final class DifficultyBadge {
     }
 
     public static void removeUIForPlayerUUID(UUID uuid) {
-        _hyUIHudByPlayer.get(uuid).remove();
+        HyUIHud hud = _hyUIHudByPlayer.remove(uuid);
+        if (hud != null) {
+            hud.remove();
+        }
         _hudByPlayer.remove(uuid);
-        _hyUIHudByPlayer.remove(uuid);
     }
 
     @SuppressWarnings("removal")
@@ -72,11 +74,13 @@ public final class DifficultyBadge {
 
     @SuppressWarnings("removal")
     private static void _showForPlayer(PlayerRef playerRef) {
-        if (!allowBadge()) {
+        UUID playerUuid = playerRef.getUuid();
+        if (playerUuid == null) {
             return;
         }
-        UUID playerUuid = playerRef.getUuid();
-
+        if (!allowBadge(playerUuid)) {
+            return;
+        }
 
         String tierId = DifficultyManager.getDifficulty(playerUuid);
         DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
@@ -102,7 +106,8 @@ public final class DifficultyBadge {
         });
     }
 
-    private static boolean allowBadge() {
-        return DifficultyManager.getFromConfig(DifficultyIO.ALLOW_BADGE);
+    private static boolean allowBadge(UUID playerUuid) {
+        return DifficultyManager.getFromConfig(DifficultyIO.ALLOW_BADGE)
+                && DifficultyManager.isBadgeVisible(playerUuid);
     }
 }

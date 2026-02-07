@@ -11,7 +11,8 @@ import java.nio.file.Path;
 public final class DifficultyIO {
     public static final String RESOURCE_DEFAULT_PATH = "difficulty.json";
     public static final Path DEFAULT_CONFIG_PATH = DifficultyConfig.DEFAULT_PATH;
-    public static final Path PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
+    public static final Path PLAYER_SETTINGS_PATH = Path.of("config", "ascendant", "players-settings.json");
+    public static final Path LEGACY_PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
 
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
     public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allowDifficultyChange";

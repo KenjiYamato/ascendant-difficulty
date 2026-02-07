@@ -22,10 +22,11 @@ Key sections:
 - `tiers`: numeric multipliers per tier (health, damage, armor, loot, XP, cash).
 - `meta`: display names, descriptions, and icon paths per tier.
 
-Player overrides are stored in `config/ascendant/difficulty-players.json`.
+Player settings are stored in `config/ascendant/players-settings.json` (difficulty override + badge visibility).
 
 ## Command and Permission
 - Command: `/ascendant-difficulty`
+- Command: `/ascendant-difficulty-badge-toggle`
 - Permission: `ascendant.difficulty`
 
 ## Integrations

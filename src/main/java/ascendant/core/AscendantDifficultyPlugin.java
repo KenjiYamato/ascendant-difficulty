@@ -2,6 +2,7 @@ package ascendant.core;
 
 import ascendant.core.adapter.KillFeedAdapter;
 import ascendant.core.adapter.NotificationsAdapter;
+import ascendant.core.commands.DifficultyBadgeToggleCommand;
 import ascendant.core.commands.TierSelectCommand;
 import ascendant.core.config.DifficultyConfig;
 import ascendant.core.config.DifficultyIO;
@@ -31,6 +32,8 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         ascendant.core.config.DifficultyManager.initialize(this.difficultyConfig, this.difficultySettings);
         this.getCommandRegistry().registerCommand(
                 new TierSelectCommand("ascendant-difficulty", "Difficulty / Tier selection", "ascendant.difficulty"));
+        this.getCommandRegistry().registerCommand(
+                new DifficultyBadgeToggleCommand("ascendant-difficulty-badge-toggle", "Toggle difficulty badge display", "ascendant.difficulty"));
 
 
         // damage entity receive from player
