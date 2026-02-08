@@ -29,6 +29,7 @@ public final class NotificationsAdapter {
 
     private static volatile PacketFilter _registered;
     private static boolean _allowDebugLogging;
+    private static boolean _allowXPReward;
 
 
     private NotificationsAdapter() {
@@ -42,6 +43,7 @@ public final class NotificationsAdapter {
         PlayerPacketWatcher watcher = NotificationsAdapter::_handleOutbound;
         _registered = PacketAdapters.registerOutbound(watcher);
         _allowDebugLogging = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DEBUG_LOGGING);
+        _allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
     }
 
     public static void unregister() {
@@ -59,6 +61,11 @@ public final class NotificationsAdapter {
         }
 
         if (n.style.equals(NotificationStyle.Warning)) {
+            return;
+        }
+
+        debugLogNotification(n);
+        if(!_allowXPReward) {
             return;
         }
 
@@ -93,7 +100,6 @@ public final class NotificationsAdapter {
             return;
         }
 
-        debugLogNotification(n);
     }
 
     private static void debugLogNotification(Notification n) {
