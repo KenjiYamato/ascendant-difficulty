@@ -29,6 +29,9 @@ public final class ExperienceAndCashMultiplier {
     private static boolean _allowLevelingCoreIntegration;
     private static boolean _allowEcotaleIntegration;
     private static boolean _allowMMOSkillTreeIntegration;
+    private static double _levelingCoreMultiplier;
+    private static double _mmoSkillTreeMultiplier;
+    private static double _ecotaleMultiplier;
 
     public ExperienceAndCashMultiplier() {
         initialize();
@@ -42,29 +45,46 @@ public final class ExperienceAndCashMultiplier {
         _allowLevelingCoreIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_LEVELING_CORE);
         _allowEcotaleIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_ECOTALE);
         _allowMMOSkillTreeIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MMO_SKILLTREE);
+        _levelingCoreMultiplier = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MULTIPLIER_LEVELING_CORE);
+        _mmoSkillTreeMultiplier = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MULTIPLIER_MMO_SKILLTREE);
+        _ecotaleMultiplier = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MULTIPLIER_ECOTALE);
 
         if (!_allowCashReward && !_allowXPReward) {
             return;
         }
 
         if (_allowMMOSkillTreeIntegration && _allowXPReward && !LibraryAvailability.isMMOSkillTreePresent()) {
+            return;
         }
     }
 
-    private static MultiplierResult getMultiplierXPAmount(String tierId, long amount) {
-        double xpMultiplier = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_XP_MULTIPLIER);
-        if (xpMultiplier <= 0.0 || xpMultiplier == 1.0) {
+    private static MultiplierResult getMultiplierXPAmount(String tierId, long amount, double integrationMultiplier) {
+        if (amount <= 0L) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
         }
-        long extraAmount = (long) (amount * xpMultiplier - amount);
+        double effectiveMultiplier = integrationMultiplier <= 0.0 ? 1.0 : integrationMultiplier;
+        double xpMultiplier = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_XP_MULTIPLIER);
+        double baseMultiplier = xpMultiplier - 1.0;
+        if (baseMultiplier <= 0.0) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+        double scaledMultiplier = baseMultiplier * effectiveMultiplier;
+        if (scaledMultiplier <= 0.0) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+        long extraAmount = (long) Math.floor((double) amount * scaledMultiplier);
         if (extraAmount <= 0L) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
         }
-        long percent = Math.round((xpMultiplier - 1.0) * 100.0);
+        long percent = Math.round(scaledMultiplier * 100.0);
         return new MultiplierResult(amount, extraAmount, percent, tierId);
     }
 
-    private static MultiplierResult getMultiplierCashAmount(String tierId, long amount) {
+    private static MultiplierResult getMultiplierCashAmount(String tierId, long amount, double integrationMultiplier) {
+        if (amount <= 0L) {
+            return new MultiplierResult(amount, 0L, 0L, tierId);
+        }
+        double effectiveMultiplier = integrationMultiplier <= 0.0 ? 1.0 : integrationMultiplier;
         double cashMultiplier = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
         if (cashMultiplier <= 0.0) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
@@ -75,17 +95,21 @@ public final class ExperienceAndCashMultiplier {
         double max = cashMultiplier + variance;
 
         double factor = min + (Math.random() * (max - min));
-        long extraAmount = (long) Math.max(1L, Math.floor((double) amount / 10 * factor));
-        if (extraAmount <= 0.0) {
+        long baseExtra = (long) Math.max(1L, Math.floor((double) amount / 10 * factor));
+        long extraAmount = (long) Math.floor(baseExtra * effectiveMultiplier);
+        if (extraAmount <= 0L) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
         }
 
-        long percent = (long) ((cashMultiplier - 1.0) * 100);
+        long percent = Math.round((cashMultiplier - 1.0) * 100.0 * effectiveMultiplier);
         return new MultiplierResult(amount, extraAmount, percent, tierId);
     }
 
     public static MultiplierResult applyLevelingCoreXPMultiplier(@Nonnull PlayerRef playerRef, long amount) {
-        if (!_allowLevelingCoreIntegration || !LibraryAvailability.isLevelingCorePresent() || !_allowXPReward) {
+        if (!_allowLevelingCoreIntegration || !_allowXPReward) {
+            return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
+        }
+        if (!LibraryAvailability.isLevelingCorePresent()) {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
@@ -95,7 +119,7 @@ public final class ExperienceAndCashMultiplier {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
-        MultiplierResult result = getMultiplierXPAmount(tierId, amount);
+        MultiplierResult result = getMultiplierXPAmount(tierId, amount, _levelingCoreMultiplier);
 
         if (result.isZero()) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
@@ -115,7 +139,10 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static void applyEcotaleCashMultiplier(@Nonnull PlayerRef playerRef, long amount) {
-        if (!_allowEcotaleIntegration || !LibraryAvailability.isEcotalePresent() || !_allowCashReward) {
+        if (!_allowEcotaleIntegration || !_allowCashReward) {
+            return;
+        }
+        if (!LibraryAvailability.isEcotalePresent()) {
             return;
         }
 
@@ -125,7 +152,7 @@ public final class ExperienceAndCashMultiplier {
             return;
         }
 
-        MultiplierResult result = getMultiplierCashAmount(tierId, amount);
+        MultiplierResult result = getMultiplierCashAmount(tierId, amount, _ecotaleMultiplier);
 
         if (result.isZero()) {
             return;
@@ -144,7 +171,10 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static MultiplierResult applyMMOSkillTreeXPMultiplier(@Nonnull PlayerRef playerRef, long amount, String skillName, String rawMessage) {
-        if (!_allowMMOSkillTreeIntegration || !LibraryAvailability.isMMOSkillTreePresent() || !_allowXPReward) {
+        if (!_allowMMOSkillTreeIntegration || !_allowXPReward) {
+            return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
+        }
+        if (!LibraryAvailability.isMMOSkillTreePresent()) {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
@@ -154,7 +184,7 @@ public final class ExperienceAndCashMultiplier {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
-        MultiplierResult result = getMultiplierXPAmount(tierId, amount);
+        MultiplierResult result = getMultiplierXPAmount(tierId, amount, _mmoSkillTreeMultiplier);
         if (result.isZero()) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
         }

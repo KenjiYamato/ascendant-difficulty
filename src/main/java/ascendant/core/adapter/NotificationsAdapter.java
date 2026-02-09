@@ -85,11 +85,13 @@ public final class NotificationsAdapter {
             long levelingCoreXP = getLongParam(formattedMessageParts, "xp");
             if (levelingCoreXP > 0L) {
                 ExperienceAndCashMultiplier.MultiplierResult multiplierResult = ExperienceAndCashMultiplier.applyLevelingCoreXPMultiplier(playerRef, levelingCoreXP);
-                if (n.message.params != null) {
-                    n.message.params.put("xp", new LongParamValue(multiplierResult.originalAmount() + multiplierResult.extraAmount()));
+                if (!multiplierResult.isZero()) {
+                    if (n.message.params != null) {
+                        n.message.params.put("xp", new LongParamValue(multiplierResult.originalAmount() + multiplierResult.extraAmount()));
+                    }
+                    String displayName = getDisplayNameFromMultiplierResult(multiplierResult);
+                    n.secondaryMessage = new FormattedMessage("+" + multiplierResult.percent() + "% " + displayName, null, null, null, null, "#FFAA00", MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, null, false);
                 }
-                String displayName = getDisplayNameFromMultiplierResult(multiplierResult);
-                n.secondaryMessage = new FormattedMessage("+" + multiplierResult.percent() + "% " + displayName, null, null, null, null, "#FFAA00", MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, null, false);
                 if (_allowEcotaleIntegration) {
                     ExperienceAndCashMultiplier.applyEcotaleCashMultiplier(playerRef, levelingCoreXP);
                 }
@@ -106,6 +108,9 @@ public final class NotificationsAdapter {
                 long amount = xp.value();
                 String skillName = xp.skill();
                 ExperienceAndCashMultiplier.MultiplierResult multiplierResult = ExperienceAndCashMultiplier.applyMMOSkillTreeXPMultiplier(playerRef, amount, skillName, n.message.rawText);
+                if (multiplierResult.isZero()) {
+                    return;
+                }
                 String displayName = getDisplayNameFromMultiplierResult(multiplierResult);
                 if (!n.message.rawText.contains(displayName)) {
                     n.message.rawText += " +" + multiplierResult.percent() + "% " + displayName;

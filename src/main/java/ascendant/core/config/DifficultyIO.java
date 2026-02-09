@@ -38,6 +38,9 @@ public final class DifficultyIO {
     public static final String PATH_INTEGRATION_ECOTALE = "base.integrations.ecotale";
     public static final String PATH_INTEGRATION_LEVELING_CORE = "base.integrations.levelingCore";
     public static final String PATH_INTEGRATION_MMO_SKILLTREE = "base.integrations.mmoSkillTree";
+    public static final String PATH_INTEGRATION_MULTIPLIER_LEVELING_CORE = "base.integrationMultipliers.levelingCore";
+    public static final String PATH_INTEGRATION_MULTIPLIER_MMO_SKILLTREE = "base.integrationMultipliers.mmoSkillTree";
+    public static final String PATH_INTEGRATION_MULTIPLIER_ECOTALE = "base.integrationMultipliers.ecotale";
 
     public static final String SETTING_BASE_DAMAGE_RANDOM_PERCENTAGE_MODIFIER = "baseDamageRandomPercentageModifier";
     public static final String SETTING_HEALTH_MULTIPLIER = "health_multiplier";
@@ -86,6 +89,9 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_INTEGRATION_ECOTALE = true;
     public static final boolean DEFAULT_INTEGRATION_LEVELING_CORE = true;
     public static final boolean DEFAULT_INTEGRATION_MMO_SKILLTREE = true;
+    public static final double DEFAULT_INTEGRATION_MULTIPLIER_LEVELING_CORE = 0.0;
+    public static final double DEFAULT_INTEGRATION_MULTIPLIER_MMO_SKILLTREE = 0.0;
+    public static final double DEFAULT_INTEGRATION_MULTIPLIER_ECOTALE = 0.0;
 
     public static final ConfigKey<String> DEFAULT_DIFFICULTY =
             ConfigKey.ofString(PATH_DEFAULT_DIFFICULTY, DEFAULT_BASE_DIFFICULTY);
@@ -133,6 +139,12 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_INTEGRATION_LEVELING_CORE, DEFAULT_INTEGRATION_LEVELING_CORE);
     public static final ConfigKey<Boolean> INTEGRATION_MMO_SKILLTREE =
             ConfigKey.ofBoolean(PATH_INTEGRATION_MMO_SKILLTREE, DEFAULT_INTEGRATION_MMO_SKILLTREE);
+    public static final ConfigKey<Double> INTEGRATION_MULTIPLIER_LEVELING_CORE =
+            ConfigKey.ofDouble(PATH_INTEGRATION_MULTIPLIER_LEVELING_CORE, DEFAULT_INTEGRATION_MULTIPLIER_LEVELING_CORE);
+    public static final ConfigKey<Double> INTEGRATION_MULTIPLIER_MMO_SKILLTREE =
+            ConfigKey.ofDouble(PATH_INTEGRATION_MULTIPLIER_MMO_SKILLTREE, DEFAULT_INTEGRATION_MULTIPLIER_MMO_SKILLTREE);
+    public static final ConfigKey<Double> INTEGRATION_MULTIPLIER_ECOTALE =
+            ConfigKey.ofDouble(PATH_INTEGRATION_MULTIPLIER_ECOTALE, DEFAULT_INTEGRATION_MULTIPLIER_ECOTALE);
 
     private DifficultyIO() {
     }

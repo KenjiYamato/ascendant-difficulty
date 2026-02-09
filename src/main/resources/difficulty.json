@@ -26,6 +26,11 @@
       "ecotale": true,
       "levelingCore": true,
       "mmoSkillTree": true
+    },
+    "integrationMultipliers": {
+      "levelingCore": 0.0,
+      "mmoSkillTree": 0.0,
+      "ecotale": 0.0
     }
   },
   "meta": {
