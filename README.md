@@ -36,7 +36,7 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 
 - Per-player difficulty tiers with a configurable list (defaults include Ascendant I-XX).
 - Tier selection UI (`/ascendant-difficulty`) with paging; respects `is_hidden` and `is_allowed`.
-- HUD badge for the current tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allowUIBadge` is enabled.
+- HUD badge for the current tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.uiBadge` is enabled.
 - Enemy HP scales to the nearest player in range.
 - Incoming damage to players scales by tier; enemy armor reduces player damage dealt.
 - Loot scaling: drop rate, drop quantity, and drop quality per tier.
@@ -53,7 +53,9 @@ The default config is written to `config/ascendant/difficulty.json`.
 
 Key sections:
 
-- `base`: global switches/limits: `defaultDifficulty`, `allowDifficultyChange`, `allowUIBadge`, `allowHealthModifier`, `allowDamageModifier`, `allowArmorModifier`, `allowDropModifier`, `allowXPReward`, `allowCashReward`, `allowCashRewardEvenWithPhysical`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `allowDebugLogging`.
+- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`.
+- `base.allow`: feature toggles: `difficultyChange`, `uiBadge`, `healthModifier`, `damageModifier`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `debugLogging`, `eliteSpawn`.
+- `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
 - `tiers`: per-tier flags and multipliers: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier`, `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`.
 - `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`.
 
@@ -84,9 +86,10 @@ Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if
 
 ## Integrations (Optional)
 
-- LevelingCore: applies bonus XP based on `xp_multiplier` and updates XP notifications; also triggers cash bonuses via Ecotale.
-- MMOSkillTree: applies bonus XP and appends a percentage line to green `+XP` notifications.
-- Ecotale: deposits bonus cash based on `cash_multiplier` (respects `allowCashReward` and `allowCashRewardEvenWithPhysical`).
+- EliteMobs: rolls elite spawns using `elite_mobs_chance_*` (toggle via `base.integrations.eliteMobs`).
+- LevelingCore: applies bonus XP based on `xp_multiplier` and updates XP notifications; also triggers cash bonuses via Ecotale (toggle via `base.integrations.levelingCore`).
+- MMOSkillTree: applies bonus XP and appends a percentage line to green `+XP` notifications (toggle via `base.integrations.mmoSkillTree`).
+- Ecotale: deposits bonus cash based on `cash_multiplier` (respects `base.allow.cashReward` and `base.allow.cashRewardEvenWithPhysical`, toggle via `base.integrations.ecotale`).
 
 If these APIs are missing, XP/cash multipliers are skipped; core difficulty scaling (health/damage/armor/loot) still runs.
 

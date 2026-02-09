@@ -4,6 +4,7 @@ import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.DifficultySettings;
 import ascendant.core.util.NearestPlayerFinder;
+import ascendant.core.util.ReflectionHelper;
 import com.hypixel.hytale.component.AddReason;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Store;
@@ -40,8 +41,8 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
 
     private final float _minFactor;
     private final float _maxFactor;
-    private float _healthScalingTolerance;
-    private boolean _allowHealthModifier;
+    private final float _healthScalingTolerance;
+    private final boolean _allowHealthModifier;
 
     public NearestPlayerHealthScaleSystem() {
         double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
@@ -54,12 +55,6 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         _minFactor = (float) minHealthScalingFactor;
         _maxFactor = (float) maxHealthScalingFactor;
         _healthScalingTolerance = (float) healthScalingTolerance;
-    }
-
-    public NearestPlayerHealthScaleSystem(float fallbackRadius, float minFactor, float maxFactor) {
-        this._fallbackRadiusSq = fallbackRadius <= 0.0f ? 0.0f : fallbackRadius * fallbackRadius;
-        this._minFactor = Math.max(0.0f, minFactor);
-        this._maxFactor = Math.max(this._minFactor, maxFactor);
     }
 
     @Nonnull
@@ -159,12 +154,18 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
 
         static {
             try {
-                Class<?> v = Class.forName("com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue");
-                PUT = v.getDeclaredMethod("putModifier", String.class, Modifier.class);
-                REMOVE = v.getDeclaredMethod("removeModifier", String.class);
-
-                PUT.setAccessible(true);
-                REMOVE.setAccessible(true);
+                Class<?> v = ReflectionHelper.resolveClass(
+                        "com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue",
+                        NearestPlayerHealthScaleSystem.class.getClassLoader()
+                );
+                if (v == null) {
+                    throw new ClassNotFoundException("com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue");
+                }
+                PUT = ReflectionHelper.getDeclaredMethod(v, "putModifier", String.class, Modifier.class);
+                REMOVE = ReflectionHelper.getDeclaredMethod(v, "removeModifier", String.class);
+                if (PUT == null || REMOVE == null) {
+                    throw new NoSuchMethodException("Missing EntityStatValue modifier methods");
+                }
             } catch (Throwable t) {
                 throw new ExceptionInInitializerError("Failed to init ReflectiveStatModifierBridge: " + t);
             }

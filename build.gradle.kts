@@ -23,6 +23,7 @@ dependencies {
     // Project ID: 1431415 HyUI
     // Project ID: 1414678 LevelingCore
     // Project ID: 1431313 MMOSkillTree
+    // Project ID: 1441945 Elite Mobs
     implementation(project.fileTree("libs") { include("*.jar") })
 }
 

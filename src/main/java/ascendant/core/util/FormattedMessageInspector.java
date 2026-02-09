@@ -20,7 +20,7 @@ public final class FormattedMessageInspector {
         }
 
         List<FormattedMessageParts> children = new ArrayList<>();
-        if (msg.children != null && msg.children.length > 0) {
+        if (msg.children != null) {
             for (FormattedMessage child : msg.children) {
                 children.add(inspect(child));
             }
@@ -164,9 +164,8 @@ public final class FormattedMessageInspector {
 
         private static String _extractCommonValue(ParamValue v) {
             try {
-                var f = v.getClass().getDeclaredField("value");
-                f.setAccessible(true);
-                Object o = f.get(v);
+                var f = ReflectionHelper.getDeclaredField(v.getClass(), "value");
+                Object o = ReflectionHelper.getFieldValue(f, v);
                 return o == null ? null : String.valueOf(o);
             } catch (Throwable ignored) {
                 return null;

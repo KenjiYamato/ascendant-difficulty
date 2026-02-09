@@ -110,18 +110,21 @@ public class TierSelect {
         for (int i = from; i < to; i++) {
             String tierId = tierIds.get(i);
             DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(config, tierId);
-            String resolvedTierId = meta.tierId();
-            double maxHealth = settings.get(resolvedTierId, DifficultyIO.SETTING_HEALTH_MULTIPLIER);
-            double baseDamage = settings.get(resolvedTierId, DifficultyIO.SETTING_DAMAGE_MULTIPLIER);
-            double armor = settings.get(resolvedTierId, DifficultyIO.SETTING_ARMOR_MULTIPLIER);
-            double dropRate = settings.get(resolvedTierId, DifficultyIO.SETTING_DROP_RATE_MULTIPLIER);
-            double dropQuantity = settings.get(resolvedTierId, DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER);
-            double dropQuality = settings.get(resolvedTierId, DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER);
-            double xp = settings.get(resolvedTierId, DifficultyIO.SETTING_XP_MULTIPLIER);
-            double cash = settings.get(resolvedTierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
-            boolean isAllowed = settings.getBoolean(resolvedTierId, DifficultyIO.SETTING_IS_ALLOWED);
+            double maxHealth = settings.get(tierId, DifficultyIO.SETTING_HEALTH_MULTIPLIER);
+            double baseDamage = settings.get(tierId, DifficultyIO.SETTING_DAMAGE_MULTIPLIER);
+            double armor = settings.get(tierId, DifficultyIO.SETTING_ARMOR_MULTIPLIER);
+            double dropRate = settings.get(tierId, DifficultyIO.SETTING_DROP_RATE_MULTIPLIER);
+            double dropQuantity = settings.get(tierId, DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER);
+            double dropQuality = settings.get(tierId, DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER);
+            double xp = settings.get(tierId, DifficultyIO.SETTING_XP_MULTIPLIER);
+            double cash = settings.get(tierId, DifficultyIO.SETTING_CASH_MULTIPLIER);
+            double eliteMobsChance = settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_MULTIPLIER);
+            double eliteMobsChanceUncommon = settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_UNCOMMON);
+            double eliteMobsChanceRare = settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_RARE);
+            double eliteMobsChanceLegendary = settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_LEGENDARY);
+            boolean isAllowed = settings.getBoolean(tierId, DifficultyIO.SETTING_IS_ALLOWED);
             tiers.add(new DifficultyTier(
-                    resolvedTierId,
+                    tierId,
                     meta.displayName(),
                     meta.description(),
                     meta.imagePath(),
@@ -134,6 +137,10 @@ public class TierSelect {
                     dropQuality,
                     xp,
                     cash,
+                    eliteMobsChance,
+                    eliteMobsChanceUncommon,
+                    eliteMobsChanceRare,
+                    eliteMobsChanceLegendary,
                     isAllowed
             ));
         }
@@ -165,6 +172,10 @@ public class TierSelect {
             double dropQuality,
             double xp,
             double cash,
+            double eliteMobsChance,
+            double eliteMobsChanceUncommon,
+            double eliteMobsChanceRare,
+            double eliteMobsChanceLegendary,
             boolean isAllowed) {
     }
 }

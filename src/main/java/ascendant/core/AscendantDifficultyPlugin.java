@@ -44,6 +44,8 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new NearestPlayerHealthScaleSystem());
         // drop
         this.getEntityStoreRegistry().registerSystem(new EntityDropMultiplier());
+        // elite spawn
+        this.getEntityStoreRegistry().registerSystem(new EntityEliteSpawn());
         // experience
         ExperienceAndCashMultiplier.initialize();
         //CosmeticDamageNumbersAdapter.register();
@@ -59,7 +61,6 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         NotificationsAdapter.register();
         // KillFeed adapter PACKET_ID = 213;
         KillFeedAdapter.register();
-
     }
 
     private void loadDifficultyConfig() {

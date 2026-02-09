@@ -1,22 +1,32 @@
 {
   "base": {
     "defaultDifficulty": "normal",
-    "allowDifficultyChange": true,
     "minDamageFactor": 0.001,
     "playerDistanceRadiusToCheck": 128.0,
     "healthScalingTolerance": 0.0001,
     "minHealthScalingFactor": 0.05,
     "maxHealthScalingFactor": 300.0,
     "cashVarianceFactor": 0.23,
-    "allowUIBadge": true,
-    "allowCashReward": true,
-    "allowCashRewardEvenWithPhysical": true,
-    "allowXPReward": true,
-    "allowHealthModifier": true,
-    "allowDamageModifier": true,
-    "allowArmorModifier": true,
-    "allowDropModifier": true,
-    "allowDebugLogging": false
+    "roundingDigits": 3,
+    "allow": {
+      "difficultyChange": true,
+      "uiBadge": true,
+      "cashReward": true,
+      "cashRewardEvenWithPhysical": true,
+      "xpReward": true,
+      "healthModifier": true,
+      "damageModifier": true,
+      "armorModifier": true,
+      "dropModifier": true,
+      "debugLogging": false,
+      "eliteSpawn": true
+    },
+    "integrations": {
+      "eliteMobs": true,
+      "ecotale": true,
+      "levelingCore": true,
+      "mmoSkillTree": true
+    }
   },
   "meta": {
     "very_easy": {
@@ -227,6 +237,7 @@
     "very_easy": {
       "is_allowed": true,
       "is_hidden": false,
+      "health_multiplier": 0.827,
       "damage_multiplier": 0.7,
       "armor_multiplier": 0.0,
       "drop_rate_multiplier": 0.9,
@@ -234,7 +245,10 @@
       "drop_quality_multiplier": 0.0,
       "xp_multiplier": 0.9,
       "cash_multiplier": 0.9,
-      "health_multiplier": 0.827
+      "elite_mobs_chance_multiplier": 0.0,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0,
+      "elite_mobs_chance_legendary": 0.0
     },
     "easy": {
       "is_allowed": true,
@@ -246,7 +260,11 @@
       "drop_quantity_multiplier": 0.95,
       "drop_quality_multiplier": 0.0,
       "xp_multiplier": 0.95,
-      "cash_multiplier": 0.95
+      "cash_multiplier": 0.95,
+      "elite_mobs_chance_multiplier": 0.0,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0,
+      "elite_mobs_chance_legendary": 0.0
     },
     "normal": {
       "is_allowed": true,
@@ -258,7 +276,11 @@
       "drop_quantity_multiplier": 1.0,
       "drop_quality_multiplier": 0.0,
       "xp_multiplier": 1.0,
-      "cash_multiplier": 1.0
+      "cash_multiplier": 1.0,
+      "elite_mobs_chance_multiplier": 0.0,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0,
+      "elite_mobs_chance_legendary": 0.0
     },
     "challenging": {
       "is_allowed": true,
@@ -270,7 +292,11 @@
       "drop_quantity_multiplier": 1.08,
       "drop_quality_multiplier": 0.03,
       "xp_multiplier": 1.1,
-      "cash_multiplier": 1.1
+      "cash_multiplier": 1.1,
+      "elite_mobs_chance_multiplier": 0.0,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0,
+      "elite_mobs_chance_legendary": 0.0
     },
     "hard": {
       "is_allowed": true,
@@ -282,7 +308,11 @@
       "drop_quantity_multiplier": 1.18,
       "drop_quality_multiplier": 0.06,
       "xp_multiplier": 1.2,
-      "cash_multiplier": 1.2
+      "cash_multiplier": 1.2,
+      "elite_mobs_chance_multiplier": 0.001,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0,
+      "elite_mobs_chance_legendary": 0.0
     },
     "expert": {
       "is_allowed": true,
@@ -294,7 +324,11 @@
       "drop_quantity_multiplier": 1.4,
       "drop_quality_multiplier": 0.1,
       "xp_multiplier": 1.35,
-      "cash_multiplier": 1.35
+      "cash_multiplier": 1.35,
+      "elite_mobs_chance_multiplier": 0.002,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0005,
+      "elite_mobs_chance_legendary": 0.00001
     },
     "master": {
       "is_allowed": true,
@@ -306,7 +340,11 @@
       "drop_quantity_multiplier": 1.8,
       "drop_quality_multiplier": 0.14,
       "xp_multiplier": 1.55,
-      "cash_multiplier": 1.55
+      "cash_multiplier": 1.55,
+      "elite_mobs_chance_multiplier": 0.05,
+      "elite_mobs_chance_uncommon": 0.015,
+      "elite_mobs_chance_rare": 0.002,
+      "elite_mobs_chance_legendary": 0.0002
     },
     "nightmare": {
       "is_allowed": true,
@@ -318,7 +356,11 @@
       "drop_quantity_multiplier": 2.2,
       "drop_quality_multiplier": 0.18,
       "xp_multiplier": 1.8,
-      "cash_multiplier": 1.8
+      "cash_multiplier": 1.8,
+      "elite_mobs_chance_multiplier": 0.2,
+      "elite_mobs_chance_uncommon": 0.03,
+      "elite_mobs_chance_rare": 0.004,
+      "elite_mobs_chance_legendary": 0.0004
     },
     "ascendant": {
       "is_allowed": true,
@@ -330,7 +372,11 @@
       "drop_quantity_multiplier": 1.22,
       "drop_quality_multiplier": 0.15,
       "xp_multiplier": 1.2,
-      "cash_multiplier": 1.2
+      "cash_multiplier": 1.2,
+      "elite_mobs_chance_multiplier": 0.3,
+      "elite_mobs_chance_uncommon": 0.003,
+      "elite_mobs_chance_rare": 0.0359,
+      "elite_mobs_chance_legendary": 0.015
     },
     "ascendant_I": {
       "is_allowed": true,
@@ -342,7 +388,11 @@
       "drop_quantity_multiplier": 1.46,
       "drop_quality_multiplier": 0.172,
       "xp_multiplier": 1.4,
-      "cash_multiplier": 1.4
+      "cash_multiplier": 1.4,
+      "elite_mobs_chance_multiplier": 0.32,
+      "elite_mobs_chance_uncommon": 0.0032,
+      "elite_mobs_chance_rare": 0.0384,
+      "elite_mobs_chance_legendary": 0.016
     },
     "ascendant_II": {
       "is_allowed": true,
@@ -354,7 +404,11 @@
       "drop_quantity_multiplier": 1.7,
       "drop_quality_multiplier": 0.194,
       "xp_multiplier": 1.6,
-      "cash_multiplier": 1.6
+      "cash_multiplier": 1.6,
+      "elite_mobs_chance_multiplier": 0.34,
+      "elite_mobs_chance_uncommon": 0.0034,
+      "elite_mobs_chance_rare": 0.0408,
+      "elite_mobs_chance_legendary": 0.017
     },
     "ascendant_III": {
       "is_allowed": true,
@@ -366,7 +420,11 @@
       "drop_quantity_multiplier": 2.0,
       "drop_quality_multiplier": 0.217,
       "xp_multiplier": 1.8,
-      "cash_multiplier": 1.8
+      "cash_multiplier": 1.8,
+      "elite_mobs_chance_multiplier": 0.36,
+      "elite_mobs_chance_uncommon": 0.0036,
+      "elite_mobs_chance_rare": 0.0432,
+      "elite_mobs_chance_legendary": 0.018
     },
     "ascendant_IV": {
       "is_allowed": true,
@@ -378,7 +436,11 @@
       "drop_quantity_multiplier": 2.3,
       "drop_quality_multiplier": 0.239,
       "xp_multiplier": 2.0,
-      "cash_multiplier": 2.0
+      "cash_multiplier": 2.0,
+      "elite_mobs_chance_multiplier": 0.38,
+      "elite_mobs_chance_uncommon": 0.0038,
+      "elite_mobs_chance_rare": 0.0456,
+      "elite_mobs_chance_legendary": 0.019
     },
     "ascendant_V": {
       "is_allowed": true,
@@ -390,7 +452,11 @@
       "drop_quantity_multiplier": 2.66,
       "drop_quality_multiplier": 0.261,
       "xp_multiplier": 2.2,
-      "cash_multiplier": 2.2
+      "cash_multiplier": 2.2,
+      "elite_mobs_chance_multiplier": 0.4,
+      "elite_mobs_chance_uncommon": 0.004,
+      "elite_mobs_chance_rare": 0.048,
+      "elite_mobs_chance_legendary": 0.02
     },
     "ascendant_VI": {
       "is_allowed": true,
@@ -402,7 +468,11 @@
       "drop_quantity_multiplier": 3.02,
       "drop_quality_multiplier": 0.283,
       "xp_multiplier": 2.4,
-      "cash_multiplier": 2.4
+      "cash_multiplier": 2.4,
+      "elite_mobs_chance_multiplier": 0.42,
+      "elite_mobs_chance_uncommon": 0.0042,
+      "elite_mobs_chance_rare": 0.0504,
+      "elite_mobs_chance_legendary": 0.021
     },
     "ascendant_VII": {
       "is_allowed": true,
@@ -414,7 +484,11 @@
       "drop_quantity_multiplier": 3.38,
       "drop_quality_multiplier": 0.306,
       "xp_multiplier": 2.6,
-      "cash_multiplier": 2.6
+      "cash_multiplier": 2.6,
+      "elite_mobs_chance_multiplier": 0.44,
+      "elite_mobs_chance_uncommon": 0.0044,
+      "elite_mobs_chance_rare": 0.0527,
+      "elite_mobs_chance_legendary": 0.022
     },
     "ascendant_VIII": {
       "is_allowed": true,
@@ -426,7 +500,11 @@
       "drop_quantity_multiplier": 3.74,
       "drop_quality_multiplier": 0.328,
       "xp_multiplier": 2.8,
-      "cash_multiplier": 2.8
+      "cash_multiplier": 2.8,
+      "elite_mobs_chance_multiplier": 0.46,
+      "elite_mobs_chance_uncommon": 0.0046,
+      "elite_mobs_chance_rare": 0.0552,
+      "elite_mobs_chance_legendary": 0.023
     },
     "ascendant_IX": {
       "is_allowed": true,
@@ -438,7 +516,11 @@
       "drop_quantity_multiplier": 4.1,
       "drop_quality_multiplier": 0.35,
       "xp_multiplier": 3.0,
-      "cash_multiplier": 3.0
+      "cash_multiplier": 3.0,
+      "elite_mobs_chance_multiplier": 0.48,
+      "elite_mobs_chance_uncommon": 0.0048,
+      "elite_mobs_chance_rare": 0.0576,
+      "elite_mobs_chance_legendary": 0.024
     },
     "ascendant_X": {
       "is_allowed": true,
@@ -450,7 +532,11 @@
       "drop_quantity_multiplier": 4.182,
       "drop_quality_multiplier": 0.364,
       "xp_multiplier": 3.045,
-      "cash_multiplier": 3.045
+      "cash_multiplier": 3.045,
+      "elite_mobs_chance_multiplier": 0.5,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.06,
+      "elite_mobs_chance_legendary": 0.1
     },
     "ascendant_XI": {
       "is_allowed": true,
@@ -462,7 +548,11 @@
       "drop_quantity_multiplier": 4.264,
       "drop_quality_multiplier": 0.377,
       "xp_multiplier": 3.091,
-      "cash_multiplier": 3.091
+      "cash_multiplier": 3.091,
+      "elite_mobs_chance_multiplier": 0.55,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.066,
+      "elite_mobs_chance_legendary": 0.11
     },
     "ascendant_XII": {
       "is_allowed": true,
@@ -474,7 +564,11 @@
       "drop_quantity_multiplier": 4.345,
       "drop_quality_multiplier": 0.391,
       "xp_multiplier": 3.136,
-      "cash_multiplier": 3.136
+      "cash_multiplier": 3.136,
+      "elite_mobs_chance_multiplier": 0.6,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.0719,
+      "elite_mobs_chance_legendary": 0.12
     },
     "ascendant_XIII": {
       "is_allowed": true,
@@ -486,7 +580,11 @@
       "drop_quantity_multiplier": 4.427,
       "drop_quality_multiplier": 0.405,
       "xp_multiplier": 3.182,
-      "cash_multiplier": 3.182
+      "cash_multiplier": 3.182,
+      "elite_mobs_chance_multiplier": 0.65,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.078,
+      "elite_mobs_chance_legendary": 0.13
     },
     "ascendant_XIV": {
       "is_allowed": true,
@@ -498,7 +596,11 @@
       "drop_quantity_multiplier": 4.509,
       "drop_quality_multiplier": 0.418,
       "xp_multiplier": 3.227,
-      "cash_multiplier": 3.227
+      "cash_multiplier": 3.227,
+      "elite_mobs_chance_multiplier": 0.7,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.084,
+      "elite_mobs_chance_legendary": 0.14
     },
     "ascendant_XV": {
       "is_allowed": true,
@@ -510,7 +612,11 @@
       "drop_quantity_multiplier": 4.591,
       "drop_quality_multiplier": 0.432,
       "xp_multiplier": 3.273,
-      "cash_multiplier": 3.273
+      "cash_multiplier": 3.273,
+      "elite_mobs_chance_multiplier": 0.75,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.09,
+      "elite_mobs_chance_legendary": 0.15
     },
     "ascendant_XVI": {
       "is_allowed": true,
@@ -522,7 +628,11 @@
       "drop_quantity_multiplier": 4.673,
       "drop_quality_multiplier": 0.445,
       "xp_multiplier": 3.318,
-      "cash_multiplier": 3.318
+      "cash_multiplier": 3.318,
+      "elite_mobs_chance_multiplier": 0.8,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.096,
+      "elite_mobs_chance_legendary": 0.16
     },
     "ascendant_XVII": {
       "is_allowed": true,
@@ -534,7 +644,11 @@
       "drop_quantity_multiplier": 4.755,
       "drop_quality_multiplier": 0.459,
       "xp_multiplier": 3.364,
-      "cash_multiplier": 3.364
+      "cash_multiplier": 3.364,
+      "elite_mobs_chance_multiplier": 0.85,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.102,
+      "elite_mobs_chance_legendary": 0.17
     },
     "ascendant_XVIII": {
       "is_allowed": true,
@@ -546,7 +660,11 @@
       "drop_quantity_multiplier": 4.836,
       "drop_quality_multiplier": 0.473,
       "xp_multiplier": 3.409,
-      "cash_multiplier": 3.409
+      "cash_multiplier": 3.409,
+      "elite_mobs_chance_multiplier": 0.9,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.1079,
+      "elite_mobs_chance_legendary": 0.18
     },
     "ascendant_XIX": {
       "is_allowed": true,
@@ -558,7 +676,11 @@
       "drop_quantity_multiplier": 4.918,
       "drop_quality_multiplier": 0.486,
       "xp_multiplier": 3.455,
-      "cash_multiplier": 3.455
+      "cash_multiplier": 3.455,
+      "elite_mobs_chance_multiplier": 0.95,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.114,
+      "elite_mobs_chance_legendary": 0.19
     },
     "ascendant_XX": {
       "is_allowed": true,
@@ -570,7 +692,11 @@
       "drop_quantity_multiplier": 5.0,
       "drop_quality_multiplier": 0.5,
       "xp_multiplier": 3.5,
-      "cash_multiplier": 3.5
+      "cash_multiplier": 3.5,
+      "elite_mobs_chance_multiplier": 1.0,
+      "elite_mobs_chance_uncommon": 0.0,
+      "elite_mobs_chance_rare": 0.12,
+      "elite_mobs_chance_legendary": 0.2
     }
   }
 }

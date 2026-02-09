@@ -26,6 +26,9 @@ public final class ExperienceAndCashMultiplier {
     private static boolean _allowXPReward;
     private static boolean _allowCashReward;
     private static boolean _allowCashRewardEvenWithPhysical;
+    private static boolean _allowLevelingCoreIntegration;
+    private static boolean _allowEcotaleIntegration;
+    private static boolean _allowMMOSkillTreeIntegration;
 
     public ExperienceAndCashMultiplier() {
         initialize();
@@ -36,13 +39,15 @@ public final class ExperienceAndCashMultiplier {
         _allowCashReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD);
         _allowCashRewardEvenWithPhysical = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
         _allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
+        _allowLevelingCoreIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_LEVELING_CORE);
+        _allowEcotaleIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_ECOTALE);
+        _allowMMOSkillTreeIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MMO_SKILLTREE);
 
         if (!_allowCashReward && !_allowXPReward) {
             return;
         }
 
-        if (!LibraryAvailability.isMMOSkillTreePresent()) {
-            return;
+        if (_allowMMOSkillTreeIntegration && _allowXPReward && !LibraryAvailability.isMMOSkillTreePresent()) {
         }
     }
 
@@ -80,7 +85,7 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static MultiplierResult applyLevelingCoreXPMultiplier(@Nonnull PlayerRef playerRef, long amount) {
-        if (!LibraryAvailability.isLevelingCorePresent() || !_allowXPReward) {
+        if (!_allowLevelingCoreIntegration || !LibraryAvailability.isLevelingCorePresent() || !_allowXPReward) {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
@@ -110,7 +115,7 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static void applyEcotaleCashMultiplier(@Nonnull PlayerRef playerRef, long amount) {
-        if (!LibraryAvailability.isEcotalePresent() || !_allowCashReward) {
+        if (!_allowEcotaleIntegration || !LibraryAvailability.isEcotalePresent() || !_allowCashReward) {
             return;
         }
 
@@ -139,7 +144,7 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static MultiplierResult applyMMOSkillTreeXPMultiplier(@Nonnull PlayerRef playerRef, long amount, String skillName, String rawMessage) {
-        if (!LibraryAvailability.isMMOSkillTreePresent() || !_allowXPReward) {
+        if (!_allowMMOSkillTreeIntegration || !LibraryAvailability.isMMOSkillTreePresent() || !_allowXPReward) {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 

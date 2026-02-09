@@ -64,16 +64,16 @@ public final class EntityEliteSpawn extends RefSystem<EntityStore> {
         DifficultySettings settings = DifficultyManager.getSettings();
 
         ComponentType<EntityStore, NPCEntity> componentType = NPCEntity.getComponentType();
-        if(componentType == null) {
+        if (componentType == null) {
             return;
         }
-        NPCEntity npc = (NPCEntity)store.getComponent(ref, componentType);
-        if(npc == null) {
+        NPCEntity npc = store.getComponent(ref, componentType);
+        if (npc == null) {
             return;
         }
 
         if (EliteMobsDifficultySpawner.isAvailable()) {
-            float factor = (float) settings.get(tierId, DifficultyIO.SETTING_ELITE_SPAWN_MULTIPLIER);
+            double factor = settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_MULTIPLIER);
             // 0.15
             double uncommonChance = factor + settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_UNCOMMON);
             // 0.08

@@ -3,6 +3,7 @@ package ascendant.core.scaling;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.util.NearestPlayerFinder;
+import ascendant.core.util.ReflectionHelper;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
@@ -277,19 +278,25 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
             Method withQualityInt = null;
 
             try {
-                Class<?> c = Class.forName("com.hypixel.hytale.server.core.inventory.ItemStack");
-
-                getRarity = _findMethod(c, "getRarity");
-                if (getRarity != null && getRarity.getReturnType().isEnum()) {
-                    Class<?> enumType = getRarity.getReturnType();
-                    withRarity = _findMethod(c, "withRarity", enumType);
+                Class<?> c = ReflectionHelper.resolveClass(
+                        "com.hypixel.hytale.server.core.inventory.ItemStack",
+                        EntityDropMultiplier.class.getClassLoader()
+                );
+                if (c == null) {
+                    throw new ClassNotFoundException("com.hypixel.hytale.server.core.inventory.ItemStack");
                 }
 
-                getQualityInt = _findMethod(c, "getQuality");
+                getRarity = ReflectionHelper.getAnyMethod(c, "getRarity");
+                if (getRarity != null && getRarity.getReturnType().isEnum()) {
+                    Class<?> enumType = getRarity.getReturnType();
+                    withRarity = ReflectionHelper.getAnyMethod(c, "withRarity", enumType);
+                }
+
+                getQualityInt = ReflectionHelper.getAnyMethod(c, "getQuality");
                 if (getQualityInt != null && (getQualityInt.getReturnType() == int.class || getQualityInt.getReturnType() == Integer.class)) {
-                    withQualityInt = _findMethod(c, "withQuality", int.class);
+                    withQualityInt = ReflectionHelper.getAnyMethod(c, "withQuality", int.class);
                     if (withQualityInt == null) {
-                        withQualityInt = _findMethod(c, "withQuality", Integer.class);
+                        withQualityInt = ReflectionHelper.getAnyMethod(c, "withQuality", Integer.class);
                     }
                 }
             } catch (Throwable ignored) {
@@ -375,21 +382,5 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
             }
         }
 
-        @Nullable
-        private static Method _findMethod(@Nonnull Class<?> c, @Nonnull String name, Class<?>... params) {
-            try {
-                Method m = c.getDeclaredMethod(name, params);
-                m.setAccessible(true);
-                return m;
-            } catch (Throwable ignored) {
-                try {
-                    Method m = c.getMethod(name, params);
-                    m.setAccessible(true);
-                    return m;
-                } catch (Throwable ignored2) {
-                    return null;
-                }
-            }
-        }
     }
 }

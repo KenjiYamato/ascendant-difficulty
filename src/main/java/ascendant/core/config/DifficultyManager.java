@@ -52,7 +52,7 @@ public final class DifficultyManager {
         return key.read(config);
     }
 
-    // Global switch from config: base.allowDifficultyChange
+    // Global switch from config: base.allow.difficultyChange
     public static boolean allowDifficultyChange() {
         ensureInitialized();
         return getFromConfig(DifficultyIO.ALLOW_DIFFICULTY_CHANGE);

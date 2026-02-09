@@ -30,6 +30,9 @@ public final class NotificationsAdapter {
     private static volatile PacketFilter _registered;
     private static boolean _allowDebugLogging;
     private static boolean _allowXPReward;
+    private static boolean _allowLevelingCoreIntegration;
+    private static boolean _allowEcotaleIntegration;
+    private static boolean _allowMMOSkillTreeIntegration;
 
 
     private NotificationsAdapter() {
@@ -44,6 +47,9 @@ public final class NotificationsAdapter {
         _registered = PacketAdapters.registerOutbound(watcher);
         _allowDebugLogging = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DEBUG_LOGGING);
         _allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
+        _allowLevelingCoreIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_LEVELING_CORE);
+        _allowEcotaleIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_ECOTALE);
+        _allowMMOSkillTreeIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MMO_SKILLTREE);
     }
 
     public static void unregister() {
@@ -65,7 +71,7 @@ public final class NotificationsAdapter {
         }
 
         debugLogNotification(n);
-        if(!_allowXPReward) {
+        if (!_allowXPReward) {
             return;
         }
 
@@ -73,6 +79,9 @@ public final class NotificationsAdapter {
         // levelingcore
         String messageId = formattedMessageParts.messageId();
         if ("commands.levelingcore.gained".equals(messageId)) {
+            if (!_allowLevelingCoreIntegration) {
+                return;
+            }
             long levelingCoreXP = getLongParam(formattedMessageParts, "xp");
             if (levelingCoreXP > 0L) {
                 ExperienceAndCashMultiplier.MultiplierResult multiplierResult = ExperienceAndCashMultiplier.applyLevelingCoreXPMultiplier(playerRef, levelingCoreXP);
@@ -81,12 +90,17 @@ public final class NotificationsAdapter {
                 }
                 String displayName = getDisplayNameFromMultiplierResult(multiplierResult);
                 n.secondaryMessage = new FormattedMessage("+" + multiplierResult.percent() + "% " + displayName, null, null, null, null, "#FFAA00", MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, null, false);
-                ExperienceAndCashMultiplier.applyEcotaleCashMultiplier(playerRef, levelingCoreXP);
+                if (_allowEcotaleIntegration) {
+                    ExperienceAndCashMultiplier.applyEcotaleCashMultiplier(playerRef, levelingCoreXP);
+                }
             }
             return;
         }
         // mmoskilltree
         if (n.message.color != null && n.message.color.equals("#00ff00")) {
+            if (!_allowMMOSkillTreeIntegration) {
+                return;
+            }
             ParsedXp xp = parseXpRawText(n.message.rawText);
             if (xp != null) {
                 long amount = xp.value();
@@ -97,7 +111,6 @@ public final class NotificationsAdapter {
                     n.message.rawText += " +" + multiplierResult.percent() + "% " + displayName;
                 }
             }
-            return;
         }
 
     }

@@ -15,22 +15,29 @@ public final class DifficultyIO {
     public static final Path LEGACY_PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
 
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
-    public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allowDifficultyChange";
-    public static final String PATH_ALLOW_BADGE = "base.allowUIBadge";
+    public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
+    public static final String PATH_ALLOW_BADGE = "base.allow.uiBadge";
     public static final String PATH_MIN_DAMAGE_FACTOR = "base.minDamageFactor";
     public static final String PATH_PLAYER_DISTANCE_RADIUS_TO_CHECK = "base.playerDistanceRadiusToCheck";
     public static final String PATH_HEALTH_SCALING_TOLERANCE = "base.healthScalingTolerance";
     public static final String PATH_MIN_HEALTH_SCALING_FACTOR = "base.minHealthScalingFactor";
     public static final String PATH_MAX_HEALTH_SCALING_FACTOR = "base.maxHealthScalingFactor";
     public static final String PATH_CASH_VARIANCE_FACTOR = "base.cashVarianceFactor";
-    public static final String PATH_ALLOW_CASH_REWARD = "base.allowCashReward";
-    public static final String PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allowCashRewardEvenWithPhysical";
-    public static final String PATH_ALLOW_XP_REWARD = "base.allowXPReward";
-    public static final String PATH_ALLOW_HEALTH_MODIFIER = "base.allowHealthModifier";
-    public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allowDamageModifier";
-    public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allowArmorModifier";
-    public static final String PATH_ALLOW_DROP_MODIFIER = "base.allowDropModifier";
-    public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allowDebugLogging";
+    public static final String PATH_ROUNDING_DIGITS = "base.roundingDigits";
+    public static final String PATH_ALLOW_CASH_REWARD = "base.allow.cashReward";
+    public static final String PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allow.cashRewardEvenWithPhysical";
+    public static final String PATH_ALLOW_XP_REWARD = "base.allow.xpReward";
+    public static final String PATH_ALLOW_HEALTH_MODIFIER = "base.allow.healthModifier";
+    public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allow.damageModifier";
+    public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allow.armorModifier";
+    public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
+    public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
+    public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.eliteSpawn";
+
+    public static final String PATH_INTEGRATION_ELITE_MOBS = "base.integrations.eliteMobs";
+    public static final String PATH_INTEGRATION_ECOTALE = "base.integrations.ecotale";
+    public static final String PATH_INTEGRATION_LEVELING_CORE = "base.integrations.levelingCore";
+    public static final String PATH_INTEGRATION_MMO_SKILLTREE = "base.integrations.mmoSkillTree";
 
     public static final String SETTING_BASE_DAMAGE_RANDOM_PERCENTAGE_MODIFIER = "baseDamageRandomPercentageModifier";
     public static final String SETTING_HEALTH_MULTIPLIER = "health_multiplier";
@@ -48,8 +55,13 @@ public final class DifficultyIO {
     public static final String SETTING_DROP_QUALITY_MULTIPLIER = "drop_quality_multiplier";
     public static final String SETTING_XP_MULTIPLIER = "xp_multiplier";
     public static final String SETTING_CASH_MULTIPLIER = "cash_multiplier";
+    public static final String SETTING_ELITE_MOBS_CHANCE_MULTIPLIER = "elite_mobs_chance_multiplier";
+    public static final String SETTING_ELITE_MOBS_CHANCE_UNCOMMON = "elite_mobs_chance_uncommon";
+    public static final String SETTING_ELITE_MOBS_CHANCE_RARE = "elite_mobs_chance_rare";
+    public static final String SETTING_ELITE_MOBS_CHANCE_LEGENDARY = "elite_mobs_chance_legendary";
     public static final String SETTING_IS_ALLOWED = "is_allowed";
     public static final String SETTING_IS_HIDDEN = "is_hidden";
+    public static final String SETTING_ELITE_SPAWN_MULTIPLIER = "elite_spawn_multiplier";
 
     public static final String DEFAULT_BASE_DIFFICULTY = "normal";
     public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE = true;
@@ -59,6 +71,7 @@ public final class DifficultyIO {
     public static final double DEFAULT_MIN_HEALTH_SCALING_FACTOR = 0.05;
     public static final double DEFAULT_MAX_HEALTH_SCALING_FACTOR = 300.0;
     public static final double DEFAULT_CASH_VARIANCE_FACTOR = 0.23;
+    public static final int DEFAULT_ROUNDING_DIGITS = 3;
     public static final boolean DEFAULT_ALLOW_BADGE = true;
     public static final boolean DEFAULT_ALLOW_CASH_REWARD = true;
     public static final boolean DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = true;
@@ -68,6 +81,11 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_ARMOR_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
+    public static final boolean DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER = true;
+    public static final boolean DEFAULT_INTEGRATION_ELITE_MOBS = true;
+    public static final boolean DEFAULT_INTEGRATION_ECOTALE = true;
+    public static final boolean DEFAULT_INTEGRATION_LEVELING_CORE = true;
+    public static final boolean DEFAULT_INTEGRATION_MMO_SKILLTREE = true;
 
     public static final ConfigKey<String> DEFAULT_DIFFICULTY =
             ConfigKey.ofString(PATH_DEFAULT_DIFFICULTY, DEFAULT_BASE_DIFFICULTY);
@@ -87,6 +105,8 @@ public final class DifficultyIO {
             ConfigKey.ofDouble(PATH_MAX_HEALTH_SCALING_FACTOR, DEFAULT_MAX_HEALTH_SCALING_FACTOR);
     public static final ConfigKey<Double> CASH_VARIANCE_FACTOR =
             ConfigKey.ofDouble(PATH_CASH_VARIANCE_FACTOR, DEFAULT_CASH_VARIANCE_FACTOR);
+    public static final ConfigKey<Integer> ROUNDING_DIGITS =
+            ConfigKey.ofInt(PATH_ROUNDING_DIGITS, DEFAULT_ROUNDING_DIGITS);
     public static final ConfigKey<Boolean> ALLOW_CASH_REWARD =
             ConfigKey.ofBoolean(PATH_ALLOW_CASH_REWARD, DEFAULT_ALLOW_CASH_REWARD);
     public static final ConfigKey<Boolean> ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL =
@@ -103,6 +123,16 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_DROP_MODIFIER, DEFAULT_ALLOW_DROP_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DEBUG_LOGGING =
             ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
+    public static final ConfigKey<Boolean> ALLOW_ELITE_SPAWN_MODIFIER =
+            ConfigKey.ofBoolean(PATH_ALLOW_ELITE_SPAWN_MODIFIER, DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER);
+    public static final ConfigKey<Boolean> INTEGRATION_ELITE_MOBS =
+            ConfigKey.ofBoolean(PATH_INTEGRATION_ELITE_MOBS, DEFAULT_INTEGRATION_ELITE_MOBS);
+    public static final ConfigKey<Boolean> INTEGRATION_ECOTALE =
+            ConfigKey.ofBoolean(PATH_INTEGRATION_ECOTALE, DEFAULT_INTEGRATION_ECOTALE);
+    public static final ConfigKey<Boolean> INTEGRATION_LEVELING_CORE =
+            ConfigKey.ofBoolean(PATH_INTEGRATION_LEVELING_CORE, DEFAULT_INTEGRATION_LEVELING_CORE);
+    public static final ConfigKey<Boolean> INTEGRATION_MMO_SKILLTREE =
+            ConfigKey.ofBoolean(PATH_INTEGRATION_MMO_SKILLTREE, DEFAULT_INTEGRATION_MMO_SKILLTREE);
 
     private DifficultyIO() {
     }

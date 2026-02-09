@@ -7,32 +7,50 @@ import java.util.logging.Level;
 public final class LibraryAvailability {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
-    private static final boolean LEVELING_CORE_PRESENT = _checkAndLog(
-            "LevelingCore",
-            "com.azuredoom.levelingcore.api.LevelingCoreApi"
-    );
-    private static final boolean ECOTALE_PRESENT = _checkAndLog(
-            "Ecotale",
-            "com.ecotale.api.EcotaleAPI"
-    );
-    private static final boolean MMO_SKILLTREE_PRESENT = _checkAndLog(
-            "MMOSkillTree",
-            "com.ziggfreed.mmoskilltree.api.MMOSkillTreeAPI"
-    );
+    private static volatile Boolean LEVELING_CORE_PRESENT;
+    private static volatile Boolean ECOTALE_PRESENT;
+    private static volatile Boolean MMO_SKILLTREE_PRESENT;
 
     private LibraryAvailability() {
     }
 
     public static boolean isLevelingCorePresent() {
-        return LEVELING_CORE_PRESENT;
+        Boolean cached = LEVELING_CORE_PRESENT;
+        if (cached != null) {
+            return cached;
+        }
+        boolean present = _checkAndLog(
+                "LevelingCore",
+                "com.azuredoom.levelingcore.api.LevelingCoreApi"
+        );
+        LEVELING_CORE_PRESENT = present;
+        return present;
     }
 
     public static boolean isEcotalePresent() {
-        return ECOTALE_PRESENT;
+        Boolean cached = ECOTALE_PRESENT;
+        if (cached != null) {
+            return cached;
+        }
+        boolean present = _checkAndLog(
+                "Ecotale",
+                "com.ecotale.api.EcotaleAPI"
+        );
+        ECOTALE_PRESENT = present;
+        return present;
     }
 
     public static boolean isMMOSkillTreePresent() {
-        return MMO_SKILLTREE_PRESENT;
+        Boolean cached = MMO_SKILLTREE_PRESENT;
+        if (cached != null) {
+            return cached;
+        }
+        boolean present = _checkAndLog(
+                "MMOSkillTree",
+                "com.ziggfreed.mmoskilltree.api.MMOSkillTreeAPI"
+        );
+        MMO_SKILLTREE_PRESENT = present;
+        return present;
     }
 
     public static void logMissingDependency(String name, Throwable error) {
@@ -42,7 +60,7 @@ public final class LibraryAvailability {
 
     private static boolean _checkAndLog(String name, String className) {
         try {
-            Class.forName(className, false, LibraryAvailability.class.getClassLoader());
+            ReflectionHelper.resolveClassOrThrow(className, LibraryAvailability.class.getClassLoader());
             return true;
         } catch (Throwable t) {
             logMissingDependency(name, t);

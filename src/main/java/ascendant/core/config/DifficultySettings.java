@@ -38,10 +38,15 @@ public final class DifficultySettings {
             DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER,
             DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER,
             DifficultyIO.SETTING_XP_MULTIPLIER,
-            DifficultyIO.SETTING_CASH_MULTIPLIER
+            DifficultyIO.SETTING_CASH_MULTIPLIER,
+            DifficultyIO.SETTING_ELITE_MOBS_CHANCE_MULTIPLIER,
+            DifficultyIO.SETTING_ELITE_MOBS_CHANCE_UNCOMMON,
+            DifficultyIO.SETTING_ELITE_MOBS_CHANCE_RARE,
+            DifficultyIO.SETTING_ELITE_MOBS_CHANCE_LEGENDARY
     );
     private static final String KEY_IS_ALLOWED = DifficultyIO.SETTING_IS_ALLOWED;
     private static final String KEY_IS_HIDDEN = DifficultyIO.SETTING_IS_HIDDEN;
+    private static final String KEY_ROUNDING_DIGITS = "roundingDigits";
 
     private final Map<String, Double> base;
     private final Map<String, Map<String, Double>> tiers;
@@ -49,14 +54,16 @@ public final class DifficultySettings {
     private final boolean baseIsHidden;
     private final Map<String, Boolean> tiersIsAllowed;
     private final Map<String, Boolean> tiersIsHidden;
+    private final int roundingDigits;
 
-    private DifficultySettings(Map<String, Double> base, Map<String, Map<String, Double>> tiers, boolean baseIsAllowed, boolean baseIsHidden, Map<String, Boolean> tiersIsAllowed, Map<String, Boolean> tiersIsHidden) {
+    private DifficultySettings(Map<String, Double> base, Map<String, Map<String, Double>> tiers, boolean baseIsAllowed, boolean baseIsHidden, Map<String, Boolean> tiersIsAllowed, Map<String, Boolean> tiersIsHidden, int roundingDigits) {
         this.base = base;
         this.tiers = tiers;
         this.baseIsAllowed = baseIsAllowed;
         this.baseIsHidden = baseIsHidden;
         this.tiersIsAllowed = tiersIsAllowed;
         this.tiersIsHidden = tiersIsHidden;
+        this.roundingDigits = Math.max(0, roundingDigits);
     }
 
     public static DifficultySettings fromConfig(DifficultyConfig config) {
@@ -71,9 +78,10 @@ public final class DifficultySettings {
         JsonObject baseObj = root.getAsJsonObject("base");
         boolean baseIsAllowed = readBoolean(baseObj, KEY_IS_ALLOWED, true);
         boolean baseIsHidden = readBoolean(baseObj, KEY_IS_HIDDEN, false);
+        int roundingDigits = readInt(baseObj, KEY_ROUNDING_DIGITS, DifficultyIO.DEFAULT_ROUNDING_DIGITS);
         Map<String, Boolean> tiersIsAllowed = readTiersBoolean(root.getAsJsonObject("tiers"), baseIsAllowed, KEY_IS_ALLOWED);
         Map<String, Boolean> tiersIsHidden = readTiersBoolean(root.getAsJsonObject("tiers"), baseIsHidden, KEY_IS_HIDDEN);
-        return new DifficultySettings(base, tiers, baseIsAllowed, baseIsHidden, tiersIsAllowed, tiersIsHidden);
+        return new DifficultySettings(base, tiers, baseIsAllowed, baseIsHidden, tiersIsAllowed, tiersIsHidden, roundingDigits);
     }
 
     public static JsonObject defaultJson() {
@@ -82,6 +90,7 @@ public final class DifficultySettings {
         for (String key : KEYS) {
             base.addProperty(key, 1.0);
         }
+        base.addProperty(KEY_ROUNDING_DIGITS, DifficultyIO.DEFAULT_ROUNDING_DIGITS);
         root.add("base", base);
 
         JsonObject tiers = new JsonObject();
@@ -183,6 +192,21 @@ public final class DifficultySettings {
         return fallback;
     }
 
+    private static int readInt(JsonObject section, String key, int fallback) {
+        if (section == null) {
+            return fallback;
+        }
+        JsonElement element = section.get(key);
+        if (element != null && element.isJsonPrimitive()) {
+            try {
+                return element.getAsInt();
+            } catch (UnsupportedOperationException | NumberFormatException ignored) {
+                return fallback;
+            }
+        }
+        return fallback;
+    }
+
     private static Map<String, Double> mergeWithPrevious(JsonObject section, Map<String, Double> previous) {
         Map<String, Double> result = new LinkedHashMap<>(previous);
         for (String key : KEYS) {
@@ -211,6 +235,11 @@ public final class DifficultySettings {
         return sb.toString();
     }
 
+    private static double roundToAfterComma(double value, int digits) {
+        double factor = Math.pow(10, Math.max(0, digits));
+        return Math.round(value * factor) / factor;
+    }
+
     public Map<String, Double> base() {
         return Collections.unmodifiableMap(this.base);
     }
@@ -221,13 +250,13 @@ public final class DifficultySettings {
 
     public double get(String tier, String key) {
         if (!KEYS.contains(key)) {
-            return this.base.getOrDefault(key, 1.0);
+            return roundToAfterComma(this.base.getOrDefault(key, 1.0), this.roundingDigits);
         }
         Map<String, Double> tierValues = this.tiers.get(tier);
         if (tierValues != null && tierValues.containsKey(key)) {
-            return tierValues.get(key);
+            return roundToAfterComma(tierValues.get(key), this.roundingDigits);
         }
-        return this.base.getOrDefault(key, 1.0);
+        return roundToAfterComma(this.base.getOrDefault(key, 1.0), this.roundingDigits);
     }
 
     public boolean getBoolean(String tier, String key) {
