@@ -18,6 +18,7 @@ public final class DifficultyIO {
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
     public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
     public static final String PATH_ALLOW_BADGE = "base.allow.uiBadge";
+    public static final String PATH_UI_BADGE_START_DELAY_MS = "base.uiBadgeStartDelayMs";
     public static final String PATH_MIN_DAMAGE_FACTOR = "base.minDamageFactor";
     public static final String PATH_PLAYER_DISTANCE_RADIUS_TO_CHECK = "base.playerDistanceRadiusToCheck";
     public static final String PATH_HEALTH_SCALING_TOLERANCE = "base.healthScalingTolerance";
@@ -56,6 +57,14 @@ public final class DifficultyIO {
     public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER = "base.customLeveling.downscale.levelMultiplier";
     public static final String PATH_ALLOW_HEALTH_MODIFIER = "base.allow.healthModifier";
     public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allow.damageModifier";
+    public static final String PATH_ALLOW_DAMAGE_PHYSICAL = "base.allow.damagePhysical";
+    public static final String PATH_ALLOW_DAMAGE_PROJECTILE = "base.allow.damageProjectile";
+    public static final String PATH_ALLOW_DAMAGE_COMMAND = "base.allow.damageCommand";
+    public static final String PATH_ALLOW_DAMAGE_DROWNING = "base.allow.damageDrowning";
+    public static final String PATH_ALLOW_DAMAGE_ENVIRONMENT = "base.allow.damageEnvironment";
+    public static final String PATH_ALLOW_DAMAGE_FALL = "base.allow.damageFall";
+    public static final String PATH_ALLOW_DAMAGE_OUT_OF_WORLD = "base.allow.damageOutOfWorld";
+    public static final String PATH_ALLOW_DAMAGE_SUFFOCATION = "base.allow.damageSuffocation";
     public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allow.armorModifier";
     public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
     public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
@@ -78,6 +87,14 @@ public final class DifficultyIO {
     public static final String SETTING_COMBAT_RELATIVE_TURN_SPEED = "combatRelativeTurnSpeed";
     public static final String SETTING_ARMOR_MULTIPLIER = "armor_multiplier";
     public static final String SETTING_DAMAGE_MULTIPLIER = "damage_multiplier";
+    public static final String SETTING_DAMAGE_MULTIPLIER_PHYSICAL = "damage_multiplier_physical";
+    public static final String SETTING_DAMAGE_MULTIPLIER_PROJECTILE = "damage_multiplier_projectile";
+    public static final String SETTING_DAMAGE_MULTIPLIER_COMMAND = "damage_multiplier_command";
+    public static final String SETTING_DAMAGE_MULTIPLIER_DROWNING = "damage_multiplier_drowning";
+    public static final String SETTING_DAMAGE_MULTIPLIER_ENVIRONMENT = "damage_multiplier_environment";
+    public static final String SETTING_DAMAGE_MULTIPLIER_FALL = "damage_multiplier_fall";
+    public static final String SETTING_DAMAGE_MULTIPLIER_OUT_OF_WORLD = "damage_multiplier_out_of_world";
+    public static final String SETTING_DAMAGE_MULTIPLIER_SUFFOCATION = "damage_multiplier_suffocation";
     public static final String SETTING_KNOCKBACK_RESISTANCE = "knockbackResistance";
     public static final String SETTING_REGENERATION = "regeneration";
     public static final String SETTING_DROP_RATE_MULTIPLIER = "drop_rate_multiplier";
@@ -95,6 +112,7 @@ public final class DifficultyIO {
 
     public static final String DEFAULT_BASE_DIFFICULTY = "normal";
     public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE = true;
+    public static final double DEFAULT_UI_BADGE_START_DELAY_MS = 0.0;
     public static final double DEFAULT_MIN_DAMAGE_FACTOR = 0.001;
     public static final double DEFAULT_PLAYER_DISTANCE_RADIUS_TO_CHECK = 128.0;
     public static final double DEFAULT_HEALTH_SCALING_TOLERANCE = 0.0001;
@@ -134,6 +152,14 @@ public final class DifficultyIO {
     public static final double DEFAULT_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER = 1.8;
     public static final boolean DEFAULT_ALLOW_HEALTH_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DAMAGE_MODIFIER = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_PHYSICAL = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_PROJECTILE = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_COMMAND = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_DROWNING = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_ENVIRONMENT = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_FALL = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_OUT_OF_WORLD = true;
+    public static final boolean DEFAULT_ALLOW_DAMAGE_SUFFOCATION = true;
     public static final boolean DEFAULT_ALLOW_ARMOR_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
@@ -152,6 +178,8 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_DIFFICULTY_CHANGE, DEFAULT_ALLOW_DIFFICULTY_CHANGE);
     public static final ConfigKey<Boolean> ALLOW_BADGE =
             ConfigKey.ofBoolean(PATH_ALLOW_BADGE, DEFAULT_ALLOW_BADGE);
+    public static final ConfigKey<Double> UI_BADGE_START_DELAY_MS =
+            ConfigKey.ofDouble(PATH_UI_BADGE_START_DELAY_MS, DEFAULT_UI_BADGE_START_DELAY_MS);
     public static final ConfigKey<Double> MIN_DAMAGE_FACTOR =
             ConfigKey.ofDouble(PATH_MIN_DAMAGE_FACTOR, DEFAULT_MIN_DAMAGE_FACTOR);
     public static final ConfigKey<Double> PLAYER_DISTANCE_RADIUS_TO_CHECK =
@@ -228,6 +256,22 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_HEALTH_MODIFIER, DEFAULT_ALLOW_HEALTH_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_MODIFIER =
             ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_MODIFIER, DEFAULT_ALLOW_DAMAGE_MODIFIER);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_PHYSICAL =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_PHYSICAL, DEFAULT_ALLOW_DAMAGE_PHYSICAL);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_PROJECTILE =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_PROJECTILE, DEFAULT_ALLOW_DAMAGE_PROJECTILE);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_COMMAND =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_COMMAND, DEFAULT_ALLOW_DAMAGE_COMMAND);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_DROWNING =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_DROWNING, DEFAULT_ALLOW_DAMAGE_DROWNING);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_ENVIRONMENT =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_ENVIRONMENT, DEFAULT_ALLOW_DAMAGE_ENVIRONMENT);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_FALL =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_FALL, DEFAULT_ALLOW_DAMAGE_FALL);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_OUT_OF_WORLD =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_OUT_OF_WORLD, DEFAULT_ALLOW_DAMAGE_OUT_OF_WORLD);
+    public static final ConfigKey<Boolean> ALLOW_DAMAGE_SUFFOCATION =
+            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_SUFFOCATION, DEFAULT_ALLOW_DAMAGE_SUFFOCATION);
     public static final ConfigKey<Boolean> ALLOW_ARMOR_MODIFIER =
             ConfigKey.ofBoolean(PATH_ALLOW_ARMOR_MODIFIER, DEFAULT_ALLOW_ARMOR_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DROP_MODIFIER =

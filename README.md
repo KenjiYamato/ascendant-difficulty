@@ -54,9 +54,9 @@ The default config is written to `config/ascendant/difficulty.json`.
 Key sections:
 
 - `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`.
-- `base.allow`: feature toggles: `difficultyChange`, `uiBadge`, `healthModifier`, `damageModifier`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `debugLogging`, `eliteSpawn`.
+- `base.allow`: feature toggles: `difficultyChange`, `uiBadge`, `healthModifier`, `damageModifier`, `damagePhysical`, `damageProjectile`, `damageCommand`, `damageDrowning`, `damageEnvironment`, `damageFall`, `damageOutOfWorld`, `damageSuffocation`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `debugLogging`, `eliteSpawn`.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
-- `tiers`: per-tier flags and multipliers: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier`, `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`.
+- `tiers`: per-tier flags and multipliers: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`.
 - `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`.
 
 Player settings are stored in `config/ascendant/players-settings.json` (keys: `difficulty`, `showBadge`).

@@ -18,19 +18,44 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public final class DifficultyBadge {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final String HUD_HTML = "Pages/DifficultyBadge.html";
+    private static final ScheduledExecutorService HUD_SCHEDULER = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "ascendant-difficulty-badge-delay");
+        t.setDaemon(true);
+        return t;
+    });
 
     private static final ConcurrentHashMap<UUID, HudBuilder> _hudByPlayer = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, HyUIHud> _hyUIHudByPlayer = new ConcurrentHashMap<>();
 
+    @SuppressWarnings("removal")
     public static void onPlayerReady(PlayerReadyEvent _event) {
         if (_event == null) {
             return;
         }
-        _showForPlayer(_event.getPlayer());
+        Player player = _event.getPlayer();
+        double delayMsCfg = DifficultyManager.getFromConfig(DifficultyIO.UI_BADGE_START_DELAY_MS);
+        long delayMs = Math.max(0L, Math.round(delayMsCfg));
+        if (delayMs == 0L) {
+            _showForPlayer(player);
+            return;
+        }
+        PlayerRef playerRef = player.getPlayerRef();
+        if (playerRef == null) {
+            return;
+        }
+        HUD_SCHEDULER.schedule(() -> {
+            if (!playerRef.isValid()) {
+                return;
+            }
+            _showForPlayer(playerRef);
+        }, delayMs, TimeUnit.MILLISECONDS);
     }
 
     public static void updateForPlayer(PlayerRef _playerRef) {
