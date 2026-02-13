@@ -139,6 +139,7 @@ public final class DifficultyManager {
         synchronized (INIT_LOCK) {
             config.reload();
             settings = config.toSettings();
+            RuntimeSettings.reload();
         }
     }
 

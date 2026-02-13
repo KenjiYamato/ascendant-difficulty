@@ -2,8 +2,12 @@ package ascendant.core.scaling;
 
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.config.RuntimeSettings;
 import ascendant.core.util.LibraryAvailability;
+import ascendant.core.util.Logging;
+import ascendant.core.util.PlayerWorldExecutor;
 import com.azuredoom.levelingcore.api.LevelingCoreApi;
+import com.azuredoom.levelingcore.ui.hud.XPBarHud;
 import com.ecotale.api.EcotaleAPI;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -22,38 +26,21 @@ import static ascendant.core.config.DifficultyMeta.META_PREFIX;
 
 public final class ExperienceAndCashMultiplier {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-    private static double _cashVarianceFactor;
-    private static boolean _allowXPReward;
-    private static boolean _allowCashReward;
-    private static boolean _allowCashRewardEvenWithPhysical;
-    private static boolean _allowLevelingCoreIntegration;
-    private static boolean _allowEcotaleIntegration;
-    private static boolean _allowMMOSkillTreeIntegration;
-    private static double _levelingCoreMultiplier;
-    private static double _mmoSkillTreeMultiplier;
-    private static double _ecotaleMultiplier;
 
     public ExperienceAndCashMultiplier() {
         initialize();
     }
 
     public static void initialize() {
-        _cashVarianceFactor = DifficultyManager.getFromConfig(DifficultyIO.CASH_VARIANCE_FACTOR);
-        _allowCashReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD);
-        _allowCashRewardEvenWithPhysical = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
-        _allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
-        _allowLevelingCoreIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_LEVELING_CORE);
-        _allowEcotaleIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_ECOTALE);
-        _allowMMOSkillTreeIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MMO_SKILLTREE);
-        _levelingCoreMultiplier = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MULTIPLIER_LEVELING_CORE);
-        _mmoSkillTreeMultiplier = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MULTIPLIER_MMO_SKILLTREE);
-        _ecotaleMultiplier = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MULTIPLIER_ECOTALE);
+        RuntimeSettings.load();
 
-        if (!_allowCashReward && !_allowXPReward) {
+        if (!RuntimeSettings.allowCashReward() && !RuntimeSettings.allowXPReward()) {
             return;
         }
 
-        if (_allowMMOSkillTreeIntegration && _allowXPReward && !LibraryAvailability.isMMOSkillTreePresent()) {
+        if (RuntimeSettings.allowMMOSkillTreeIntegration()
+                && RuntimeSettings.allowXPReward()
+                && !LibraryAvailability.isMMOSkillTreePresent()) {
             return;
         }
     }
@@ -90,7 +77,7 @@ public final class ExperienceAndCashMultiplier {
             return new MultiplierResult(amount, 0L, 0L, tierId);
         }
 
-        double variance = _cashVarianceFactor;
+        double variance = RuntimeSettings.cashVarianceFactor();
         double min = cashMultiplier - variance;
         double max = cashMultiplier + variance;
 
@@ -106,7 +93,7 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static MultiplierResult applyLevelingCoreXPMultiplier(@Nonnull PlayerRef playerRef, long amount) {
-        if (!_allowLevelingCoreIntegration || !_allowXPReward) {
+        if (!RuntimeSettings.allowLevelingCoreIntegration() || !RuntimeSettings.allowXPReward()) {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
         if (!LibraryAvailability.isLevelingCorePresent()) {
@@ -119,7 +106,7 @@ public final class ExperienceAndCashMultiplier {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
-        MultiplierResult result = getMultiplierXPAmount(tierId, amount, _levelingCoreMultiplier);
+        MultiplierResult result = getMultiplierXPAmount(tierId, amount, RuntimeSettings.levelingCoreMultiplier());
 
         if (result.isZero()) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
@@ -129,17 +116,23 @@ public final class ExperienceAndCashMultiplier {
 
         try {
             LevelingCoreApi.getLevelServiceIfPresent().ifPresent(levelService -> {
-                levelService.addXp(playerUuid, extraXp);
+                Runnable task = () -> {
+                    levelService.addXp(playerUuid, extraXp);
+                    XPBarHud.updateHud(playerRef);
+                };
+                if (!PlayerWorldExecutor.execute(playerRef, task)) {
+                    Logging.debug("[XP] Failed to schedule LevelingCore XP update for " + playerUuid);
+                }
                 //sendNotification(playerRef.getPacketHandler(), extraXp + "XP (+" + percent + "%)", NotificationStyle.Warning);
             });
         } catch (NoClassDefFoundError error) {
-            LibraryAvailability.logMissingDependency("Ecotale", error);
+            LibraryAvailability.logMissingDependency("LevelingCore", error);
         }
         return result;
     }
 
     public static void applyEcotaleCashMultiplier(@Nonnull PlayerRef playerRef, long amount) {
-        if (!_allowEcotaleIntegration || !_allowCashReward) {
+        if (!RuntimeSettings.allowEcotaleIntegration() || !RuntimeSettings.allowCashReward()) {
             return;
         }
         if (!LibraryAvailability.isEcotalePresent()) {
@@ -152,7 +145,7 @@ public final class ExperienceAndCashMultiplier {
             return;
         }
 
-        MultiplierResult result = getMultiplierCashAmount(tierId, amount, _ecotaleMultiplier);
+        MultiplierResult result = getMultiplierCashAmount(tierId, amount, RuntimeSettings.ecotaleMultiplier());
 
         if (result.isZero()) {
             return;
@@ -162,7 +155,7 @@ public final class ExperienceAndCashMultiplier {
         long percent = result.percent();
 
         try {
-            if (!EcotaleAPI.isPhysicalCoinsAvailable() || _allowCashRewardEvenWithPhysical) {
+            if (!EcotaleAPI.isPhysicalCoinsAvailable() || RuntimeSettings.allowCashRewardEvenWithPhysical()) {
                 EcotaleAPI.deposit(playerUuid, extraCash, "Transfer for Difficulty (+" + percent + "%)");
             }
         } catch (NoClassDefFoundError error) {
@@ -171,7 +164,7 @@ public final class ExperienceAndCashMultiplier {
     }
 
     public static MultiplierResult applyMMOSkillTreeXPMultiplier(@Nonnull PlayerRef playerRef, long amount, String skillName, String rawMessage) {
-        if (!_allowMMOSkillTreeIntegration || !_allowXPReward) {
+        if (!RuntimeSettings.allowMMOSkillTreeIntegration() || !RuntimeSettings.allowXPReward()) {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
         if (!LibraryAvailability.isMMOSkillTreePresent()) {
@@ -184,7 +177,7 @@ public final class ExperienceAndCashMultiplier {
             return new MultiplierResult(amount, 0L, 0L, DEFAULT_BASE_DIFFICULTY);
         }
 
-        MultiplierResult result = getMultiplierXPAmount(tierId, amount, _mmoSkillTreeMultiplier);
+        MultiplierResult result = getMultiplierXPAmount(tierId, amount, RuntimeSettings.mmoSkillTreeMultiplier());
         if (result.isZero()) {
             return new MultiplierResult(amount, 0L, 0L, tierId);
         }

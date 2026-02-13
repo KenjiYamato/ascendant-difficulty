@@ -107,7 +107,7 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         );
     }
 
-    private float applyDamageMultiplier(float damage, float damageMultiplier) {
+    public float applyDamageMultiplier(float damage, float damageMultiplier) {
         float d = Math.max(0.0f, damage);
         float m = Math.max(0.0f, damageMultiplier);
         float scaled = d * m;

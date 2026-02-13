@@ -7,8 +7,12 @@ import ascendant.core.commands.TierSelectCommand;
 import ascendant.core.config.DifficultyConfig;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultySettings;
+import ascendant.core.config.RuntimeSettings;
+import ascendant.core.events.OnDeath;
+import ascendant.core.events.OnSpawn;
 import ascendant.core.scaling.*;
 import ascendant.core.ui.DifficultyBadge;
+import ascendant.core.util.NpcRoles;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -30,12 +34,14 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         super.setup();
         this.loadDifficultyConfig();
         ascendant.core.config.DifficultyManager.initialize(this.difficultyConfig, this.difficultySettings);
+        RuntimeSettings.load();
         this.getCommandRegistry().registerCommand(
                 new TierSelectCommand("ascendant-difficulty", "Difficulty / Tier selection", "ascendant.difficulty"));
         this.getCommandRegistry().registerCommand(
                 new DifficultyBadgeToggleCommand("ascendant-difficulty-badge-toggle", "Toggle difficulty badge display", "ascendant.difficulty"));
 
 
+        NpcRoles.preload();
         // damage entity receive from player
         this.getEntityStoreRegistry().registerSystem(new EntityDamageReceiveMultiplier());
         // damage player receive
@@ -46,6 +52,9 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new EntityDropMultiplier());
         // elite spawn
         this.getEntityStoreRegistry().registerSystem(new EntityEliteSpawn());
+        // custom experience for levelingcore
+        this.getEntityStoreRegistry().registerSystem(new OnDeath());
+        //this.getEntityStoreRegistry().registerSystem(new OnSpawn());
         // experience
         ExperienceAndCashMultiplier.initialize();
         //CosmeticDamageNumbersAdapter.register();

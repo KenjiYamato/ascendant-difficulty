@@ -2,6 +2,7 @@ package ascendant.core.adapter;
 
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.config.RuntimeSettings;
 import ascendant.core.scaling.ExperienceAndCashMultiplier;
 import ascendant.core.util.FormattedMessageInspector;
 import ascendant.core.util.Logging;
@@ -46,10 +47,10 @@ public final class NotificationsAdapter {
         PlayerPacketWatcher watcher = NotificationsAdapter::_handleOutbound;
         _registered = PacketAdapters.registerOutbound(watcher);
         _allowDebugLogging = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DEBUG_LOGGING);
-        _allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
-        _allowLevelingCoreIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_LEVELING_CORE);
-        _allowEcotaleIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_ECOTALE);
-        _allowMMOSkillTreeIntegration = DifficultyManager.getFromConfig(DifficultyIO.INTEGRATION_MMO_SKILLTREE);
+        _allowXPReward = RuntimeSettings.allowXPReward();
+        _allowLevelingCoreIntegration = RuntimeSettings.allowLevelingCoreIntegration();
+        _allowEcotaleIntegration = RuntimeSettings.allowEcotaleIntegration();
+        _allowMMOSkillTreeIntegration = RuntimeSettings.allowMMOSkillTreeIntegration();
     }
 
     public static void unregister() {

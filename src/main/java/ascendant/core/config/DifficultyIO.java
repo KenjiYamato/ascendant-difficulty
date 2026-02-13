@@ -13,6 +13,7 @@ public final class DifficultyIO {
     public static final Path DEFAULT_CONFIG_PATH = DifficultyConfig.DEFAULT_PATH;
     public static final Path PLAYER_SETTINGS_PATH = Path.of("config", "ascendant", "players-settings.json");
     public static final Path LEGACY_PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
+    public static final Path NPC_ROLES_PATH = Path.of("config", "ascendant", "npc_roles.json");
 
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
     public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
@@ -27,6 +28,32 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_CASH_REWARD = "base.allow.cashReward";
     public static final String PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allow.cashRewardEvenWithPhysical";
     public static final String PATH_ALLOW_XP_REWARD = "base.allow.xpReward";
+    public static final String PATH_ALLOW_CUSTOM_LEVELING = "base.allow.customLeveling";
+    public static final String PATH_CUSTOM_LEVELING_USE_MOST_DAMAGE = "base.customLeveling.useMostDamageAttacker";
+    public static final String PATH_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER = "base.customLeveling.mostDamageAttackerMultiplier";
+    public static final String PATH_CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER = "base.customLeveling.otherAttackerMultiplier";
+    public static final String PATH_CUSTOM_LEVELING_REWARD_MOST_DAMAGE = "base.customLeveling.rewardMostDamageAttacker";
+    public static final String PATH_CUSTOM_LEVELING_INCLUDE_RANGE = "base.customLeveling.includeRange";
+    public static final String PATH_CUSTOM_LEVELING_INCLUDE_DEFAULT_STATS = "base.customLeveling.includeDefaultEntityStats";
+    public static final String PATH_CUSTOM_LEVELING_INCLUDE_SCALED_DAMAGE = "base.customLeveling.includeScaledDamage";
+    public static final String PATH_CUSTOM_LEVELING_SCALED_DAMAGE_FACTOR = "base.customLeveling.scaledDamageFactor";
+    public static final String PATH_CUSTOM_LEVELING_STATS_MANA_MULTIPLIER = "base.customLeveling.statsManaMultiplier";
+    public static final String PATH_CUSTOM_LEVELING_STATS_AMMO_MULTIPLIER = "base.customLeveling.statsAmmoMultiplier";
+    public static final String PATH_CUSTOM_LEVELING_STATS_SIGNATURE_MULTIPLIER = "base.customLeveling.statsSignatureEnergyMultiplier";
+    public static final String PATH_CUSTOM_LEVELING_USE_ATTITUDE_MULTIPLIER = "base.customLeveling.useAttitudeMultiplier";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_PLAYER_REVERED_SCORE = "base.customLeveling.attitude.playerReveredScore";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_PLAYER_FRIENDLY_SCORE = "base.customLeveling.attitude.playerFriendlyNeutralIgnoreScore";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_PLAYER_HOSTILE_SCORE = "base.customLeveling.attitude.playerHostileScore";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_NPC_HOSTILE_BONUS = "base.customLeveling.attitude.npcHostileBonus";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_LOW = "base.customLeveling.attitude.thresholdLow";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_MID = "base.customLeveling.attitude.thresholdMid";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_HIGH = "base.customLeveling.attitude.thresholdHigh";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_LOW = "base.customLeveling.attitude.multiplierLow";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_MID = "base.customLeveling.attitude.multiplierMid";
+    public static final String PATH_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_HIGH = "base.customLeveling.attitude.multiplierHigh";
+    public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_BASE = "base.customLeveling.downscale.base";
+    public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_EXPONENT = "base.customLeveling.downscale.levelExponent";
+    public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER = "base.customLeveling.downscale.levelMultiplier";
     public static final String PATH_ALLOW_HEALTH_MODIFIER = "base.allow.healthModifier";
     public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allow.damageModifier";
     public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allow.armorModifier";
@@ -79,6 +106,32 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_CASH_REWARD = true;
     public static final boolean DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = true;
     public static final boolean DEFAULT_ALLOW_XP_REWARD = true;
+    public static final boolean DEFAULT_ALLOW_CUSTOM_LEVELING = true;
+    public static final boolean DEFAULT_CUSTOM_LEVELING_USE_MOST_DAMAGE = true;
+    public static final double DEFAULT_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER = 1.1;
+    public static final double DEFAULT_CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER = 0.1;
+    public static final boolean DEFAULT_CUSTOM_LEVELING_REWARD_MOST_DAMAGE = true;
+    public static final boolean DEFAULT_CUSTOM_LEVELING_INCLUDE_RANGE = true;
+    public static final boolean DEFAULT_CUSTOM_LEVELING_INCLUDE_DEFAULT_STATS = true;
+    public static final boolean DEFAULT_CUSTOM_LEVELING_INCLUDE_SCALED_DAMAGE = true;
+    public static final double DEFAULT_CUSTOM_LEVELING_SCALED_DAMAGE_FACTOR = 4.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_STATS_MANA_MULTIPLIER = 4.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_STATS_AMMO_MULTIPLIER = 4.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_STATS_SIGNATURE_MULTIPLIER = 10.0;
+    public static final boolean DEFAULT_CUSTOM_LEVELING_USE_ATTITUDE_MULTIPLIER = true;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_PLAYER_REVERED_SCORE = -1000.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_PLAYER_FRIENDLY_SCORE = -500.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_PLAYER_HOSTILE_SCORE = 50.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_NPC_HOSTILE_BONUS = 50.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_LOW = -900.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_MID = -400.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_HIGH = 50.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_LOW = 0.05;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_MID = 0.2;
+    public static final double DEFAULT_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_HIGH = 1.1;
+    public static final double DEFAULT_CUSTOM_LEVELING_DOWNSCALE_BASE = 12.0;
+    public static final double DEFAULT_CUSTOM_LEVELING_DOWNSCALE_LEVEL_EXPONENT = 0.75;
+    public static final double DEFAULT_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER = 1.8;
     public static final boolean DEFAULT_ALLOW_HEALTH_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DAMAGE_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_ARMOR_MODIFIER = true;
@@ -119,6 +172,58 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL, DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
     public static final ConfigKey<Boolean> ALLOW_XP_REWARD =
             ConfigKey.ofBoolean(PATH_ALLOW_XP_REWARD, DEFAULT_ALLOW_XP_REWARD);
+    public static final ConfigKey<Boolean> ALLOW_CUSTOM_LEVELING =
+            ConfigKey.ofBoolean(PATH_ALLOW_CUSTOM_LEVELING, DEFAULT_ALLOW_CUSTOM_LEVELING);
+    public static final ConfigKey<Boolean> CUSTOM_LEVELING_USE_MOST_DAMAGE =
+            ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_USE_MOST_DAMAGE, DEFAULT_CUSTOM_LEVELING_USE_MOST_DAMAGE);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER);
+    public static final ConfigKey<Boolean> CUSTOM_LEVELING_REWARD_MOST_DAMAGE =
+            ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_REWARD_MOST_DAMAGE, DEFAULT_CUSTOM_LEVELING_REWARD_MOST_DAMAGE);
+    public static final ConfigKey<Boolean> CUSTOM_LEVELING_INCLUDE_RANGE =
+            ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_INCLUDE_RANGE, DEFAULT_CUSTOM_LEVELING_INCLUDE_RANGE);
+    public static final ConfigKey<Boolean> CUSTOM_LEVELING_INCLUDE_DEFAULT_STATS =
+            ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_INCLUDE_DEFAULT_STATS, DEFAULT_CUSTOM_LEVELING_INCLUDE_DEFAULT_STATS);
+    public static final ConfigKey<Boolean> CUSTOM_LEVELING_INCLUDE_SCALED_DAMAGE =
+            ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_INCLUDE_SCALED_DAMAGE, DEFAULT_CUSTOM_LEVELING_INCLUDE_SCALED_DAMAGE);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_SCALED_DAMAGE_FACTOR =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_SCALED_DAMAGE_FACTOR, DEFAULT_CUSTOM_LEVELING_SCALED_DAMAGE_FACTOR);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_STATS_MANA_MULTIPLIER =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_STATS_MANA_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_STATS_MANA_MULTIPLIER);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_STATS_AMMO_MULTIPLIER =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_STATS_AMMO_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_STATS_AMMO_MULTIPLIER);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_STATS_SIGNATURE_MULTIPLIER =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_STATS_SIGNATURE_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_STATS_SIGNATURE_MULTIPLIER);
+    public static final ConfigKey<Boolean> CUSTOM_LEVELING_USE_ATTITUDE_MULTIPLIER =
+            ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_USE_ATTITUDE_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_USE_ATTITUDE_MULTIPLIER);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_PLAYER_REVERED_SCORE =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_PLAYER_REVERED_SCORE, DEFAULT_CUSTOM_LEVELING_ATTITUDE_PLAYER_REVERED_SCORE);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_PLAYER_FRIENDLY_SCORE =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_PLAYER_FRIENDLY_SCORE, DEFAULT_CUSTOM_LEVELING_ATTITUDE_PLAYER_FRIENDLY_SCORE);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_PLAYER_HOSTILE_SCORE =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_PLAYER_HOSTILE_SCORE, DEFAULT_CUSTOM_LEVELING_ATTITUDE_PLAYER_HOSTILE_SCORE);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_NPC_HOSTILE_BONUS =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_NPC_HOSTILE_BONUS, DEFAULT_CUSTOM_LEVELING_ATTITUDE_NPC_HOSTILE_BONUS);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_THRESHOLD_LOW =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_LOW, DEFAULT_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_LOW);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_THRESHOLD_MID =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_MID, DEFAULT_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_MID);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_THRESHOLD_HIGH =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_HIGH, DEFAULT_CUSTOM_LEVELING_ATTITUDE_THRESHOLD_HIGH);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_LOW =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_LOW, DEFAULT_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_LOW);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_MID =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_MID, DEFAULT_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_MID);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_HIGH =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_HIGH, DEFAULT_CUSTOM_LEVELING_ATTITUDE_MULTIPLIER_HIGH);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_DOWNSCALE_BASE =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_DOWNSCALE_BASE, DEFAULT_CUSTOM_LEVELING_DOWNSCALE_BASE);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_DOWNSCALE_LEVEL_EXPONENT =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_EXPONENT, DEFAULT_CUSTOM_LEVELING_DOWNSCALE_LEVEL_EXPONENT);
+    public static final ConfigKey<Double> CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER =
+            ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER);
     public static final ConfigKey<Boolean> ALLOW_HEALTH_MODIFIER =
             ConfigKey.ofBoolean(PATH_ALLOW_HEALTH_MODIFIER, DEFAULT_ALLOW_HEALTH_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_MODIFIER =
