@@ -158,12 +158,10 @@ public final class DifficultySettings {
         if (tiersObj == null) {
             return tiers;
         }
-        Map<String, Double> previous = new LinkedHashMap<>(base);
         for (Map.Entry<String, JsonElement> entry : tiersObj.entrySet()) {
             if (entry.getValue().isJsonObject()) {
-                Map<String, Double> merged = mergeWithPrevious(entry.getValue().getAsJsonObject(), previous);
+                Map<String, Double> merged = mergeWithBase(entry.getValue().getAsJsonObject(), base);
                 tiers.put(entry.getKey(), merged);
-                previous = merged;
             }
         }
         return tiers;
@@ -174,12 +172,11 @@ public final class DifficultySettings {
         if (tiersObj == null) {
             return tiers;
         }
-        boolean previous = baseValue;
         for (Map.Entry<String, JsonElement> entry : tiersObj.entrySet()) {
             if (entry.getValue().isJsonObject()) {
                 JsonObject section = entry.getValue().getAsJsonObject();
-                previous = readBoolean(section, key, previous);
-                tiers.put(entry.getKey(), previous);
+                boolean resolved = readBoolean(section, key, baseValue);
+                tiers.put(entry.getKey(), resolved);
             }
         }
         return tiers;
@@ -215,8 +212,8 @@ public final class DifficultySettings {
         return fallback;
     }
 
-    private static Map<String, Double> mergeWithPrevious(JsonObject section, Map<String, Double> previous) {
-        Map<String, Double> result = new LinkedHashMap<>(previous);
+    private static Map<String, Double> mergeWithBase(JsonObject section, Map<String, Double> base) {
+        Map<String, Double> result = new LinkedHashMap<>(base);
         for (String key : KEYS) {
             JsonElement element = section.get(key);
             if (element != null && element.isJsonPrimitive()) {

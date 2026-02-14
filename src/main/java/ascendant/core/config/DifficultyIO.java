@@ -1,8 +1,13 @@
 package ascendant.core.config;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.Reader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -11,6 +16,7 @@ import java.nio.file.Path;
 public final class DifficultyIO {
     public static final String RESOURCE_DEFAULT_PATH = "difficulty.json";
     public static final Path DEFAULT_CONFIG_PATH = DifficultyConfig.DEFAULT_PATH;
+    public static final Path DIFFICULTY_DROPINS_PATH = Path.of("config", "ascendant", "difficultys");
     public static final Path PLAYER_SETTINGS_PATH = Path.of("config", "ascendant", "players-settings.json");
     public static final Path LEGACY_PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
     public static final Path NPC_ROLES_PATH = Path.of("config", "ascendant", "npc_roles.json");
@@ -300,6 +306,62 @@ public final class DifficultyIO {
 
     public static DifficultyConfig loadOrCreateConfig() throws IOException {
         JsonObject defaults = DifficultySettings.defaultJsonFromResource(RESOURCE_DEFAULT_PATH);
-        return DifficultyConfig.loadOrCreate(DEFAULT_CONFIG_PATH, defaults);
+        if (Files.notExists(DEFAULT_CONFIG_PATH)) {
+            JsonObject baseDefaults = defaults.deepCopy();
+            baseDefaults.remove("meta");
+            baseDefaults.remove("tiers");
+            DifficultyConfig.loadOrCreate(DEFAULT_CONFIG_PATH, baseDefaults);
+            if (!DifficultyDropIns.writeDefaultsFromResources(DIFFICULTY_DROPINS_PATH)) {
+                DifficultyDropIns.writeDefaultsFromLegacy(defaults, DIFFICULTY_DROPINS_PATH);
+            }
+            return DifficultyConfig.loadWithDropIns(DEFAULT_CONFIG_PATH, DIFFICULTY_DROPINS_PATH);
+        }
+        if (!DifficultyDropIns.hasJsonFiles(DIFFICULTY_DROPINS_PATH)) {
+            JsonObject legacyRoot = readRoot(DEFAULT_CONFIG_PATH);
+            if (legacyRoot != null && (legacyRoot.has("tiers") || legacyRoot.has("meta"))) {
+                DifficultyDropIns.writeDefaultsFromLegacy(legacyRoot, DIFFICULTY_DROPINS_PATH);
+                stripLegacySections(DEFAULT_CONFIG_PATH, legacyRoot);
+            }
+            if (!DifficultyDropIns.hasJsonFiles(DIFFICULTY_DROPINS_PATH)) {
+                DifficultyDropIns.writeDefaultsFromResources(DIFFICULTY_DROPINS_PATH);
+            }
+        }
+        return DifficultyConfig.loadOrCreateWithDropIns(DEFAULT_CONFIG_PATH, DIFFICULTY_DROPINS_PATH, defaults);
+    }
+
+    private static void stripLegacySections(Path path, JsonObject root) {
+        if (path == null || root == null) {
+            return;
+        }
+        boolean changed = false;
+        if (root.has("meta")) {
+            root.remove("meta");
+            changed = true;
+        }
+        if (root.has("tiers")) {
+            root.remove("tiers");
+            changed = true;
+        }
+        if (!changed) {
+            return;
+        }
+        try {
+            Files.writeString(path, root.toString(), StandardCharsets.UTF_8);
+        } catch (IOException ignored) {
+        }
+    }
+
+    private static JsonObject readRoot(Path path) {
+        if (path == null || Files.notExists(path)) {
+            return null;
+        }
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            JsonElement parsed = JsonParser.parseReader(reader);
+            if (parsed != null && parsed.isJsonObject()) {
+                return parsed.getAsJsonObject();
+            }
+        } catch (IOException ignored) {
+        }
+        return null;
     }
 }

@@ -1,0 +1,26 @@
+﻿{
+    "id":  "ascendant_X",
+    "order":  19,
+    "meta":  {
+                 "displayName":  "Ascendant X",
+                 "description":  "HP x280.555, Eingehender DMG x7.273, Gegner-Rüstung: 37% Spieler-DMG, XP x3.045, Cash x3.045, Loot: Rate x2.5, Menge x4.182. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+                 "color":  "#47AFFF",
+                 "imagePath":  "Images/Difficulty_ASC/ascendant_10.png",
+                 "iconPath":  "Images/Difficulty_ASC/ascendant_10@icon.png"
+             },
+    "is_allowed":  true,
+    "is_hidden":  false,
+    "health_multiplier":  280.555,
+    "damage_multiplier":  7.273,
+    "armor_multiplier":  1.704,
+    "drop_rate_multiplier":  2.357,
+    "drop_quantity_multiplier":  3.667,
+    "drop_quality_multiplier":  0.348,
+    "xp_multiplier":  2.690,
+    "cash_multiplier":  2.690,
+    "elite_mobs_chance_multiplier":  0.5,
+    "elite_mobs_chance_uncommon":  0.0,
+    "elite_mobs_chance_rare":  0.06,
+    "elite_mobs_chance_legendary":  0.1
+}
+

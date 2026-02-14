@@ -49,15 +49,29 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 
 ## Configuration
 
-The default config is written to `config/ascendant/difficulty.json`.
+The base config is written to `config/ascendant/difficulty.json`.
+Per-tier drop-ins live in `config/ascendant/difficultys/*.json`.
 
-Key sections:
+Base file (`difficulty.json`) sections:
 
 - `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`.
 - `base.allow`: feature toggles: `difficultyChange`, `uiBadge`, `healthModifier`, `damageModifier`, `damagePhysical`, `damageProjectile`, `damageCommand`, `damageDrowning`, `damageEnvironment`, `damageFall`, `damageOutOfWorld`, `damageSuffocation`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `debugLogging`, `eliteSpawn`.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
-- `tiers`: per-tier flags and multipliers: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`.
-- `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`.
+
+Drop-in file format (`config/ascendant/difficultys/*.json`):
+
+- `id` (required): tier identifier (used everywhere else, e.g. `very_easy`, `ascendant_III`).
+- `order` (required): numeric sort key for UI order (can be fractional, e.g. `13.5`).
+- `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`, `color`.
+- Tier overrides: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`, `elite_mobs_chance_multiplier`, `elite_mobs_chance_uncommon`, `elite_mobs_chance_rare`, `elite_mobs_chance_legendary`.
+- Missing keys fall back to the base template (defaults to `1.0` for multipliers).
+
+Ordering:
+
+- Ordering uses the numeric `order` field only; filenames are ignored.
+- If multiple entries share the same `order`, they are ordered by `id`.
+
+Default drop-ins are shipped in `src/main/resources/difficultys` and copied to `config/ascendant/difficultys` on first run.
 
 Player settings are stored in `config/ascendant/players-settings.json` (keys: `difficulty`, `showBadge`).
 Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if found.

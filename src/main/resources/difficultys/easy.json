@@ -1,0 +1,26 @@
+﻿{
+    "id":  "easy",
+    "order":  2,
+    "meta":  {
+                 "displayName":  "Easy",
+                 "description":  "HP x0.914, Eingehender DMG x0.85, Gegner-Rüstung: aus, XP x0.95, Cash x0.95, Loot: Rate x0.95, Menge x0.95.",
+                 "color":  "#A7E6A7",
+                 "imagePath":  "Images/Difficulty/easy.png",
+                 "iconPath":  "Images/Difficulty/easy@icon.png"
+             },
+    "is_allowed":  true,
+    "is_hidden":  false,
+    "health_multiplier":  0.914,
+    "damage_multiplier":  0.85,
+    "armor_multiplier":  0.0,
+    "drop_rate_multiplier":  0.95,
+    "drop_quantity_multiplier":  0.95,
+    "drop_quality_multiplier":  0.0,
+    "xp_multiplier":  0.95,
+    "cash_multiplier":  0.95,
+    "elite_mobs_chance_multiplier":  0.0,
+    "elite_mobs_chance_uncommon":  0.0,
+    "elite_mobs_chance_rare":  0.0,
+    "elite_mobs_chance_legendary":  0.0
+}
+

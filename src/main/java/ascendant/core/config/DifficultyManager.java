@@ -133,7 +133,7 @@ public final class DifficultyManager {
         return newValue;
     }
 
-    // Reloads difficulty.json without touching overrides.
+    // Reloads base difficulty.json and drop-ins without touching overrides.
     public static void reloadConfig() throws IOException {
         ensureInitialized();
         synchronized (INIT_LOCK) {

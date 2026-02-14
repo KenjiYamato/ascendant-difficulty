@@ -1,0 +1,26 @@
+﻿{
+    "id":  "master",
+    "order":  7,
+    "meta":  {
+                 "displayName":  "Master",
+                 "description":  "HP x6.473, Eingehender DMG x3.1, Gegner-Rüstung: 72% Spieler-DMG, XP x1.55, Cash x1.55, Loot: Rate x1.45, Menge x1.8.",
+                 "color":  "#8000FF",
+                 "imagePath":  "Images/Difficulty/master.png",
+                 "iconPath":  "Images/Difficulty/master@icon.png"
+             },
+    "is_allowed":  true,
+    "is_hidden":  false,
+    "health_multiplier":  6.473,
+    "damage_multiplier":  3.1,
+    "armor_multiplier":  0.39,
+    "drop_rate_multiplier":  1.45,
+    "drop_quantity_multiplier":  1.8,
+    "drop_quality_multiplier":  0.14,
+    "xp_multiplier":  1.55,
+    "cash_multiplier":  1.55,
+    "elite_mobs_chance_multiplier":  0.05,
+    "elite_mobs_chance_uncommon":  0.015,
+    "elite_mobs_chance_rare":  0.002,
+    "elite_mobs_chance_legendary":  0.0002
+}
+

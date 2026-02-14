@@ -1,0 +1,26 @@
+﻿{
+    "id":  "ascendant_VII",
+    "order":  16,
+    "meta":  {
+                 "displayName":  "Ascendant VII",
+                 "description":  "HP x165.14, Eingehender DMG x6.444, Gegner-Rüstung: 41% Spieler-DMG, XP x2.6, Cash x2.6, Loot: Rate x2.15, Menge x3.38. Ascendant = Mayhem 8.",
+                 "color":  "#3EC1E4",
+                 "imagePath":  "Images/Difficulty_ASC/ascendant_7.png",
+                 "iconPath":  "Images/Difficulty_ASC/ascendant_7@icon.png"
+             },
+    "is_allowed":  true,
+    "is_hidden":  false,
+    "health_multiplier":  165.14,
+    "damage_multiplier":  6.444,
+    "armor_multiplier":  1.463,
+    "drop_rate_multiplier":  2.164,
+    "drop_quantity_multiplier":  3.267,
+    "drop_quality_multiplier":  0.302,
+    "xp_multiplier":  2.448,
+    "cash_multiplier":  2.448,
+    "elite_mobs_chance_multiplier":  0.44,
+    "elite_mobs_chance_uncommon":  0.0044,
+    "elite_mobs_chance_rare":  0.0527,
+    "elite_mobs_chance_legendary":  0.022
+}
+

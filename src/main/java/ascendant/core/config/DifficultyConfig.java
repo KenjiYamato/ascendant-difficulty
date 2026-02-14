@@ -17,10 +17,16 @@ public final class DifficultyConfig {
     public static final Path DEFAULT_PATH = Path.of("config", "ascendant", "difficulty.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final Path file;
+    private final Path dropInsDir;
     private JsonObject root;
 
     private DifficultyConfig(Path file, JsonObject root) {
+        this(file, null, root);
+    }
+
+    private DifficultyConfig(Path file, Path dropInsDir, JsonObject root) {
         this.file = Objects.requireNonNull(file, "file");
+        this.dropInsDir = dropInsDir;
         this.root = Objects.requireNonNull(root, "root");
     }
 
@@ -30,6 +36,14 @@ public final class DifficultyConfig {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             return new DifficultyConfig(file, root);
         }
+    }
+
+    public static DifficultyConfig loadWithDropIns(Path file, Path dropInsDir) throws IOException {
+        Objects.requireNonNull(file, "file");
+        Objects.requireNonNull(dropInsDir, "dropInsDir");
+        DifficultyConfig base = load(file);
+        JsonObject merged = DifficultyDropIns.mergeIntoRoot(base.root, dropInsDir);
+        return new DifficultyConfig(file, dropInsDir, merged);
     }
 
     public static DifficultyConfig loadDefault(JsonObject defaults) throws IOException {
@@ -47,8 +61,19 @@ public final class DifficultyConfig {
         return load(file);
     }
 
+    public static DifficultyConfig loadOrCreateWithDropIns(Path file, Path dropInsDir, JsonObject defaults) throws IOException {
+        Objects.requireNonNull(file, "file");
+        Objects.requireNonNull(dropInsDir, "dropInsDir");
+        Objects.requireNonNull(defaults, "defaults");
+        DifficultyConfig base = loadOrCreate(file, defaults);
+        JsonObject merged = DifficultyDropIns.mergeIntoRoot(base.root, dropInsDir);
+        return new DifficultyConfig(file, dropInsDir, merged);
+    }
+
     public void reload() throws IOException {
-        DifficultyConfig reloaded = load(this.file);
+        DifficultyConfig reloaded = (this.dropInsDir == null)
+                ? load(this.file)
+                : loadWithDropIns(this.file, this.dropInsDir);
         this.root = reloaded.root;
     }
 

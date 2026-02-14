@@ -1,0 +1,26 @@
+﻿{
+    "id":  "ascendant_III",
+    "order":  12,
+    "meta":  {
+                 "displayName":  "Ascendant III",
+                 "description":  "HP x32.466, Eingehender DMG x5.333, Gegner-Rüstung: 54% Spieler-DMG, XP x1.8, Cash x1.8, Loot: Rate x1.575, Menge x2. Ascendant = Mayhem 4.",
+                 "color":  "#33D9BB",
+                 "imagePath":  "Images/Difficulty_ASC/ascendant_3.png",
+                 "iconPath":  "Images/Difficulty_ASC/ascendant_3@icon.png"
+             },
+    "is_allowed":  true,
+    "is_hidden":  false,
+    "health_multiplier":  32.466,
+    "damage_multiplier":  5.333,
+    "armor_multiplier":  0.848,
+    "drop_rate_multiplier":  1.907,
+    "drop_quantity_multiplier":  2.733,
+    "drop_quality_multiplier":  0.241,
+    "xp_multiplier":  2.124,
+    "cash_multiplier":  2.124,
+    "elite_mobs_chance_multiplier":  0.36,
+    "elite_mobs_chance_uncommon":  0.0036,
+    "elite_mobs_chance_rare":  0.0432,
+    "elite_mobs_chance_legendary":  0.018
+}
+

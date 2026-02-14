@@ -1,0 +1,26 @@
+﻿{
+    "id":  "ascendant_XVI",
+    "order":  25,
+    "meta":  {
+                 "displayName":  "Ascendant XVI",
+                 "description":  "HP x300, Eingehender DMG x8.909, Gegner-Rüstung: 19% Spieler-DMG, XP x3.318, Cash x3.318, Loot: Rate x2.8, Menge x4.673. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+                 "color":  "#5937FF",
+                 "imagePath":  "Images/Difficulty_ASC/ascendant_16.png",
+                 "iconPath":  "Images/Difficulty_ASC/ascendant_16@icon.png"
+             },
+    "is_allowed":  true,
+    "is_hidden":  false,
+    "health_multiplier":  300.0,
+    "damage_multiplier":  8.909,
+    "armor_multiplier":  4.172,
+    "drop_rate_multiplier":  2.743,
+    "drop_quantity_multiplier":  4.467,
+    "drop_quality_multiplier":  0.439,
+    "xp_multiplier":  3.176,
+    "cash_multiplier":  3.176,
+    "elite_mobs_chance_multiplier":  0.8,
+    "elite_mobs_chance_uncommon":  0.0,
+    "elite_mobs_chance_rare":  0.096,
+    "elite_mobs_chance_legendary":  0.16
+}
+
