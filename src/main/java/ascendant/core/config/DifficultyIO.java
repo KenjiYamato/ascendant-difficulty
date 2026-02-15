@@ -75,6 +75,9 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
     public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
     public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.eliteSpawn";
+    public static final String PATH_ELITE_SPAWN_QUEUE_INTERVAL_MS = "base.eliteSpawnQueue.intervalMs";
+    public static final String PATH_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN = "base.eliteSpawnQueue.maxPerDrain";
+    public static final String PATH_ELITE_SPAWN_QUEUE_MAX_DRAIN_MS = "base.eliteSpawnQueue.maxDrainMs";
 
     public static final String PATH_INTEGRATION_ELITE_MOBS = "base.integrations.eliteMobs";
     public static final String PATH_INTEGRATION_ECOTALE = "base.integrations.ecotale";
@@ -170,6 +173,9 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
     public static final boolean DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER = true;
+    public static final double DEFAULT_ELITE_SPAWN_QUEUE_INTERVAL_MS = 0.0;
+    public static final int DEFAULT_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN = 2;
+    public static final double DEFAULT_ELITE_SPAWN_QUEUE_MAX_DRAIN_MS = 4.0;
     public static final boolean DEFAULT_INTEGRATION_ELITE_MOBS = true;
     public static final boolean DEFAULT_INTEGRATION_ECOTALE = true;
     public static final boolean DEFAULT_INTEGRATION_LEVELING_CORE = true;
@@ -286,6 +292,12 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
     public static final ConfigKey<Boolean> ALLOW_ELITE_SPAWN_MODIFIER =
             ConfigKey.ofBoolean(PATH_ALLOW_ELITE_SPAWN_MODIFIER, DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER);
+    public static final ConfigKey<Double> ELITE_SPAWN_QUEUE_INTERVAL_MS =
+            ConfigKey.ofDouble(PATH_ELITE_SPAWN_QUEUE_INTERVAL_MS, DEFAULT_ELITE_SPAWN_QUEUE_INTERVAL_MS);
+    public static final ConfigKey<Integer> ELITE_SPAWN_QUEUE_MAX_PER_DRAIN =
+            ConfigKey.ofInt(PATH_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN, DEFAULT_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN);
+    public static final ConfigKey<Double> ELITE_SPAWN_QUEUE_MAX_DRAIN_MS =
+            ConfigKey.ofDouble(PATH_ELITE_SPAWN_QUEUE_MAX_DRAIN_MS, DEFAULT_ELITE_SPAWN_QUEUE_MAX_DRAIN_MS);
     public static final ConfigKey<Boolean> INTEGRATION_ELITE_MOBS =
             ConfigKey.ofBoolean(PATH_INTEGRATION_ELITE_MOBS, DEFAULT_INTEGRATION_ELITE_MOBS);
     public static final ConfigKey<Boolean> INTEGRATION_ECOTALE =

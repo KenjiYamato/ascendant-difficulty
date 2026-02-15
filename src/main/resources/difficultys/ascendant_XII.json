@@ -1,26 +1,25 @@
-﻿{
-    "id":  "ascendant_XII",
-    "order":  21,
-    "meta":  {
-                 "displayName":  "Ascendant XII",
-                 "description":  "HP x300, Eingehender DMG x7.818, Gegner-Rüstung: 31% Spieler-DMG, XP x3.136, Cash x3.136, Loot: Rate x2.6, Menge x4.345. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
-                 "color":  "#4D87FF",
-                 "imagePath":  "Images/Difficulty_ASC/ascendant_12.png",
-                 "iconPath":  "Images/Difficulty_ASC/ascendant_12@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  300.0,
-    "damage_multiplier":  7.818,
-    "armor_multiplier":  2.21,
-    "drop_rate_multiplier":  2.486,
-    "drop_quantity_multiplier":  3.933,
-    "drop_quality_multiplier":  0.378,
-    "xp_multiplier":  2.852,
-    "cash_multiplier":  2.852,
-    "elite_mobs_chance_multiplier":  0.6,
-    "elite_mobs_chance_uncommon":  0.0,
-    "elite_mobs_chance_rare":  0.0719,
-    "elite_mobs_chance_legendary":  0.12
+{
+    "id": "ascendant_XII",
+    "order": 21,
+    "meta": {
+        "displayName": "Ascendant XII",
+        "description": "HP x300, Eingehender DMG x7.818, Gegner-Rüstung: 31% Spieler-DMG, XP x3.136, Cash x3.136, Loot: Rate x2.6, Menge x4.345. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+        "color": "#4D87FF",
+        "imagePath": "Images/Difficulty_ASC/ascendant_12.png",
+        "iconPath": "Images/Difficulty_ASC/ascendant_12@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 300.0,
+    "damage_multiplier": 7.818,
+    "armor_multiplier": 2.21,
+    "drop_rate_multiplier": 2.486,
+    "drop_quantity_multiplier": 3.933,
+    "drop_quality_multiplier": 0.378,
+    "xp_multiplier": 2.852,
+    "cash_multiplier": 2.852,
+    "elite_mobs_chance_multiplier": 60,
+    "elite_mobs_chance_uncommon": 0.0,
+    "elite_mobs_chance_rare": 0.0719,
+    "elite_mobs_chance_legendary": 0.12
 }
-

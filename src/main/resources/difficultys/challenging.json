@@ -1,26 +1,25 @@
-﻿{
-    "id":  "challenging",
-    "order":  4,
-    "meta":  {
-                 "displayName":  "Challenging",
-                 "description":  "HP x1.491, Eingehender DMG x1.25, Gegner-Rüstung: 93% Spieler-DMG, XP x1.1, Cash x1.1, Loot: Rate x1.05, Menge x1.08.",
-                 "color":  "#FFD000",
-                 "imagePath":  "Images/Difficulty/challenging.png",
-                 "iconPath":  "Images/Difficulty/challenging@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  1.491,
-    "damage_multiplier":  1.25,
-    "armor_multiplier":  0.073,
-    "drop_rate_multiplier":  1.05,
-    "drop_quantity_multiplier":  1.08,
-    "drop_quality_multiplier":  0.03,
-    "xp_multiplier":  1.1,
-    "cash_multiplier":  1.1,
-    "elite_mobs_chance_multiplier":  0.0,
-    "elite_mobs_chance_uncommon":  0.0,
-    "elite_mobs_chance_rare":  0.0,
-    "elite_mobs_chance_legendary":  0.0
+{
+    "id": "challenging",
+    "order": 4,
+    "meta": {
+        "displayName": "Challenging",
+        "description": "HP x1.491, Eingehender DMG x1.25, Gegner-Rüstung: 93% Spieler-DMG, XP x1.1, Cash x1.1, Loot: Rate x1.05, Menge x1.08.",
+        "color": "#FFD000",
+        "imagePath": "Images/Difficulty/challenging.png",
+        "iconPath": "Images/Difficulty/challenging@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 1.491,
+    "damage_multiplier": 1.25,
+    "armor_multiplier": 0.073,
+    "drop_rate_multiplier": 1.05,
+    "drop_quantity_multiplier": 1.08,
+    "drop_quality_multiplier": 0.03,
+    "xp_multiplier": 1.1,
+    "cash_multiplier": 1.1,
+    "elite_mobs_chance_multiplier": 0,
+    "elite_mobs_chance_uncommon": 0.0,
+    "elite_mobs_chance_rare": 0.0,
+    "elite_mobs_chance_legendary": 0.0
 }
-

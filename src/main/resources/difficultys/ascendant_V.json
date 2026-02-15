@@ -1,26 +1,25 @@
-﻿{
-    "id":  "ascendant_V",
-    "order":  14,
-    "meta":  {
-                 "displayName":  "Ascendant V",
-                 "description":  "HP x92.892, Eingehender DMG x5.889, Gegner-Rüstung: 45% Spieler-DMG, XP x2.2, Cash x2.2, Loot: Rate x1.85, Menge x2.66. Ascendant = Mayhem 6.",
-                 "color":  "#38CDCF",
-                 "imagePath":  "Images/Difficulty_ASC/ascendant_5.png",
-                 "iconPath":  "Images/Difficulty_ASC/ascendant_5@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  92.892,
-    "damage_multiplier":  5.889,
-    "armor_multiplier":  1.225,
-    "drop_rate_multiplier":  2.036,
-    "drop_quantity_multiplier":  3.000,
-    "drop_quality_multiplier":  0.271,
-    "xp_multiplier":  2.286,
-    "cash_multiplier":  2.286,
-    "elite_mobs_chance_multiplier":  0.4,
-    "elite_mobs_chance_uncommon":  0.004,
-    "elite_mobs_chance_rare":  0.048,
-    "elite_mobs_chance_legendary":  0.02
+{
+    "id": "ascendant_V",
+    "order": 14,
+    "meta": {
+        "displayName": "Ascendant V",
+        "description": "HP x92.892, Eingehender DMG x5.889, Gegner-Rüstung: 45% Spieler-DMG, XP x2.2, Cash x2.2, Loot: Rate x1.85, Menge x2.66. Ascendant = Mayhem 6.",
+        "color": "#38CDCF",
+        "imagePath": "Images/Difficulty_ASC/ascendant_5.png",
+        "iconPath": "Images/Difficulty_ASC/ascendant_5@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 92.892,
+    "damage_multiplier": 5.889,
+    "armor_multiplier": 1.225,
+    "drop_rate_multiplier": 2.036,
+    "drop_quantity_multiplier": 3.0,
+    "drop_quality_multiplier": 0.271,
+    "xp_multiplier": 2.286,
+    "cash_multiplier": 2.286,
+    "elite_mobs_chance_multiplier": 40,
+    "elite_mobs_chance_uncommon": 0.004,
+    "elite_mobs_chance_rare": 0.048,
+    "elite_mobs_chance_legendary": 0.02
 }
-

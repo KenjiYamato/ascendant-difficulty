@@ -1,26 +1,25 @@
-﻿{
-    "id":  "ascendant_XIX",
-    "order":  28,
-    "meta":  {
-                 "displayName":  "Ascendant XIX",
-                 "description":  "HP x300, Eingehender DMG x9.727, Gegner-Rüstung: 14% Spieler-DMG, XP x3.455, Cash x3.455, Loot: Rate x2.95, Menge x4.918. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
-                 "color":  "#6A00FF",
-                 "imagePath":  "Images/Difficulty_ASC/ascendant_19.png",
-                 "iconPath":  "Images/Difficulty_ASC/ascendant_19@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  300.0,
-    "damage_multiplier":  9.727,
-    "armor_multiplier":  6.397,
-    "drop_rate_multiplier":  2.936,
-    "drop_quantity_multiplier":  4.867,
-    "drop_quality_multiplier":  0.485,
-    "xp_multiplier":  3.419,
-    "cash_multiplier":  3.419,
-    "elite_mobs_chance_multiplier":  0.95,
-    "elite_mobs_chance_uncommon":  0.0,
-    "elite_mobs_chance_rare":  0.114,
-    "elite_mobs_chance_legendary":  0.19
+{
+    "id": "ascendant_XIX",
+    "order": 28,
+    "meta": {
+        "displayName": "Ascendant XIX",
+        "description": "HP x300, Eingehender DMG x9.727, Gegner-Rüstung: 14% Spieler-DMG, XP x3.455, Cash x3.455, Loot: Rate x2.95, Menge x4.918. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+        "color": "#6A00FF",
+        "imagePath": "Images/Difficulty_ASC/ascendant_19.png",
+        "iconPath": "Images/Difficulty_ASC/ascendant_19@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 300.0,
+    "damage_multiplier": 9.727,
+    "armor_multiplier": 6.397,
+    "drop_rate_multiplier": 2.936,
+    "drop_quantity_multiplier": 4.867,
+    "drop_quality_multiplier": 0.485,
+    "xp_multiplier": 3.419,
+    "cash_multiplier": 3.419,
+    "elite_mobs_chance_multiplier": 95,
+    "elite_mobs_chance_uncommon": 0.0,
+    "elite_mobs_chance_rare": 0.114,
+    "elite_mobs_chance_legendary": 0.19
 }
-

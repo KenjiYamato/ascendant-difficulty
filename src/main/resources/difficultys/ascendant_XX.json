@@ -1,26 +1,25 @@
-﻿{
-    "id":  "ascendant_XX",
-    "order":  29,
-    "meta":  {
-                 "displayName":  "Ascendant XX",
-                 "description":  "HP x300, Eingehender DMG x10, Gegner-Rüstung: 12% Spieler-DMG, XP x3.5, Cash x3.5, Loot: Rate x3, Menge x5. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
-                 "color":  "#8000FF",
-                 "imagePath":  "Images/Difficulty_ASC/ascendant_20.png",
-                 "iconPath":  "Images/Difficulty_ASC/ascendant_20@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  300.0,
-    "damage_multiplier":  10.0,
-    "armor_multiplier":  7.333,
-    "drop_rate_multiplier":  3.000,
-    "drop_quantity_multiplier":  5.000,
-    "drop_quality_multiplier":  0.500,
-    "xp_multiplier":  3.500,
-    "cash_multiplier":  3.500,
-    "elite_mobs_chance_multiplier":  1.0,
-    "elite_mobs_chance_uncommon":  0.0,
-    "elite_mobs_chance_rare":  0.12,
-    "elite_mobs_chance_legendary":  0.2
+{
+    "id": "ascendant_XX",
+    "order": 29,
+    "meta": {
+        "displayName": "Ascendant XX",
+        "description": "HP x300, Eingehender DMG x10, Gegner-Rüstung: 12% Spieler-DMG, XP x3.5, Cash x3.5, Loot: Rate x3, Menge x5. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+        "color": "#8000FF",
+        "imagePath": "Images/Difficulty_ASC/ascendant_20.png",
+        "iconPath": "Images/Difficulty_ASC/ascendant_20@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 300.0,
+    "damage_multiplier": 10.0,
+    "armor_multiplier": 7.333,
+    "drop_rate_multiplier": 3.0,
+    "drop_quantity_multiplier": 5.0,
+    "drop_quality_multiplier": 0.5,
+    "xp_multiplier": 3.5,
+    "cash_multiplier": 3.5,
+    "elite_mobs_chance_multiplier": 100,
+    "elite_mobs_chance_uncommon": 0.0,
+    "elite_mobs_chance_rare": 0.12,
+    "elite_mobs_chance_legendary": 0.2
 }
-
