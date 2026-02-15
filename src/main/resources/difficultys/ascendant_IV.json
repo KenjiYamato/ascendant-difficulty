@@ -1,26 +1,25 @@
-﻿{
-    "id":  "ascendant_IV",
-    "order":  13,
-    "meta":  {
-                 "displayName":  "Ascendant IV",
-                 "description":  "HP x52.945, Eingehender DMG x5.611, Gegner-Rüstung: 50% Spieler-DMG, XP x2, Cash x2, Loot: Rate x1.7, Menge x2.3. Ascendant = Mayhem 5.",
-                 "color":  "#36D3C5",
-                 "imagePath":  "Images/Difficulty_ASC/ascendant_4.png",
-                 "iconPath":  "Images/Difficulty_ASC/ascendant_4@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  52.945,
-    "damage_multiplier":  5.611,
-    "armor_multiplier":  1.015,
-    "drop_rate_multiplier":  1.971,
-    "drop_quantity_multiplier":  2.867,
-    "drop_quality_multiplier":  0.256,
-    "xp_multiplier":  2.205,
-    "cash_multiplier":  2.205,
-    "elite_mobs_chance_multiplier":  0.38,
-    "elite_mobs_chance_uncommon":  0.0038,
-    "elite_mobs_chance_rare":  0.0456,
-    "elite_mobs_chance_legendary":  0.019
+{
+    "id": "ascendant_IV",
+    "order": 13,
+    "meta": {
+        "displayName": "Ascendant IV",
+        "description": "HP x52.945, Eingehender DMG x5.611, Gegner-Rüstung: 50% Spieler-DMG, XP x2, Cash x2, Loot: Rate x1.7, Menge x2.3. Ascendant = Mayhem 5.",
+        "color": "#36D3C5",
+        "imagePath": "Images/Difficulty_ASC/ascendant_4.png",
+        "iconPath": "Images/Difficulty_ASC/ascendant_4@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 52.945,
+    "damage_multiplier": 5.611,
+    "armor_multiplier": 1.015,
+    "drop_rate_multiplier": 1.971,
+    "drop_quantity_multiplier": 2.867,
+    "drop_quality_multiplier": 0.256,
+    "xp_multiplier": 2.205,
+    "cash_multiplier": 2.205,
+    "elite_mobs_chance_multiplier": 38,
+    "elite_mobs_chance_uncommon": 0.0038,
+    "elite_mobs_chance_rare": 0.0456,
+    "elite_mobs_chance_legendary": 0.019
 }
-

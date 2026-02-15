@@ -1,26 +1,25 @@
-﻿{
-    "id":  "ascendant_XVIII",
-    "order":  27,
-    "meta":  {
-                 "displayName":  "Ascendant XVIII",
-                 "description":  "HP x300, Eingehender DMG x9.455, Gegner-Rüstung: 15% Spieler-DMG, XP x3.409, Cash x3.409, Loot: Rate x2.9, Menge x4.836. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
-                 "color":  "#600FFF",
-                 "imagePath":  "Images/Difficulty_ASC/ascendant_18.png",
-                 "iconPath":  "Images/Difficulty_ASC/ascendant_18@icon.png"
-             },
-    "is_allowed":  true,
-    "is_hidden":  false,
-    "health_multiplier":  300.0,
-    "damage_multiplier":  9.455,
-    "armor_multiplier":  5.565,
-    "drop_rate_multiplier":  2.871,
-    "drop_quantity_multiplier":  4.733,
-    "drop_quality_multiplier":  0.470,
-    "xp_multiplier":  3.338,
-    "cash_multiplier":  3.338,
-    "elite_mobs_chance_multiplier":  0.9,
-    "elite_mobs_chance_uncommon":  0.0,
-    "elite_mobs_chance_rare":  0.1079,
-    "elite_mobs_chance_legendary":  0.18
+{
+    "id": "ascendant_XVIII",
+    "order": 27,
+    "meta": {
+        "displayName": "Ascendant XVIII",
+        "description": "HP x300, Eingehender DMG x9.455, Gegner-Rüstung: 15% Spieler-DMG, XP x3.409, Cash x3.409, Loot: Rate x2.9, Menge x4.836. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
+        "color": "#600FFF",
+        "imagePath": "Images/Difficulty_ASC/ascendant_18.png",
+        "iconPath": "Images/Difficulty_ASC/ascendant_18@icon.png"
+    },
+    "is_allowed": true,
+    "is_hidden": false,
+    "health_multiplier": 300.0,
+    "damage_multiplier": 9.455,
+    "armor_multiplier": 5.565,
+    "drop_rate_multiplier": 2.871,
+    "drop_quantity_multiplier": 4.733,
+    "drop_quality_multiplier": 0.47,
+    "xp_multiplier": 3.338,
+    "cash_multiplier": 3.338,
+    "elite_mobs_chance_multiplier": 90,
+    "elite_mobs_chance_uncommon": 0.0,
+    "elite_mobs_chance_rare": 0.1079,
+    "elite_mobs_chance_legendary": 0.18
 }
-

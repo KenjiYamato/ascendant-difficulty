@@ -10,7 +10,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.UUID;
 
-public final class TierSelectCommand extends AbstractPlayerUICommand {
+public final class TierSelectCommand extends AbstractPlayerCommand {
 
     public TierSelectCommand(String commandName, String commandDescription, String commandPermission) {
         super(commandName, commandDescription, commandPermission);
@@ -19,7 +19,7 @@ public final class TierSelectCommand extends AbstractPlayerUICommand {
     }
 
     @Override
-    protected void openOrUpdateUi(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
+    protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         TierSelect.openOrUpdateUi(playerRef, store, playerUuid, commandContext);
     }
 }

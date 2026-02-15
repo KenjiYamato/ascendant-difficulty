@@ -2,6 +2,7 @@ package ascendant.core;
 
 import ascendant.core.adapter.KillFeedAdapter;
 import ascendant.core.adapter.NotificationsAdapter;
+import ascendant.core.commands.ClearAllEntityCommand;
 import ascendant.core.commands.DifficultyBadgeToggleCommand;
 import ascendant.core.commands.TierSelectCommand;
 import ascendant.core.config.DifficultyConfig;
@@ -39,7 +40,8 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
                 new TierSelectCommand("ascendant-difficulty", "Difficulty / Tier selection", "ascendant.difficulty"));
         this.getCommandRegistry().registerCommand(
                 new DifficultyBadgeToggleCommand("ascendant-difficulty-badge-toggle", "Toggle difficulty badge display", "ascendant.difficulty"));
-
+        this.getCommandRegistry().registerCommand(
+                new ClearAllEntityCommand("ce", "Clear Entities", "ascendant.debug.clear_entities"));
 
         NpcRoles.preload();
         // damage entity receive from player
@@ -52,6 +54,7 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new EntityDropMultiplier());
         // elite spawn
         this.getEntityStoreRegistry().registerSystem(new EntityEliteSpawn());
+        this.getEntityStoreRegistry().registerSystem(new EliteSpawnQueueTickSystem());
         // custom experience for levelingcore
         this.getEntityStoreRegistry().registerSystem(new OnDeath());
         //this.getEntityStoreRegistry().registerSystem(new OnSpawn());

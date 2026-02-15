@@ -1,77 +1,82 @@
-﻿{
-    "base":  {
-                 "defaultDifficulty":  "normal",
-                 "uiBadgeStartDelayMs":  680.0,
-                 "minDamageFactor":  0.001,
-                 "playerDistanceRadiusToCheck":  128.0,
-                 "healthScalingTolerance":  0.0001,
-                 "minHealthScalingFactor":  0.05,
-                 "maxHealthScalingFactor":  300.0,
-                 "cashVarianceFactor":  0.23,
-                 "roundingDigits":  3,
-                 "allow":  {
-                               "difficultyChange":  true,
-                               "uiBadge":  true,
-                               "cashReward":  true,
-                               "cashRewardEvenWithPhysical":  true,
-                               "xpReward":  true,
-                               "customLeveling":  true,
-                               "healthModifier":  true,
-                               "damageModifier":  true,
-                               "damagePhysical":  true,
-                               "damageProjectile":  true,
-                               "damageCommand":  true,
-                               "damageDrowning":  true,
-                               "damageEnvironment":  true,
-                               "damageFall":  true,
-                               "damageOutOfWorld":  true,
-                               "damageSuffocation":  true,
-                               "armorModifier":  true,
-                               "dropModifier":  true,
-                               "debugLogging":  false,
-                               "eliteSpawn":  false
-                           },
-                 "customLeveling":  {
-                                        "useMostDamageAttacker":  true,
-                                        "mostDamageAttackerMultiplier":  1.1,
-                                        "otherAttackerMultiplier":  0.1,
-                                        "rewardMostDamageAttacker":  true,
-                                        "includeRange":  true,
-                                        "includeDefaultEntityStats":  true,
-                                        "includeScaledDamage":  true,
-                                        "scaledDamageFactor":  4.0,
-                                        "statsManaMultiplier":  4.0,
-                                        "statsAmmoMultiplier":  4.0,
-                                        "statsSignatureEnergyMultiplier":  10.0,
-                                        "useAttitudeMultiplier":  true,
-                                        "attitude":  {
-                                                         "playerReveredScore":  -1000.0,
-                                                         "playerFriendlyNeutralIgnoreScore":  -500.0,
-                                                         "playerHostileScore":  50.0,
-                                                         "npcHostileBonus":  50.0,
-                                                         "thresholdLow":  -900.0,
-                                                         "thresholdMid":  -400.0,
-                                                         "thresholdHigh":  50.0,
-                                                         "multiplierLow":  0.05,
-                                                         "multiplierMid":  0.2,
-                                                         "multiplierHigh":  1.1
-                                                     },
-                                        "downscale":  {
-                                                          "base":  12.0,
-                                                          "levelExponent":  0.75,
-                                                          "levelMultiplier":  1.8
-                                                      }
-                                    },
-                 "integrations":  {
-                                      "eliteMobs":  false,
-                                      "ecotale":  true,
-                                      "levelingCore":  true,
-                                      "mmoSkillTree":  true
-                                  },
-                 "integrationMultipliers":  {
-                                                "levelingCore":  0.0,
-                                                "mmoSkillTree":  0.0,
-                                                "ecotale":  0.0
-                                            }
-             }
+{
+    "base": {
+        "defaultDifficulty": "normal",
+        "uiBadgeStartDelayMs": 680.0,
+        "minDamageFactor": 0.001,
+        "playerDistanceRadiusToCheck": 128.0,
+        "healthScalingTolerance": 0.0001,
+        "minHealthScalingFactor": 0.05,
+        "maxHealthScalingFactor": 300.0,
+        "cashVarianceFactor": 0.23,
+        "roundingDigits": 3,
+        "allow": {
+            "difficultyChange": true,
+            "uiBadge": true,
+            "cashReward": true,
+            "cashRewardEvenWithPhysical": true,
+            "xpReward": true,
+            "customLeveling": true,
+            "healthModifier": true,
+            "damageModifier": true,
+            "damagePhysical": true,
+            "damageProjectile": true,
+            "damageCommand": true,
+            "damageDrowning": true,
+            "damageEnvironment": true,
+            "damageFall": true,
+            "damageOutOfWorld": true,
+            "damageSuffocation": true,
+            "armorModifier": true,
+            "dropModifier": true,
+            "debugLogging": false,
+            "eliteSpawn": true
+        },
+        "eliteSpawnQueue": {
+            "intervalMs": 0.0,
+            "maxPerDrain": 2,
+            "maxDrainMs": 4.0
+        },
+        "customLeveling": {
+            "useMostDamageAttacker": true,
+            "mostDamageAttackerMultiplier": 1.1,
+            "otherAttackerMultiplier": 0.1,
+            "rewardMostDamageAttacker": true,
+            "includeRange": true,
+            "includeDefaultEntityStats": true,
+            "includeScaledDamage": true,
+            "scaledDamageFactor": 4.0,
+            "statsManaMultiplier": 4.0,
+            "statsAmmoMultiplier": 4.0,
+            "statsSignatureEnergyMultiplier": 10.0,
+            "useAttitudeMultiplier": true,
+            "attitude": {
+                "playerReveredScore": -1000.0,
+                "playerFriendlyNeutralIgnoreScore": -500.0,
+                "playerHostileScore": 50.0,
+                "npcHostileBonus": 50.0,
+                "thresholdLow": -900.0,
+                "thresholdMid": -400.0,
+                "thresholdHigh": 50.0,
+                "multiplierLow": 0.05,
+                "multiplierMid": 0.2,
+                "multiplierHigh": 1.1
+            },
+            "downscale": {
+                "base": 12.0,
+                "levelExponent": 0.75,
+                "levelMultiplier": 1.8
+            }
+        },
+        "integrations": {
+            "eliteMobs": true,
+            "ecotale": true,
+            "levelingCore": true,
+            "mmoSkillTree": true
+        },
+        "integrationMultipliers": {
+            "levelingCore": 0.0,
+            "mmoSkillTree": 0.0,
+            "ecotale": 0.0
+        }
+    }
 }

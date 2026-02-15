@@ -1,24 +1,24 @@
 {
-  "Group": "ascendant.core",
-  "Name": "ascendant-difficulty",
-  "Version": "1.0.1",
-  "Main": "ascendant.core.AscendantDifficultyPlugin",
-  "Authors": [
-    {
-      "Name": "KawaiiK4nna"
-    }
-  ],
-  "Website": "",
-  "ServerVersion": "*",
-  "Dependencies": {
-    "Ellie:HyUI": "*"
-  },
-  "OptionalDependencies": {
-    "Buuz135:MultipleHUD": "*",
-    "com.azuredoom:levelingcore": "*",
-    "Ecotale:Ecotale": "*",
-    "Ziggfreed:MMOSkillTree": "*"
-  },
-  "DisabledByDefault": false,
-  "IncludesAssetPack": true
+    "Group": "ascendant.core",
+    "Name": "ascendant-difficulty",
+    "Version": "1.1.0",
+    "Main": "ascendant.core.AscendantDifficultyPlugin",
+    "Authors": [
+        {
+            "Name": "KawaiiK4nna"
+        }
+    ],
+    "Website": "",
+    "ServerVersion": "*",
+    "Dependencies": {
+        "Ellie:HyUI": "*"
+    },
+    "OptionalDependencies": {
+        "Buuz135:MultipleHUD": "*",
+        "com.azuredoom:levelingcore": "*",
+        "Ecotale:Ecotale": "*",
+        "Ziggfreed:MMOSkillTree": "*"
+    },
+    "DisabledByDefault": false,
+    "IncludesAssetPack": true
 }

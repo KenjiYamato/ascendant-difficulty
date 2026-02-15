@@ -17,9 +17,9 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.hypixel.hytale.server.core.command.commands.player.inventory.InventorySeeCommand.MESSAGE_COMMANDS_ERRORS_PLAYER_NOT_IN_WORLD;
 
-public abstract class AbstractPlayerUICommand extends AbstractAsyncCommand {
+public abstract class AbstractPlayerCommand extends AbstractAsyncCommand {
 
-    protected AbstractPlayerUICommand(String commandName, String commandDescription, String commandPermission) {
+    protected AbstractPlayerCommand(String commandName, String commandDescription, String commandPermission) {
         super(commandName, commandDescription);
         requirePermission(HytalePermissions.fromCommand(commandPermission));
     }
@@ -49,14 +49,14 @@ public abstract class AbstractPlayerUICommand extends AbstractAsyncCommand {
             if (playerRef == null || player.getUuid() == null) {
                 return;
             }
-            openOrUpdateUi(playerRef, store, player.getUuid(), commandContext);
+            executeOnWorldThread(playerRef, store, player.getUuid(), commandContext);
         }, world);
     }
 
     /**
      * Called on the world thread.
      */
-    protected abstract void openOrUpdateUi(
+    protected abstract void executeOnWorldThread(
             @Nonnull PlayerRef playerRef,
             @Nonnull Store<EntityStore> store,
             @Nonnull UUID playerUuid,

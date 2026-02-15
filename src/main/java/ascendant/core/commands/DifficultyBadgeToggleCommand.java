@@ -11,7 +11,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.UUID;
 
-public final class DifficultyBadgeToggleCommand extends AbstractPlayerUICommand {
+public final class DifficultyBadgeToggleCommand extends AbstractPlayerCommand {
 
     public DifficultyBadgeToggleCommand(String commandName, String commandDescription, String commandPermission) {
         super(commandName, commandDescription, commandPermission);
@@ -20,7 +20,7 @@ public final class DifficultyBadgeToggleCommand extends AbstractPlayerUICommand 
     }
 
     @Override
-    protected void openOrUpdateUi(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
+    protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         boolean badgeVisible = DifficultyManager.togglePlayerBadgeVisibility(playerUuid);
         DifficultyBadge.updateForPlayer(playerRef);
         String message = badgeVisible ? "Difficulty badge shown." : "Difficulty badge hidden.";

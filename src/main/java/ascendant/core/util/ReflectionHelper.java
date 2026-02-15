@@ -55,6 +55,13 @@ public final class ReflectionHelper {
         }
     };
 
+    private static final ClassValue<ConcurrentHashMap<ConstructorKey, Constructor<?>>> DECLARED_CONSTRUCTOR_CACHE = new ClassValue<>() {
+        @Override
+        protected ConcurrentHashMap<ConstructorKey, Constructor<?>> computeValue(Class<?> type) {
+            return new ConcurrentHashMap<>();
+        }
+    };
+
     private static final ClassValue<Field[]> INSTANCE_FIELDS_CACHE = new ClassValue<>() {
         @Override
         protected Field[] computeValue(Class<?> type) {
@@ -232,6 +239,24 @@ public final class ReflectionHelper {
                 return ctor;
             }
             ctor = owner.getConstructor(params);
+            ctor.setAccessible(true);
+            Constructor<?> prev = map.putIfAbsent(key, ctor);
+            return prev != null ? prev : ctor;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Constructor<?> getDeclaredConstructor(@Nonnull Class<?> owner, Class<?>... params) {
+        try {
+            ConstructorKey key = new ConstructorKey(params);
+            ConcurrentHashMap<ConstructorKey, Constructor<?>> map = DECLARED_CONSTRUCTOR_CACHE.get(owner);
+            Constructor<?> ctor = map.get(key);
+            if (ctor != null) {
+                return ctor;
+            }
+            ctor = owner.getDeclaredConstructor(params);
             ctor.setAccessible(true);
             Constructor<?> prev = map.putIfAbsent(key, ctor);
             return prev != null ? prev : ctor;

@@ -28,6 +28,7 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 - [Dependencies](#dependencies)
 - [Command and Permission](#command-and-permission)
 - [Integrations (Optional)](#integrations-optional)
+- [AI Assistance Disclosure](#ai-assistance-disclosure)
 - [Not a public end-user release](#not-a-public-end-user-release)
 
 ---
@@ -40,6 +41,7 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 - Enemy HP scales to the nearest player in range.
 - Incoming damage to players scales by tier; enemy armor reduces player damage dealt.
 - Loot scaling: drop rate, drop quantity, and drop quality per tier.
+- EliteMobs spawns are queued and rolled on tick to avoid spawn spikes; optional timing logs via `base.allow.debugLogging`.
 - XP and cash multipliers per tier (with cash variance) when integrations are present.
 - Per-player tier overrides and badge visibility are persisted.
 
@@ -54,16 +56,17 @@ Per-tier drop-ins live in `config/ascendant/difficultys/*.json`.
 
 Base file (`difficulty.json`) sections:
 
-- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`.
+- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`, `eliteSpawnQueue`.
 - `base.allow`: feature toggles: `difficultyChange`, `uiBadge`, `healthModifier`, `damageModifier`, `damagePhysical`, `damageProjectile`, `damageCommand`, `damageDrowning`, `damageEnvironment`, `damageFall`, `damageOutOfWorld`, `damageSuffocation`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `debugLogging`, `eliteSpawn`.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
+- `base.eliteSpawnQueue`: queue settings for EliteMobs rolls: `intervalMs`, `maxPerDrain`, `maxDrainMs`.
 
 Drop-in file format (`config/ascendant/difficultys/*.json`):
 
 - `id` (required): tier identifier (used everywhere else, e.g. `very_easy`, `ascendant_III`).
 - `order` (required): numeric sort key for UI order (can be fractional, e.g. `13.5`).
 - `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`, `color`.
-- Tier overrides: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`, `elite_mobs_chance_multiplier`, `elite_mobs_chance_uncommon`, `elite_mobs_chance_rare`, `elite_mobs_chance_legendary`.
+- Tier overrides: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`, `elite_mobs_chance_multiplier` (percent scale), `elite_mobs_chance_uncommon`, `elite_mobs_chance_rare`, `elite_mobs_chance_legendary`.
 - Missing keys fall back to the base template (defaults to `1.0` for multipliers).
 
 Ordering:
@@ -94,6 +97,10 @@ Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if
 - Command: `/ascendant-difficulty-badge-toggle` (toggle badge visibility)
 - Permission: `ascendant.difficulty` (required for both commands)
 
+
+- Command: `/ce` (clears all living entities)
+- Permission: `ascendant.debug.clear_entities` (required for above command)
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
@@ -113,6 +120,48 @@ If these APIs are missing, XP/cash multipliers are skipped; core difficulty scal
 <img src="images/integration-notification-ascendant_v.png" alt="" width="340" height="120">
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+---
+
+### Integration Setup (Original Mod Configuration Required)
+
+The following changes must be applied to the configuration files of the respective mods
+
+#### EliteMobs
+(only required if using custom roll values)
+
+Set the default spawn chances to `0.0` in the EliteMobs Main.json:
+
+- `UncommonChance` → `0.0`
+- `RareChance` → `0.0`
+- `LegendaryChance` → `0.0`
+
+This ensures that spawn rolls are handled exclusively by this integration layer.
+
+#### LevelingCore
+(only required if using custom leveling)
+
+Disable the default XP system in the LevelingCore levelingcore.json:
+
+- `EnableDefaultXPGainSystem` → `false`
+
+This prevents duplicate XP handling and allows this integration to manage XP rewards.
+
+---
+
+## AI Assistance Disclosure
+
+> [!NOTE]
+> This project was developed with the support of AI-based tooling.
+>
+> Approximately 40% of the code (including scaffolding, refactoring, configuration restructuring, and integration logic) was initially generated or iterated with the help of AI agents. All such contributions were subsequently reviewed, validated, and integrated manually.
+>
+> AI tooling was used as a productivity accelerator, not as an autonomous contributor. Architectural decisions, final implementations, performance validation, and maintenance responsibility remain entirely with the project maintainer.
+>
+> This disclosure is provided in the interest of transparency.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 ---
 
