@@ -85,7 +85,10 @@ public final class NotificationsAdapter {
             }
             long levelingCoreXP = getLongParam(formattedMessageParts, "xp");
             if (levelingCoreXP > 0L) {
-                ExperienceAndCashMultiplier.MultiplierResult multiplierResult = ExperienceAndCashMultiplier.applyLevelingCoreXPMultiplier(playerRef, levelingCoreXP);
+                ExperienceAndCashMultiplier.RewardTierResolution resolution =
+                        ExperienceAndCashMultiplier.resolveRewardTierResolution(playerRef.getUuid());
+                ExperienceAndCashMultiplier.MultiplierResult multiplierResult =
+                        ExperienceAndCashMultiplier.applyLevelingCoreXPMultiplier(playerRef, levelingCoreXP, resolution.tierId(), resolution.rewardScale());
                 if (!multiplierResult.isZero()) {
                     if (n.message.params != null) {
                         n.message.params.put("xp", new LongParamValue(multiplierResult.originalAmount() + multiplierResult.extraAmount()));
@@ -94,7 +97,7 @@ public final class NotificationsAdapter {
                     n.secondaryMessage = new FormattedMessage("+" + multiplierResult.percent() + "% " + displayName, null, null, null, null, "#FFAA00", MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, MaybeBool.Null, null, false);
                 }
                 if (_allowEcotaleIntegration) {
-                    ExperienceAndCashMultiplier.applyEcotaleCashMultiplier(playerRef, levelingCoreXP);
+                    ExperienceAndCashMultiplier.applyEcotaleCashMultiplier(playerRef, levelingCoreXP, resolution.tierId(), resolution.rewardScale());
                 }
             }
             return;
@@ -108,7 +111,10 @@ public final class NotificationsAdapter {
             if (xp != null) {
                 long amount = xp.value();
                 String skillName = xp.skill();
-                ExperienceAndCashMultiplier.MultiplierResult multiplierResult = ExperienceAndCashMultiplier.applyMMOSkillTreeXPMultiplier(playerRef, amount, skillName, n.message.rawText);
+                ExperienceAndCashMultiplier.RewardTierResolution resolution =
+                        ExperienceAndCashMultiplier.resolveRewardTierResolution(playerRef.getUuid());
+                ExperienceAndCashMultiplier.MultiplierResult multiplierResult =
+                        ExperienceAndCashMultiplier.applyMMOSkillTreeXPMultiplier(playerRef, amount, skillName, n.message.rawText, resolution.tierId(), resolution.rewardScale());
                 if (multiplierResult.isZero()) {
                     return;
                 }

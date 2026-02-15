@@ -20,16 +20,22 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageCalculatorSystems.DamageSequence;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatsModule;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static final ConcurrentHashMap<UUID, Boolean> DEBUG_MAX_ATTACK = new ConcurrentHashMap<>();
 
     private final Set<Dependency<EntityStore>> _dependencies;
     private final float _fallbackRadiusSq;
@@ -63,6 +69,22 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         return AllLegacyLivingEntityTypesQuery.INSTANCE;
     }
 
+    public static boolean toggleDebugMaxAttack(@Nonnull UUID playerUuid) {
+        Boolean current = DEBUG_MAX_ATTACK.get(playerUuid);
+        boolean next = current == null || !current;
+        if (next) {
+            DEBUG_MAX_ATTACK.put(playerUuid, true);
+        } else {
+            DEBUG_MAX_ATTACK.remove(playerUuid);
+        }
+        return next;
+    }
+
+    public static boolean isDebugMaxAttackEnabled(@Nonnull UUID playerUuid) {
+        Boolean enabled = DEBUG_MAX_ATTACK.get(playerUuid);
+        return enabled != null && enabled;
+    }
+
 
     //public static class ArmorDamageReduction/ DamageArmor
     @Override
@@ -74,7 +96,9 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
             @Nonnull Damage damage
     ) {
-        if (!_allowArmorModifier) {
+        UUID attackerUuid = DamageRef.resolveAttackerPlayerUuid(damage, store);
+        boolean debugEnabled = attackerUuid != null && isDebugMaxAttackEnabled(attackerUuid);
+        if (!_allowArmorModifier && !debugEnabled) {
             return;
         }
         DamageContext ctx = buildContext(index, chunk, store, commandBuffer, damage);
@@ -82,8 +106,15 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
             return;
         }
 
-        float afterArmor = applyArmor(ctx.baseDamage, ctx.armorMultiplier);
+        if (debugEnabled) {
+            float debugDamage = resolveMaxAttackDamage(index, chunk, store, ctx.armorMultiplier);
+            if (debugDamage > 0.0f && Float.isFinite(debugDamage)) {
+                damage.setAmount(debugDamage);
+                return;
+            }
+        }
 
+        float afterArmor = applyArmor(ctx.baseDamage, ctx.armorMultiplier);
         damage.setAmount(afterArmor);
     }
 
@@ -138,6 +169,40 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         float m = Math.max(0.0f, armorMultiplier);
         float reduced = d / (1.0f + m);
         return Math.max(d * _minDamageFactor, reduced);
+    }
+
+    @SuppressWarnings("removal")
+    private float resolveMaxAttackDamage(
+            int index,
+            @Nonnull ArchetypeChunk<EntityStore> chunk,
+            @Nonnull Store<EntityStore> store,
+            float armorMultiplier
+    ) {
+        Ref<EntityStore> victimRef = chunk.getReferenceTo(index);
+        if (!victimRef.isValid()) {
+            return -1.0f;
+        }
+        EntityStatMap statMap = store.getComponent(victimRef, EntityStatsModule.get().getEntityStatMapComponentType());
+        if (statMap == null) {
+            return -1.0f;
+        }
+        int healthIndex = DefaultEntityStatTypes.getHealth();
+        if (healthIndex == Integer.MIN_VALUE) {
+            return -1.0f;
+        }
+        EntityStatValue health = statMap.get(healthIndex);
+        if (health == null) {
+            return -1.0f;
+        }
+        float maxHealth = health.getMax();
+        if (!Float.isFinite(maxHealth) || maxHealth <= 0.0f) {
+            return -1.0f;
+        }
+        double raw = (double) maxHealth * (1.0 + Math.max(0.0f, armorMultiplier)) + 1.0;
+        if (raw >= Float.MAX_VALUE) {
+            return Float.MAX_VALUE;
+        }
+        return (float) raw;
     }
 
     private record DamageContext(float baseDamage, float armorMultiplier) {

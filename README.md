@@ -39,10 +39,13 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 - Tier selection UI (`/ascendant-difficulty`) with paging; respects `is_hidden` and `is_allowed`.
 - HUD badge for the current tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.uiBadge` is enabled.
 - Enemy HP scales to the nearest player in range.
+- Spawn tier is stored on mobs and used for reward scaling (configurable).
+- Optional debug nameplate shows the spawn tier on mobs.
 - Incoming damage to players scales by tier; enemy armor reduces player damage dealt.
-- Loot scaling: drop rate, drop quantity, and drop quality per tier.
+- Loot scaling: drop rate, drop quantity, and drop quality per tier, with optional spawn-tier mismatch scaling.
 - EliteMobs spawns are queued and rolled on tick to avoid spawn spikes; optional timing logs via `base.allow.debugLogging`.
-- XP and cash multipliers per tier (with cash variance) when integrations are present.
+- XP and cash multipliers per tier (with cash variance) when integrations are present; optional spawn-tier mismatch scaling.
+- Difficulty change cooldown and combat lock (configurable).
 - Per-player tier overrides and badge visibility are persisted.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -56,9 +59,11 @@ Per-tier drop-ins live in `config/ascendant/difficultys/*.json`.
 
 Base file (`difficulty.json`) sections:
 
-- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`, `eliteSpawnQueue`.
-- `base.allow`: feature toggles: `difficultyChange`, `uiBadge`, `healthModifier`, `damageModifier`, `damagePhysical`, `damageProjectile`, `damageCommand`, `damageDrowning`, `damageEnvironment`, `damageFall`, `damageOutOfWorld`, `damageSuffocation`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `debugLogging`, `eliteSpawn`.
+- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`, `difficultyChangeCooldownMs`, `difficultyChangeCombatTimeoutMs`, `spawnTierRewardOverFactor`, `spawnTierRewardUnderFactor`, `eliteSpawnQueue`.
+- `base.allow`: feature toggles: `difficultyChange`, `difficultyChangeInCombat`, `uiBadge`, `healthModifier`, `damageModifier`, `damagePhysical`, `damageProjectile`, `damageCommand`, `damageDrowning`, `damageEnvironment`, `damageFall`, `damageOutOfWorld`, `damageSuffocation`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `spawnTierReward`, `spawnTierNameplate`, `debugCommands`, `debugLogging`, `eliteSpawn`.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
+- `base.mmoSkillTree`: MMO SkillTree config: `xpBonusWhitelist`.
+- Default `base.mmoSkillTree.xpBonusWhitelist`: `Swords`, `Daggers`, `Polearms`, `Staves`, `Axes`, `Blunt`, `Archery`, `Unarmed`.
 - `base.eliteSpawnQueue`: queue settings for EliteMobs rolls: `intervalMs`, `maxPerDrain`, `maxDrainMs`.
 
 Drop-in file format (`config/ascendant/difficultys/*.json`):
@@ -97,9 +102,20 @@ Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if
 - Command: `/ascendant-difficulty-badge-toggle` (toggle badge visibility)
 - Permission: `ascendant.difficulty` (required for both commands)
 
+Debug commands (only registered when `base.allow.debugCommands` is `true`):
 
-- Command: `/ce` (clears all living entities)
-- Permission: `ascendant.debug.clear_entities` (required for above command)
+- Command: `/ce` (clear non-player living entities)
+- Permission: `ascendant.debug.clear_entities`
+- Command: `/ci` (clear dropped items)
+- Permission: `ascendant.debug.clear_items`
+- Command: `/test_attack` (toggle debug max attack damage)
+- Permission: `ascendant.debug.test_attack`
+- Command: `/spawn_wraith [count]` (spawn Wraiths)
+- Permission: `ascendant.debug.spawn_wraith`
+- Command: `/tier_lowest` (set tier to lowest)
+- Permission: `ascendant.debug.tier_lowest`
+- Command: `/tier_highest` (set tier to highest)
+- Permission: `ascendant.debug.tier_highest`
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -109,7 +125,7 @@ Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if
 
 - EliteMobs: rolls elite spawns using `elite_mobs_chance_*` (toggle via `base.integrations.eliteMobs`).
 - LevelingCore: applies bonus XP based on `xp_multiplier` and updates XP notifications; also triggers cash bonuses via Ecotale (toggle via `base.integrations.levelingCore`).
-- MMOSkillTree: applies bonus XP and appends a percentage line to green `+XP` notifications (toggle via `base.integrations.mmoSkillTree`).
+- MMOSkillTree: applies bonus XP and appends a percentage line to green `+XP` notifications (toggle via `base.integrations.mmoSkillTree`, whitelist via `base.mmoSkillTree.xpBonusWhitelist`).
 - Ecotale: deposits bonus cash based on `cash_multiplier` (respects `base.allow.cashReward` and `base.allow.cashRewardEvenWithPhysical`, toggle via `base.integrations.ecotale`).
 
 If these APIs are missing, XP/cash multipliers are skipped; core difficulty scaling (health/damage/armor/loot) still runs.
@@ -132,9 +148,9 @@ The following changes must be applied to the configuration files of the respecti
 
 Set the default spawn chances to `0.0` in the EliteMobs Main.json:
 
-- `UncommonChance` → `0.0`
-- `RareChance` → `0.0`
-- `LegendaryChance` → `0.0`
+- `UncommonChance` -> `0.0`
+- `RareChance` -> `0.0`
+- `LegendaryChance` -> `0.0`
 
 This ensures that spawn rolls are handled exclusively by this integration layer.
 
@@ -143,7 +159,7 @@ This ensures that spawn rolls are handled exclusively by this integration layer.
 
 Disable the default XP system in the LevelingCore levelingcore.json:
 
-- `EnableDefaultXPGainSystem` → `false`
+- `EnableDefaultXPGainSystem` -> `false`
 
 This prevents duplicate XP handling and allows this integration to manage XP rewards.
 

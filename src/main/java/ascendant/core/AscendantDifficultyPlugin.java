@@ -2,15 +2,19 @@ package ascendant.core;
 
 import ascendant.core.adapter.KillFeedAdapter;
 import ascendant.core.adapter.NotificationsAdapter;
-import ascendant.core.commands.ClearAllEntityCommand;
+import ascendant.core.commands.debug.ClearAllEntityCommand;
+import ascendant.core.commands.debug.ClearDroppedItemsCommand;
 import ascendant.core.commands.DifficultyBadgeToggleCommand;
+import ascendant.core.commands.debug.SetTierHighestCommand;
+import ascendant.core.commands.debug.SetTierLowestCommand;
+import ascendant.core.commands.debug.SpawnWraithCommand;
 import ascendant.core.commands.TierSelectCommand;
+import ascendant.core.commands.debug.TestAttackToggleCommand;
 import ascendant.core.config.DifficultyConfig;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultySettings;
 import ascendant.core.config.RuntimeSettings;
 import ascendant.core.events.OnDeath;
-import ascendant.core.events.OnSpawn;
 import ascendant.core.scaling.*;
 import ascendant.core.ui.DifficultyBadge;
 import ascendant.core.util.NpcRoles;
@@ -40,8 +44,20 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
                 new TierSelectCommand("ascendant-difficulty", "Difficulty / Tier selection", "ascendant.difficulty"));
         this.getCommandRegistry().registerCommand(
                 new DifficultyBadgeToggleCommand("ascendant-difficulty-badge-toggle", "Toggle difficulty badge display", "ascendant.difficulty"));
-        this.getCommandRegistry().registerCommand(
-                new ClearAllEntityCommand("ce", "Clear Entities", "ascendant.debug.clear_entities"));
+        if (RuntimeSettings.allowDebugCommands()) {
+            this.getCommandRegistry().registerCommand(
+                    new ClearAllEntityCommand("ce", "Clear Entities", "ascendant.debug.clear_entities"));
+            this.getCommandRegistry().registerCommand(
+                    new ClearDroppedItemsCommand("ci", "Clear dropped items", "ascendant.debug.clear_items"));
+            this.getCommandRegistry().registerCommand(
+                    new TestAttackToggleCommand("test_attack", "Toggle debug max attack damage", "ascendant.debug.test_attack"));
+            this.getCommandRegistry().registerCommand(
+                    new SpawnWraithCommand("spawn_wraith", "Spawn a Wraith (debug)", "ascendant.debug.spawn_wraith"));
+            this.getCommandRegistry().registerCommand(
+                    new SetTierLowestCommand("tier_lowest", "Set tier to lowest (debug)", "ascendant.debug.tier_lowest"));
+            this.getCommandRegistry().registerCommand(
+                    new SetTierHighestCommand("tier_highest", "Set tier to highest (debug)", "ascendant.debug.tier_highest"));
+        }
 
         NpcRoles.preload();
         // damage entity receive from player

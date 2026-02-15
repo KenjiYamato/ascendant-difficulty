@@ -2,6 +2,7 @@ package ascendant.core.scaling;
 
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.config.RuntimeSettings;
 import ascendant.core.util.NearestPlayerFinder;
 import ascendant.core.util.ReflectionHelper;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -185,23 +186,33 @@ public class EntityDropMultiplier extends DeathSystems.OnDeathSystem {
             return;
         }
 
-        UUID playerUuid = _resolveRelevantPlayerUuid(store, ref);
-        if (playerUuid == null) {
-            return;
+        String spawnTier = null;
+        if (RuntimeSettings.allowSpawnTierReward()) {
+            spawnTier = NearestPlayerHealthScaleSystem.getSpawnTier(store, ref);
         }
 
-        String tierId = DifficultyManager.getDifficulty(playerUuid);
+        UUID playerUuid = _resolveRelevantPlayerUuid(store, ref);
+        String playerTier = null;
+        if (playerUuid != null) {
+            playerTier = DifficultyManager.getDifficulty(playerUuid);
+        }
+
+        String tierId = spawnTier;
         if (tierId == null) {
-            return;
+            if (playerTier == null || playerTier.isBlank()) {
+                return;
+            }
+            tierId = playerTier;
         }
 
         double dropRateCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_RATE_MULTIPLIER);
         double dropQtyCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER);
         double dropQualityCfg = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER);
 
-        float dropRateMult = (float) Math.max(0.0, dropRateCfg);
-        float dropQtyMult = (float) Math.max(0.0, dropQtyCfg);
-        float dropQualityMult = (float) Math.max(0.0, dropQualityCfg);
+        double rewardScale = ExperienceAndCashMultiplier.computeTierMismatchScale(playerTier, spawnTier);
+        float dropRateMult = (float) Math.max(0.0, dropRateCfg * rewardScale);
+        float dropQtyMult = (float) Math.max(0.0, dropQtyCfg * rewardScale);
+        float dropQualityMult = (float) Math.max(0.0, dropQualityCfg * rewardScale);
 
         List<ItemStack> itemsToDrop = new ObjectArrayList<>();
 

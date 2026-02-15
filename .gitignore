@@ -47,3 +47,4 @@ bin/
 /.idea
 /.idea
 src/main/resources/__pycache__/parse_npc_roles.cpython-313.pyc
+/com

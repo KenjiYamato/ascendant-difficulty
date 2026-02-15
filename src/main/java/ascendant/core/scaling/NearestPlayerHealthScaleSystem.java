@@ -2,17 +2,25 @@ package ascendant.core.scaling;
 
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
+import ascendant.core.config.DifficultyMeta;
 import ascendant.core.config.DifficultySettings;
 import ascendant.core.util.NearestPlayerFinder;
 import ascendant.core.util.ReflectionHelper;
+import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.codecs.simple.StringCodec;
 import com.hypixel.hytale.component.AddReason;
+import com.hypixel.hytale.component.Component;
+import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.dependency.Dependency;
 import com.hypixel.hytale.component.dependency.Order;
 import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.entity.nameplate.Nameplate;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
@@ -26,6 +34,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
@@ -36,6 +45,17 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         implements EntityStatsSystems.StatModifyingSystem {
 
     private static final String MOD_KEY = "ascendant.nearestPlayerHealthScale.health_multiplier";
+    private static final String SPAWN_TIER_COMPONENT_ID = "ascendant.spawn_tier";
+    private static final String SPAWN_TIER_FIELD_KEY = "TierId";
+    private static final BuilderCodec<SpawnTierComponent> SPAWN_TIER_CODEC = BuilderCodec
+            .builder(SpawnTierComponent.class, SpawnTierComponent::new)
+            .addField(
+                    new KeyedCodec<>(SPAWN_TIER_FIELD_KEY, new StringCodec()),
+                    SpawnTierComponent::setTierId,
+                    SpawnTierComponent::getTierId
+            )
+            .build();
+    private static ComponentType<EntityStore, SpawnTierComponent> SPAWN_TIER_COMPONENT_TYPE;
 
     private final float _fallbackRadiusSq;
 
@@ -43,6 +63,7 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
     private final float _maxFactor;
     private final float _healthScalingTolerance;
     private final boolean _allowHealthModifier;
+    private final boolean _allowSpawnTierNameplate;
 
     public NearestPlayerHealthScaleSystem() {
         double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
@@ -50,6 +71,8 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         double maxHealthScalingFactor = DifficultyManager.getFromConfig(DifficultyIO.MAX_HEALTH_SCALING_FACTOR);
         double healthScalingTolerance = DifficultyManager.getFromConfig(DifficultyIO.HEALTH_SCALING_TOLERANCE);
         _allowHealthModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_HEALTH_MODIFIER);
+        _allowSpawnTierNameplate = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_SPAWN_TIER_NAMEPLATE);
+        ensureSpawnTierComponentType();
         float r = (float) Math.max(0.0, radius);
         _fallbackRadiusSq = r * r;
         _minFactor = (float) minHealthScalingFactor;
@@ -73,13 +96,32 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
     public void onEntityAdd(@Nonnull Holder<EntityStore> holder,
                             @Nonnull AddReason reason,
                             @Nonnull Store<EntityStore> store) {
-
-        if (!_allowHealthModifier) {
+        Player maybePlayer = holder.getComponent(Player.getComponentType());
+        if (maybePlayer != null) {
             return;
         }
 
-        Player maybePlayer = holder.getComponent(Player.getComponentType());
-        if (maybePlayer != null) {
+        String tier = getSpawnTierFromHolder(holder);
+        if (tier == null) {
+            World world = store.getExternalData().getWorld();
+            Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, holder, _fallbackRadiusSq);
+            if (nearest == null) {
+                return;
+            }
+
+            UUID playerUuid = nearest.getUuid();
+            tier = DifficultyManager.getDifficulty(playerUuid);
+            if (tier == null || tier.isBlank()) {
+                tier = DifficultyIO.DEFAULT_BASE_DIFFICULTY;
+            }
+            setSpawnTier(holder, tier);
+        }
+
+        if (_allowSpawnTierNameplate) {
+            applySpawnTierNameplate(holder, tier);
+        }
+
+        if (!_allowHealthModifier) {
             return;
         }
 
@@ -94,14 +136,6 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
             return;
         }
 
-        World world = store.getExternalData().getWorld();
-        Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, holder, _fallbackRadiusSq);
-        if (nearest == null) {
-            return;
-        }
-
-        UUID playerUuid = nearest.getUuid();
-        String tier = DifficultyManager.getDifficulty(playerUuid);
         DifficultySettings settings = DifficultyManager.getSettings();
 
         float factor = _clampFactor((float) settings.get(tier, DifficultyIO.SETTING_HEALTH_MULTIPLIER));
@@ -146,6 +180,113 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         if (f < _minFactor) return _minFactor;
         if (f > _maxFactor) return _maxFactor;
         return f;
+    }
+
+    @Nullable
+    public static String getSpawnTier(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref) {
+        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
+        if (type == null) {
+            return null;
+        }
+        SpawnTierComponent component = store.getComponent(ref, type);
+        if (component == null) {
+            return null;
+        }
+        String tierId = component.getTierId();
+        return (tierId == null || tierId.isBlank()) ? null : tierId;
+    }
+
+    private void setSpawnTier(@Nonnull Holder<EntityStore> holder, @Nonnull String tierId) {
+        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
+        if (type == null || tierId.isBlank()) {
+            return;
+        }
+        SpawnTierComponent component = holder.getComponent(type);
+        if (component == null) {
+            component = holder.ensureAndGetComponent(type);
+        }
+        if (component.getTierId() == null || component.getTierId().isBlank()) {
+            component.setTierId(tierId);
+        }
+    }
+
+    private void applySpawnTierNameplate(@Nonnull Holder<EntityStore> holder, @Nonnull String tierId) {
+        if (tierId.isBlank()) {
+            return;
+        }
+        DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
+        String displayName = meta.displayName();
+        if (displayName == null || displayName.isBlank()) {
+            displayName = tierId;
+        }
+        String label = displayName;
+        if (!displayName.equalsIgnoreCase(tierId)) {
+            label = displayName + " (" + tierId + ")";
+        }
+
+        Nameplate nameplate = holder.getComponent(Nameplate.getComponentType());
+        if (nameplate == null) {
+            nameplate = holder.ensureAndGetComponent(Nameplate.getComponentType());
+            nameplate.setText(label);
+            return;
+        }
+        String current = nameplate.getText();
+        if (current == null || current.isBlank()) {
+            nameplate.setText(label);
+        } else if (!current.contains(displayName) && !current.contains(tierId)) {
+            nameplate.setText(current + " [" + label + "]");
+        }
+    }
+
+    @Nullable
+    private static String getSpawnTierFromHolder(@Nonnull Holder<EntityStore> holder) {
+        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
+        if (type == null) {
+            return null;
+        }
+        SpawnTierComponent component = holder.getComponent(type);
+        if (component == null) {
+            return null;
+        }
+        String tierId = component.getTierId();
+        return (tierId == null || tierId.isBlank()) ? null : tierId;
+    }
+
+    private void ensureSpawnTierComponentType() {
+        if (SPAWN_TIER_COMPONENT_TYPE != null) {
+            return;
+        }
+        SPAWN_TIER_COMPONENT_TYPE = registerComponent(
+                SpawnTierComponent.class,
+                SPAWN_TIER_COMPONENT_ID,
+                SPAWN_TIER_CODEC,
+                SpawnTierComponent::new
+        );
+    }
+
+    public static final class SpawnTierComponent implements Component<EntityStore> {
+        private String tierId = "";
+
+        public SpawnTierComponent() {
+        }
+
+        public SpawnTierComponent(@Nullable String tierId) {
+            this.tierId = tierId;
+        }
+
+        @Nullable
+        public String getTierId() {
+            return tierId;
+        }
+
+        public void setTierId(@Nullable String tierId) {
+            this.tierId = tierId == null ? "" : tierId;
+        }
+
+        @Override
+        public @Nullable Component<EntityStore> clone() {
+            return new SpawnTierComponent(this.tierId);
+        }
     }
 
     private static final class ReflectiveStatModifierBridge {

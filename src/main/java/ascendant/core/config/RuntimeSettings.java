@@ -1,5 +1,13 @@
 package ascendant.core.config;
 
+import com.google.gson.JsonElement;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public final class RuntimeSettings {
     private static final Object LOCK = new Object();
     private static volatile boolean LOADED;
@@ -8,7 +16,16 @@ public final class RuntimeSettings {
     private static boolean allowXPReward;
     private static boolean allowCashReward;
     private static boolean allowCashRewardEvenWithPhysical;
+    private static boolean allowSpawnTierReward;
+    private static boolean allowSpawnTierNameplate;
+    private static boolean allowDebugCommands;
+    private static Set<String> mmoSkillTreeXpBonusWhitelist;
+    private static double spawnTierRewardOverFactor;
+    private static double spawnTierRewardUnderFactor;
     private static boolean allowCustomLeveling;
+    private static boolean allowDifficultyChangeInCombat;
+    private static double difficultyChangeCooldownMs;
+    private static double difficultyChangeCombatTimeoutMs;
     private static boolean customLevelingUseMostDamage;
     private static double customLevelingMostDamageMultiplier;
     private static double customLevelingOtherAttackerMultiplier;
@@ -41,6 +58,17 @@ public final class RuntimeSettings {
     private static double mmoSkillTreeMultiplier;
     private static double ecotaleMultiplier;
 
+    private static final Set<String> DEFAULT_MMO_SKILLTREE_XP_BONUS_WHITELIST = Set.of(
+            "SWORDS",
+            "DAGGERS",
+            "POLEARMS",
+            "STAVES",
+            "AXES",
+            "BLUNT",
+            "ARCHERY",
+            "UNARMED"
+    );
+
     private RuntimeSettings() {
     }
 
@@ -56,7 +84,16 @@ public final class RuntimeSettings {
             allowCashReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD);
             allowCashRewardEvenWithPhysical = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
             allowXPReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_XP_REWARD);
+            allowSpawnTierReward = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_SPAWN_TIER_REWARD);
+            allowSpawnTierNameplate = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_SPAWN_TIER_NAMEPLATE);
+            allowDebugCommands = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DEBUG_COMMANDS);
+            mmoSkillTreeXpBonusWhitelist = loadMmoSkillTreeXpBonusWhitelist();
+            spawnTierRewardOverFactor = DifficultyManager.getFromConfig(DifficultyIO.SPAWN_TIER_REWARD_OVER_FACTOR);
+            spawnTierRewardUnderFactor = DifficultyManager.getFromConfig(DifficultyIO.SPAWN_TIER_REWARD_UNDER_FACTOR);
             allowCustomLeveling = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_CUSTOM_LEVELING);
+            allowDifficultyChangeInCombat = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DIFFICULTY_CHANGE_IN_COMBAT);
+            difficultyChangeCooldownMs = DifficultyManager.getFromConfig(DifficultyIO.DIFFICULTY_CHANGE_COOLDOWN_MS);
+            difficultyChangeCombatTimeoutMs = DifficultyManager.getFromConfig(DifficultyIO.DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS);
             customLevelingUseMostDamage = DifficultyManager.getFromConfig(DifficultyIO.CUSTOM_LEVELING_USE_MOST_DAMAGE);
             customLevelingMostDamageMultiplier = DifficultyManager.getFromConfig(DifficultyIO.CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER);
             customLevelingOtherAttackerMultiplier = DifficultyManager.getFromConfig(DifficultyIO.CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER);
@@ -119,9 +156,100 @@ public final class RuntimeSettings {
         return allowCashRewardEvenWithPhysical;
     }
 
+    public static boolean allowSpawnTierReward() {
+        ensureLoaded();
+        return allowSpawnTierReward;
+    }
+
+    public static boolean allowSpawnTierNameplate() {
+        ensureLoaded();
+        return allowSpawnTierNameplate;
+    }
+
+    public static boolean allowDebugCommands() {
+        ensureLoaded();
+        return allowDebugCommands;
+    }
+
+    public static boolean isMmoSkillTreeXpBonusAllowed(@Nullable String skillName) {
+        ensureLoaded();
+        String key = normalizeMmoSkillName(skillName);
+        return isMmoSkillTreeXpBonusAllowedKey(key);
+    }
+
+    public static boolean isMmoSkillTreeXpBonusAllowedKey(@Nullable String normalizedSkillKey) {
+        ensureLoaded();
+        if (normalizedSkillKey == null || normalizedSkillKey.isBlank()) {
+            return false;
+        }
+        if (mmoSkillTreeXpBonusWhitelist == null || mmoSkillTreeXpBonusWhitelist.isEmpty()) {
+            return false;
+        }
+        return mmoSkillTreeXpBonusWhitelist.contains(normalizedSkillKey);
+    }
+
+    @Nullable
+    public static String normalizeMmoSkillName(@Nullable String skillName) {
+        if (skillName == null) {
+            return null;
+        }
+        String s = skillName.trim();
+        if (s.isEmpty()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder(s.length());
+        boolean lastUnderscore = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (Character.isWhitespace(c) || c == '_' || c == '-') {
+                if (sb.length() == 0 || lastUnderscore) {
+                    continue;
+                }
+                sb.append('_');
+                lastUnderscore = true;
+                continue;
+            }
+            sb.append(Character.toUpperCase(c));
+            lastUnderscore = false;
+        }
+        int len = sb.length();
+        if (len == 0) {
+            return null;
+        }
+        if (sb.charAt(len - 1) == '_') {
+            sb.setLength(len - 1);
+        }
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
+    public static double spawnTierRewardOverFactor() {
+        ensureLoaded();
+        return spawnTierRewardOverFactor;
+    }
+
+    public static double spawnTierRewardUnderFactor() {
+        ensureLoaded();
+        return spawnTierRewardUnderFactor;
+    }
+
     public static boolean allowCustomLeveling() {
         ensureLoaded();
         return allowCustomLeveling;
+    }
+
+    public static boolean allowDifficultyChangeInCombat() {
+        ensureLoaded();
+        return allowDifficultyChangeInCombat;
+    }
+
+    public static double difficultyChangeCooldownMs() {
+        ensureLoaded();
+        return difficultyChangeCooldownMs;
+    }
+
+    public static double difficultyChangeCombatTimeoutMs() {
+        ensureLoaded();
+        return difficultyChangeCombatTimeoutMs;
     }
 
     public static boolean customLevelingUseMostDamage() {
@@ -277,6 +405,50 @@ public final class RuntimeSettings {
     public static double ecotaleMultiplier() {
         ensureLoaded();
         return ecotaleMultiplier;
+    }
+
+    private static Set<String> loadMmoSkillTreeXpBonusWhitelist() {
+        JsonElement element = DifficultyManager.getConfig()
+                .get(DifficultyIO.PATH_MMO_SKILLTREE_XP_BONUS_WHITELIST)
+                .orElse(null);
+        if (element == null || element.isJsonNull()) {
+            return DEFAULT_MMO_SKILLTREE_XP_BONUS_WHITELIST;
+        }
+
+        List<String> raw = new ArrayList<>();
+        if (element.isJsonArray()) {
+            element.getAsJsonArray().forEach(item -> {
+                if (item != null && item.isJsonPrimitive()) {
+                    raw.add(item.getAsString());
+                }
+            });
+        } else if (element.isJsonPrimitive()) {
+            String value = element.getAsString();
+            if (value != null) {
+                for (String part : value.split(",")) {
+                    raw.add(part);
+                }
+            }
+        } else {
+            return DEFAULT_MMO_SKILLTREE_XP_BONUS_WHITELIST;
+        }
+
+        if (raw.isEmpty()) {
+            return Set.of();
+        }
+
+        HashSet<String> out = new HashSet<>();
+        for (String entry : raw) {
+            String key = normalizeMmoSkillName(entry);
+            if (key != null && !key.isBlank()) {
+                out.add(key);
+            }
+        }
+
+        if (out.isEmpty()) {
+            return Set.of();
+        }
+        return Set.copyOf(out);
     }
 
     private static void ensureLoaded() {

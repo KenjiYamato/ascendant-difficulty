@@ -1,5 +1,6 @@
-package ascendant.core.commands;
+package ascendant.core.commands.debug;
 
+import ascendant.core.commands.AbstractPlayerCommand;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;

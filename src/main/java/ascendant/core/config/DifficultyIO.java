@@ -23,8 +23,11 @@ public final class DifficultyIO {
 
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
     public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
+    public static final String PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = "base.allow.difficultyChangeInCombat";
     public static final String PATH_ALLOW_BADGE = "base.allow.uiBadge";
     public static final String PATH_UI_BADGE_START_DELAY_MS = "base.uiBadgeStartDelayMs";
+    public static final String PATH_DIFFICULTY_CHANGE_COOLDOWN_MS = "base.difficultyChangeCooldownMs";
+    public static final String PATH_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS = "base.difficultyChangeCombatTimeoutMs";
     public static final String PATH_MIN_DAMAGE_FACTOR = "base.minDamageFactor";
     public static final String PATH_PLAYER_DISTANCE_RADIUS_TO_CHECK = "base.playerDistanceRadiusToCheck";
     public static final String PATH_HEALTH_SCALING_TOLERANCE = "base.healthScalingTolerance";
@@ -35,6 +38,9 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_CASH_REWARD = "base.allow.cashReward";
     public static final String PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allow.cashRewardEvenWithPhysical";
     public static final String PATH_ALLOW_XP_REWARD = "base.allow.xpReward";
+    public static final String PATH_ALLOW_SPAWN_TIER_REWARD = "base.allow.spawnTierReward";
+    public static final String PATH_SPAWN_TIER_REWARD_OVER_FACTOR = "base.spawnTierRewardOverFactor";
+    public static final String PATH_SPAWN_TIER_REWARD_UNDER_FACTOR = "base.spawnTierRewardUnderFactor";
     public static final String PATH_ALLOW_CUSTOM_LEVELING = "base.allow.customLeveling";
     public static final String PATH_CUSTOM_LEVELING_USE_MOST_DAMAGE = "base.customLeveling.useMostDamageAttacker";
     public static final String PATH_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER = "base.customLeveling.mostDamageAttackerMultiplier";
@@ -74,6 +80,9 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allow.armorModifier";
     public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
     public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
+    public static final String PATH_ALLOW_SPAWN_TIER_NAMEPLATE = "base.allow.spawnTierNameplate";
+    public static final String PATH_ALLOW_DEBUG_COMMANDS = "base.allow.debugCommands";
+    public static final String PATH_MMO_SKILLTREE_XP_BONUS_WHITELIST = "base.mmoSkillTree.xpBonusWhitelist";
     public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.eliteSpawn";
     public static final String PATH_ELITE_SPAWN_QUEUE_INTERVAL_MS = "base.eliteSpawnQueue.intervalMs";
     public static final String PATH_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN = "base.eliteSpawnQueue.maxPerDrain";
@@ -121,7 +130,10 @@ public final class DifficultyIO {
 
     public static final String DEFAULT_BASE_DIFFICULTY = "normal";
     public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE = true;
+    public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = false;
     public static final double DEFAULT_UI_BADGE_START_DELAY_MS = 0.0;
+    public static final double DEFAULT_DIFFICULTY_CHANGE_COOLDOWN_MS = 0.0;
+    public static final double DEFAULT_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS = 10000.0;
     public static final double DEFAULT_MIN_DAMAGE_FACTOR = 0.001;
     public static final double DEFAULT_PLAYER_DISTANCE_RADIUS_TO_CHECK = 128.0;
     public static final double DEFAULT_HEALTH_SCALING_TOLERANCE = 0.0001;
@@ -133,6 +145,9 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_CASH_REWARD = true;
     public static final boolean DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = true;
     public static final boolean DEFAULT_ALLOW_XP_REWARD = true;
+    public static final boolean DEFAULT_ALLOW_SPAWN_TIER_REWARD = true;
+    public static final double DEFAULT_SPAWN_TIER_REWARD_OVER_FACTOR = 1.05;
+    public static final double DEFAULT_SPAWN_TIER_REWARD_UNDER_FACTOR = 0.95;
     public static final boolean DEFAULT_ALLOW_CUSTOM_LEVELING = true;
     public static final boolean DEFAULT_CUSTOM_LEVELING_USE_MOST_DAMAGE = true;
     public static final double DEFAULT_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER = 1.1;
@@ -172,6 +187,8 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_ARMOR_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
+    public static final boolean DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE = false;
+    public static final boolean DEFAULT_ALLOW_DEBUG_COMMANDS = true;
     public static final boolean DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER = true;
     public static final double DEFAULT_ELITE_SPAWN_QUEUE_INTERVAL_MS = 0.0;
     public static final int DEFAULT_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN = 2;
@@ -188,10 +205,16 @@ public final class DifficultyIO {
             ConfigKey.ofString(PATH_DEFAULT_DIFFICULTY, DEFAULT_BASE_DIFFICULTY);
     public static final ConfigKey<Boolean> ALLOW_DIFFICULTY_CHANGE =
             ConfigKey.ofBoolean(PATH_ALLOW_DIFFICULTY_CHANGE, DEFAULT_ALLOW_DIFFICULTY_CHANGE);
+    public static final ConfigKey<Boolean> ALLOW_DIFFICULTY_CHANGE_IN_COMBAT =
+            ConfigKey.ofBoolean(PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT, DEFAULT_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT);
     public static final ConfigKey<Boolean> ALLOW_BADGE =
             ConfigKey.ofBoolean(PATH_ALLOW_BADGE, DEFAULT_ALLOW_BADGE);
     public static final ConfigKey<Double> UI_BADGE_START_DELAY_MS =
             ConfigKey.ofDouble(PATH_UI_BADGE_START_DELAY_MS, DEFAULT_UI_BADGE_START_DELAY_MS);
+    public static final ConfigKey<Double> DIFFICULTY_CHANGE_COOLDOWN_MS =
+            ConfigKey.ofDouble(PATH_DIFFICULTY_CHANGE_COOLDOWN_MS, DEFAULT_DIFFICULTY_CHANGE_COOLDOWN_MS);
+    public static final ConfigKey<Double> DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS =
+            ConfigKey.ofDouble(PATH_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS, DEFAULT_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS);
     public static final ConfigKey<Double> MIN_DAMAGE_FACTOR =
             ConfigKey.ofDouble(PATH_MIN_DAMAGE_FACTOR, DEFAULT_MIN_DAMAGE_FACTOR);
     public static final ConfigKey<Double> PLAYER_DISTANCE_RADIUS_TO_CHECK =
@@ -212,6 +235,12 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL, DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
     public static final ConfigKey<Boolean> ALLOW_XP_REWARD =
             ConfigKey.ofBoolean(PATH_ALLOW_XP_REWARD, DEFAULT_ALLOW_XP_REWARD);
+    public static final ConfigKey<Boolean> ALLOW_SPAWN_TIER_REWARD =
+            ConfigKey.ofBoolean(PATH_ALLOW_SPAWN_TIER_REWARD, DEFAULT_ALLOW_SPAWN_TIER_REWARD);
+    public static final ConfigKey<Double> SPAWN_TIER_REWARD_OVER_FACTOR =
+            ConfigKey.ofDouble(PATH_SPAWN_TIER_REWARD_OVER_FACTOR, DEFAULT_SPAWN_TIER_REWARD_OVER_FACTOR);
+    public static final ConfigKey<Double> SPAWN_TIER_REWARD_UNDER_FACTOR =
+            ConfigKey.ofDouble(PATH_SPAWN_TIER_REWARD_UNDER_FACTOR, DEFAULT_SPAWN_TIER_REWARD_UNDER_FACTOR);
     public static final ConfigKey<Boolean> ALLOW_CUSTOM_LEVELING =
             ConfigKey.ofBoolean(PATH_ALLOW_CUSTOM_LEVELING, DEFAULT_ALLOW_CUSTOM_LEVELING);
     public static final ConfigKey<Boolean> CUSTOM_LEVELING_USE_MOST_DAMAGE =
@@ -290,6 +319,10 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_DROP_MODIFIER, DEFAULT_ALLOW_DROP_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DEBUG_LOGGING =
             ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
+    public static final ConfigKey<Boolean> ALLOW_SPAWN_TIER_NAMEPLATE =
+            ConfigKey.ofBoolean(PATH_ALLOW_SPAWN_TIER_NAMEPLATE, DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE);
+    public static final ConfigKey<Boolean> ALLOW_DEBUG_COMMANDS =
+            ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_COMMANDS, DEFAULT_ALLOW_DEBUG_COMMANDS);
     public static final ConfigKey<Boolean> ALLOW_ELITE_SPAWN_MODIFIER =
             ConfigKey.ofBoolean(PATH_ALLOW_ELITE_SPAWN_MODIFIER, DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER);
     public static final ConfigKey<Double> ELITE_SPAWN_QUEUE_INTERVAL_MS =

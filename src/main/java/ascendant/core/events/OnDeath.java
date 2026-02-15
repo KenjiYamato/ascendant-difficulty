@@ -4,6 +4,7 @@ import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.RuntimeSettings;
 import ascendant.core.scaling.ExperienceAndCashMultiplier;
+import ascendant.core.scaling.NearestPlayerHealthScaleSystem;
 import ascendant.core.util.DamageRef;
 import ascendant.core.util.LibraryAvailability;
 import ascendant.core.util.Logging;
@@ -111,6 +112,11 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
             return;
         }
 
+        String spawnTier = NearestPlayerHealthScaleSystem.getSpawnTier(store, ref);
+        String attackerTier = DifficultyManager.getDifficulty(attackerUuid);
+        queueRewardTierOverride(attackerUuid, attackerTier, spawnTier);
+        double attackerRewardScale = ExperienceAndCashMultiplier.computeTierMismatchScale(attackerTier, spawnTier);
+
         float baseFactor = 0.0f;
 
         RoleAndRangeResult roleAndRangeResult = _getMaxRange(entity);
@@ -162,29 +168,33 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
                             double finalFactorMostDamage = finalFactor * RuntimeSettings.customLevelingOtherAttackerMultiplier();
 
                             if (mostDamageAttackerPlayerRef != null && mostDamageAttackerUuid != null) {
-                                sendXPReward(levelService, mostDamageAttackerUuid, mostDamageAttackerPlayerRef, finalFactorMostDamage);
+                                String mostDamageTier = DifficultyManager.getDifficulty(mostDamageAttackerUuid);
+                                queueRewardTierOverride(mostDamageAttackerUuid, mostDamageTier, spawnTier);
+                                double mostDamageRewardScale = ExperienceAndCashMultiplier.computeTierMismatchScale(mostDamageTier, spawnTier);
+                                sendXPReward(levelService, mostDamageAttackerUuid, mostDamageAttackerPlayerRef, finalFactorMostDamage, mostDamageRewardScale);
                             }
                         }
 
                         if (mostDamageAttacker.equals(attacker)) {
                             finalFactor *= RuntimeSettings.customLevelingMostDamageMultiplier();
-                            sendXPReward(levelService, attackerUuid, attackerPlayerRef, finalFactor);
+                            sendXPReward(levelService, attackerUuid, attackerPlayerRef, finalFactor, attackerRewardScale);
                             return;
                         }
                     }
                 }
 
-                sendXPReward(levelService, attackerUuid, attackerPlayerRef, finalFactor);
+                sendXPReward(levelService, attackerUuid, attackerPlayerRef, finalFactor, attackerRewardScale);
             });
         } catch (NoClassDefFoundError error) {
             LibraryAvailability.logMissingDependency("LevelingCore", error);
         }
     }
 
-    public void sendXPReward(LevelServiceImpl levelService, UUID uuidToReward, PlayerRef playerRefToReward, double finalFactor) {
+    public void sendXPReward(LevelServiceImpl levelService, UUID uuidToReward, PlayerRef playerRefToReward, double finalFactor, double rewardScale) {
         int level = levelService.getLevel(uuidToReward);
 
         long xpToReward = _calculateXpRewardHardDownscaled(finalFactor, level);
+        xpToReward = scaleRewardAmount(xpToReward, rewardScale);
         if (xpToReward <= 0L) {
             return;
         }
@@ -305,10 +315,42 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
         return _f * m;
     }
 
+    private static long scaleRewardAmount(long amount, double rewardScale) {
+        if (amount <= 0L) {
+            return 0L;
+        }
+        if (!Double.isFinite(rewardScale) || rewardScale <= 0.0) {
+            return 0L;
+        }
+        if (Math.abs(rewardScale - 1.0) < 0.000001) {
+            return amount;
+        }
+        double scaled = (double) amount * rewardScale;
+        if (scaled >= Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
+        }
+        return Math.max(0L, (long) Math.floor(scaled));
+    }
+
     public float applyDamageMultiplier(float damage, float damageMultiplier) {
         float d = Math.max(0.0f, damage);
         float m = Math.max(0.0f, damageMultiplier);
         float scaled = d * m;
         return Math.max(d * _minDamageFactor, scaled);
+    }
+
+    private static void queueRewardTierOverride(@Nonnull UUID playerUuid, @Nullable String playerTier, @Nullable String spawnTier) {
+        if (spawnTier == null || spawnTier.isBlank() || playerTier == null || playerTier.isBlank()) {
+            return;
+        }
+        if (spawnTier.equals(playerTier)) {
+            return;
+        }
+        String lower = ExperienceAndCashMultiplier.resolveLowerTier(playerTier, spawnTier);
+        if (lower == null || lower.isBlank()) {
+            return;
+        }
+        double scale = ExperienceAndCashMultiplier.computeTierMismatchScale(playerTier, spawnTier);
+        ExperienceAndCashMultiplier.queueRewardTierOverride(playerUuid, lower, scale);
     }
 }

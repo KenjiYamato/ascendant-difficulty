@@ -2,6 +2,8 @@
     "base": {
         "defaultDifficulty": "normal",
         "uiBadgeStartDelayMs": 680.0,
+        "difficultyChangeCooldownMs": 0.0,
+        "difficultyChangeCombatTimeoutMs": 10000.0,
         "minDamageFactor": 0.001,
         "playerDistanceRadiusToCheck": 128.0,
         "healthScalingTolerance": 0.0001,
@@ -9,12 +11,16 @@
         "maxHealthScalingFactor": 300.0,
         "cashVarianceFactor": 0.23,
         "roundingDigits": 3,
+        "spawnTierRewardOverFactor": 1.05,
+        "spawnTierRewardUnderFactor": 0.4,
         "allow": {
             "difficultyChange": true,
+            "difficultyChangeInCombat": false,
             "uiBadge": true,
             "cashReward": true,
             "cashRewardEvenWithPhysical": true,
             "xpReward": true,
+            "spawnTierReward": true,
             "customLeveling": true,
             "healthModifier": true,
             "damageModifier": true,
@@ -29,6 +35,8 @@
             "armorModifier": true,
             "dropModifier": true,
             "debugLogging": false,
+            "spawnTierNameplate": false,
+            "debugCommands": true,
             "eliteSpawn": true
         },
         "eliteSpawnQueue": {
@@ -72,6 +80,18 @@
             "ecotale": true,
             "levelingCore": true,
             "mmoSkillTree": true
+        },
+        "mmoSkillTree": {
+            "xpBonusWhitelist": [
+                "Swords",
+                "Daggers",
+                "Polearms",
+                "Staves",
+                "Axes",
+                "Blunt",
+                "Archery",
+                "Unarmed"
+            ]
         },
         "integrationMultipliers": {
             "levelingCore": 0.0,

@@ -4,17 +4,21 @@ import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.DifficultyMeta;
 import ascendant.core.config.DifficultySettings;
+import ascendant.core.config.RuntimeSettings;
 import ascendant.core.util.EventNotificationWrapper;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.entity.damage.DamageDataComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,7 @@ public class TierSelect {
 
     private static final int TIERS_PER_PAGE = 4;
     private static final Map<UUID, Integer> pageIndexByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> lastDifficultyChangeByPlayer = new ConcurrentHashMap<>();
 
     public static void openOrUpdateUi(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         TemplateProcessor template = new TemplateProcessor();
@@ -88,7 +93,26 @@ public class TierSelect {
                     return;
                 }
 
+                if (!RuntimeSettings.allowDifficultyChangeInCombat() && isInCombat(playerRef, store)) {
+                    EventNotificationWrapper.sendMinorEventNotification(playerRef, commandContext, "Difficulty cannot be changed while in combat.");
+                    openOrUpdateUi(playerRef, store, playerUuid, commandContext);
+                    return;
+                }
+
+                long remainingCooldownMs = remainingDifficultyChangeCooldownMs(playerUuid);
+                if (remainingCooldownMs > 0L) {
+                    long remainingSeconds = Math.max(1L, (long) Math.ceil(remainingCooldownMs / 1000.0));
+                    EventNotificationWrapper.sendMinorEventNotification(
+                            playerRef,
+                            commandContext,
+                            "Please wait " + remainingSeconds + "s before changing difficulty again."
+                    );
+                    openOrUpdateUi(playerRef, store, playerUuid, commandContext);
+                    return;
+                }
+
                 DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
+                markDifficultyChange(playerUuid);
                 DifficultyBadge.updateForPlayer(playerRef);
                 EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, tier.displayName(), "selected difficulty");
 
@@ -156,6 +180,102 @@ public class TierSelect {
             }
         }
         return tierIds;
+    }
+
+    private static boolean isInCombat(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store) {
+        Ref<EntityStore> ref = playerRef.getReference();
+        if (ref == null || !ref.isValid()) {
+            return false;
+        }
+
+        DamageDataComponent damageData = store.getComponent(ref, DamageDataComponent.getComponentType());
+        if (damageData == null) {
+            return false;
+        }
+
+        long windowMs = (long) Math.ceil(RuntimeSettings.difficultyChangeCombatTimeoutMs());
+        if (windowMs <= 0L) {
+            return false;
+        }
+
+        Instant now = Instant.now();
+        return isWithinCombatWindow(damageData.getLastCombatAction(), now, windowMs)
+                || isWithinCombatWindow(damageData.getLastDamageTime(), now, windowMs);
+    }
+
+    private static boolean isWithinCombatWindow(Instant instant, Instant now, long windowMs) {
+        if (instant == null) {
+            return false;
+        }
+        long elapsed = safeElapsedMillis(instant, now);
+        if (elapsed < 0L) {
+            return true;
+        }
+        return elapsed <= windowMs;
+    }
+
+    private static long safeElapsedMillis(Instant from, Instant to) {
+        long fromMs = safeEpochMillis(from);
+        long toMs = safeEpochMillis(to);
+        return safeSubtract(toMs, fromMs);
+    }
+
+    private static long safeEpochMillis(Instant instant) {
+        long seconds = instant.getEpochSecond();
+        int nanos = instant.getNano();
+
+        long maxSeconds = Long.MAX_VALUE / 1000L;
+        long minSeconds = Long.MIN_VALUE / 1000L;
+        if (seconds > maxSeconds) {
+            return Long.MAX_VALUE;
+        }
+        if (seconds < minSeconds) {
+            return Long.MIN_VALUE;
+        }
+
+        long millis = seconds * 1000L;
+        long adjustment = nanos / 1_000_000L;
+        long result = millis + adjustment;
+        if (((millis ^ result) & (adjustment ^ result)) < 0L) {
+            return adjustment >= 0L ? Long.MAX_VALUE : Long.MIN_VALUE;
+        }
+        return result;
+    }
+
+    private static long safeSubtract(long a, long b) {
+        long diff = a - b;
+        if (((a ^ b) & (a ^ diff)) < 0L) {
+            return a < 0L ? Long.MIN_VALUE : Long.MAX_VALUE;
+        }
+        return diff;
+    }
+
+    private static long remainingDifficultyChangeCooldownMs(@NonNullDecl UUID playerUuid) {
+        long cooldownMs = (long) Math.ceil(RuntimeSettings.difficultyChangeCooldownMs());
+        if (cooldownMs <= 0L) {
+            return 0L;
+        }
+        Long last = lastDifficultyChangeByPlayer.get(playerUuid);
+        if (last == null) {
+            return 0L;
+        }
+        long elapsed = System.currentTimeMillis() - last;
+        if (elapsed >= cooldownMs) {
+            lastDifficultyChangeByPlayer.remove(playerUuid);
+            return 0L;
+        }
+        if (elapsed < 0L) {
+            return cooldownMs;
+        }
+        return cooldownMs - elapsed;
+    }
+
+    private static void markDifficultyChange(@NonNullDecl UUID playerUuid) {
+        long cooldownMs = (long) Math.ceil(RuntimeSettings.difficultyChangeCooldownMs());
+        if (cooldownMs <= 0L) {
+            return;
+        }
+        lastDifficultyChangeByPlayer.put(playerUuid, System.currentTimeMillis());
     }
 
     public record DifficultyTier(
