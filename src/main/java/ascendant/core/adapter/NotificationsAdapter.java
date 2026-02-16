@@ -134,8 +134,8 @@ public final class NotificationsAdapter {
         String primaryDebug = FormattedMessageInspector.toDebugString(n.message);
         String secondaryDebug = FormattedMessageInspector.toDebugString(n.secondaryMessage);
 
-        Logging.info("[NOTIFICATIONS LOGGER] pri " + primaryDebug);
-        Logging.info("[NOTIFICATIONS LOGGER] sec " + secondaryDebug);
+        Logging.debug("[NOTIFICATIONS LOGGER] pri " + primaryDebug);
+        Logging.debug("[NOTIFICATIONS LOGGER] sec " + secondaryDebug);
     }
 
     private static ParsedXp parseXpRawText(String rawText) {

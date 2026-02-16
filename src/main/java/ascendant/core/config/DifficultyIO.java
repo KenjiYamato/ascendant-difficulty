@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Central location for difficulty file paths and load helpers.
@@ -82,6 +83,23 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
     public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
     public static final String PATH_ALLOW_SPAWN_TIER_NAMEPLATE = "base.allow.spawnTierNameplate";
+    public static final String PATH_ALLOW_KILLFEED_TIER_TAG = "base.allow.killFeedTierTag";
+    public static final String PATH_ALLOW_KILLFEED_TIER_CHAT = "base.allow.killFeedTierChat";
+    public static final String PATH_KILLFEED_CHAT_COLOR_PLAYER = "base.killFeedTierChatColors.playerName";
+    public static final String PATH_KILLFEED_CHAT_COLOR_MIDDLE = "base.killFeedTierChatColors.middle";
+    public static final String PATH_KILLFEED_CHAT_COLOR_CAUSE = "base.killFeedTierChatColors.deathCause";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_BY_CAUSE_ID = "base.killFeedTierChatMessages.byCauseId";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_FALLBACK = "base.killFeedTierChatMessages.fallback";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_COMMAND = "base.killFeedTierChatMessages.command";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_DROWNING = "base.killFeedTierChatMessages.drowning";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_SUFFOCATION = "base.killFeedTierChatMessages.suffocation";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_ENVIRONMENT = "base.killFeedTierChatMessages.environment";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_FALL = "base.killFeedTierChatMessages.fall";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_OUT_OF_WORLD = "base.killFeedTierChatMessages.outOfWorld";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_ACTION = "base.killFeedTierChatMessages.physical.killerAction";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_CAUSE = "base.killFeedTierChatMessages.physical.killerCause";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_CAUSE = "base.killFeedTierChatMessages.physical.victimCause";
+    public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED = "base.killFeedTierChatMessages.physical.victimDied";
     public static final String PATH_ALLOW_DEBUG_COMMANDS = "base.allow.debugCommands";
     public static final String PATH_MMO_SKILLTREE_XP_BONUS_WHITELIST = "base.mmoSkillTree.xpBonusWhitelist";
     public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.eliteSpawn";
@@ -190,6 +208,38 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
     public static final boolean DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE = false;
+    public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_TAG = false;
+    public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_CHAT = false;
+    public static final String DEFAULT_KILLFEED_CHAT_COLOR_PLAYER = "#FFF2A0";
+    public static final String DEFAULT_KILLFEED_CHAT_COLOR_MIDDLE = "#FFFFFF";
+    public static final String DEFAULT_KILLFEED_CHAT_COLOR_CAUSE = "#FF2A2A";
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_FALLBACK =
+            List.of(" died", " perished", " met their end");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_COMMAND =
+            List.of(
+                    " died by the will of the goddess",
+                    " killed by an eternal existence",
+                    " was smitten by higher powers",
+                    " was ended by a command"
+            );
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_DROWNING =
+            List.of(" drowned", " ran out of air", " sank beneath the waves", " couldn't keep afloat");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_SUFFOCATION =
+            List.of(" failed to breath", " couldn't breathe", " was buried alive", " suffocated");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_ENVIRONMENT =
+            List.of(" was killed by environment", " was claimed by the elements", " met the environment", " was consumed by nature");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_FALL =
+            List.of(" land to hard", " tried to defeat gravity", " hit ground way to hard", " fell too far", " forgot how to land", " cratered");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_OUT_OF_WORLD =
+            List.of(" doesn't want to live anymore", " fell out of world", " slipped into the void", " left the world behind");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_ACTION =
+            List.of(" killed ", " eliminated ", " defeated ", " took down ", " slew ");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_CAUSE =
+            List.of(" by ", " using ", " with ", " through ");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_CAUSE =
+            List.of(" was killed by ", " was defeated by ", " was taken down by ", " was slain by ");
+    public static final List<String> DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED =
+            List.of(" died", " perished", " met their end");
     public static final boolean DEFAULT_ALLOW_DEBUG_COMMANDS = true;
     public static final boolean DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER = true;
     public static final double DEFAULT_ELITE_SPAWN_QUEUE_INTERVAL_MS = 0.0;
@@ -325,6 +375,38 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
     public static final ConfigKey<Boolean> ALLOW_SPAWN_TIER_NAMEPLATE =
             ConfigKey.ofBoolean(PATH_ALLOW_SPAWN_TIER_NAMEPLATE, DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE);
+    public static final ConfigKey<Boolean> ALLOW_KILLFEED_TIER_TAG =
+            ConfigKey.ofBoolean(PATH_ALLOW_KILLFEED_TIER_TAG, DEFAULT_ALLOW_KILLFEED_TIER_TAG);
+    public static final ConfigKey<Boolean> ALLOW_KILLFEED_TIER_CHAT =
+            ConfigKey.ofBoolean(PATH_ALLOW_KILLFEED_TIER_CHAT, DEFAULT_ALLOW_KILLFEED_TIER_CHAT);
+    public static final ConfigKey<String> KILLFEED_CHAT_COLOR_PLAYER =
+            ConfigKey.ofString(PATH_KILLFEED_CHAT_COLOR_PLAYER, DEFAULT_KILLFEED_CHAT_COLOR_PLAYER);
+    public static final ConfigKey<String> KILLFEED_CHAT_COLOR_MIDDLE =
+            ConfigKey.ofString(PATH_KILLFEED_CHAT_COLOR_MIDDLE, DEFAULT_KILLFEED_CHAT_COLOR_MIDDLE);
+    public static final ConfigKey<String> KILLFEED_CHAT_COLOR_CAUSE =
+            ConfigKey.ofString(PATH_KILLFEED_CHAT_COLOR_CAUSE, DEFAULT_KILLFEED_CHAT_COLOR_CAUSE);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_FALLBACK =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_FALLBACK, DEFAULT_KILLFEED_CHAT_MESSAGES_FALLBACK);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_COMMAND =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_COMMAND, DEFAULT_KILLFEED_CHAT_MESSAGES_COMMAND);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_DROWNING =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_DROWNING, DEFAULT_KILLFEED_CHAT_MESSAGES_DROWNING);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_SUFFOCATION =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_SUFFOCATION, DEFAULT_KILLFEED_CHAT_MESSAGES_SUFFOCATION);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_ENVIRONMENT =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_ENVIRONMENT, DEFAULT_KILLFEED_CHAT_MESSAGES_ENVIRONMENT);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_FALL =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_FALL, DEFAULT_KILLFEED_CHAT_MESSAGES_FALL);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_OUT_OF_WORLD =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_OUT_OF_WORLD, DEFAULT_KILLFEED_CHAT_MESSAGES_OUT_OF_WORLD);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_ACTION =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_ACTION, DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_ACTION);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_CAUSE =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_CAUSE, DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_CAUSE);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_CAUSE =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_CAUSE, DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_CAUSE);
+    public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED =
+            ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED, DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED);
     public static final ConfigKey<Boolean> ALLOW_DEBUG_COMMANDS =
             ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_COMMANDS, DEFAULT_ALLOW_DEBUG_COMMANDS);
     public static final ConfigKey<Boolean> ALLOW_ELITE_SPAWN_MODIFIER =

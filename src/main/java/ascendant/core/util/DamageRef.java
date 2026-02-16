@@ -80,6 +80,7 @@ public class DamageRef {
 
     public static boolean checkInvalidDamage(Damage damage) {
         if (damage.getAmount() <= 0.0f) {
+            Logging.debug("[DAMAGE RECEIVE] skip: invalid damage -> under 0");
             return false;
         }
 

@@ -3,10 +3,12 @@ package ascendant.core.scaling;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.util.DamageRef;
+import ascendant.core.util.Logging;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.dependency.Dependency;
 import com.hypixel.hytale.component.dependency.Order;
@@ -20,17 +22,23 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageModule;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageSystems;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatsModule;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static final ConcurrentHashMap<UUID, Boolean> DEBUG_MAX_DAMAGE = new ConcurrentHashMap<>();
 
     private final Set<Dependency<EntityStore>> _dependencies;
     private final float _minDamageFactor;
@@ -75,6 +83,21 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         return AllLegacyLivingEntityTypesQuery.INSTANCE;
     }
 
+    public static boolean toggleDebugMaxDamage(@Nonnull UUID playerUuid) {
+        Boolean current = DEBUG_MAX_DAMAGE.get(playerUuid);
+        boolean next = current == null || !current;
+        if (next) {
+            DEBUG_MAX_DAMAGE.put(playerUuid, true);
+        } else {
+            DEBUG_MAX_DAMAGE.remove(playerUuid);
+        }
+        return next;
+    }
+
+    public static boolean isDebugMaxDamageEnabled(@Nonnull UUID playerUuid) {
+        Boolean enabled = DEBUG_MAX_DAMAGE.get(playerUuid);
+        return enabled != null && enabled;
+    }
 
     //public static class ArmorDamageReduction/ DamageArmor
     @Override
@@ -86,43 +109,58 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
             @Nonnull Damage damage
     ) {
-        if (!_allowDamageModifier) {
-            return;
-        }
-        DamageContext ctx = buildContext(index, chunk, store, commandBuffer, damage);
-        if (ctx == null) {
+
+        Logging.debug("[DAMAGE RECEIVE] Damage entry: "+damage.getAmount());
+        if (!DamageRef.checkInvalidDamage(damage)) {
+            Logging.debug("[DAMAGE RECEIVE] skip: invalid damage amount/cause");
             return;
         }
 
+        UUID victimUuid = DamageRef.resolveVictimUUID(index, chunk, store);
+        if (victimUuid == null) {
+            Logging.debug("[DAMAGE RECEIVE] skip: victim is not a player");
+            return;
+        }
+
+        if (!_allowDamageModifier) {
+            Logging.debug("[DAMAGE RECEIVE] skip: damage modifier disabled");
+            return;
+        }
+
+        boolean debugEnabled = isDebugMaxDamageEnabled(victimUuid);
+        if (debugEnabled) {
+            float debugDamage = resolveMaxReceiveDamage(index, chunk, store);
+            if (debugDamage > 0.0f && Float.isFinite(debugDamage)) {
+                Logging.debug("[DAMAGE RECEIVE] debug max damage applied=" + debugDamage);
+                damage.setAmount(debugDamage);
+                return;
+            }
+            Logging.debug("[DAMAGE RECEIVE] debug max damage unavailable, fallback to scaling");
+        }
+
+        DamageContext ctx = buildContext(victimUuid, damage);
+        if (ctx == null) {
+            Logging.debug("[DAMAGE RECEIVE] skip: no damage context");
+            return;
+        }
         float afterMultiplier = applyDamageMultiplier(ctx.baseDamage, ctx.damageMultiplier);
         damage.setAmount(afterMultiplier);
     }
 
     @Nullable
-    @SuppressWarnings("removal")
     private DamageContext buildContext(
-            int index,
-            ArchetypeChunk<EntityStore> chunk,
-            Store<EntityStore> store,
-            CommandBuffer<EntityStore> commandBuffer,
+            UUID victimUUID,
             Damage damage
     ) {
-        if (!DamageRef.checkInvalidDamage(damage)) {
-            return null;
-        }
-
-        UUID victimUUID = DamageRef.resolveVictimUUID(index, chunk, store);
-        if (victimUUID == null) {
-            return null;
-        }
-
         String tierId = DifficultyManager.getDifficulty(victimUUID);
         if (tierId == null) {
+            Logging.debug("[DAMAGE RECEIVE] context: missing tier for victim=" + victimUUID);
             return null;
         }
 
         double damageMultiplierCfg = resolveDamageMultiplier(tierId, damage.getCause());
         if (damageMultiplierCfg <= 0) {
+            Logging.debug("[DAMAGE RECEIVE] context: multiplier <= 0 tier=" + tierId + " cause=" + damage.getCause());
             return null;
         }
 
@@ -132,19 +170,64 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         );
     }
 
+    @SuppressWarnings("removal")
+    private float resolveMaxReceiveDamage(
+            int index,
+            @Nonnull ArchetypeChunk<EntityStore> chunk,
+            @Nonnull Store<EntityStore> store
+    ) {
+        Ref<EntityStore> victimRef = chunk.getReferenceTo(index);
+        if (!victimRef.isValid()) {
+            Logging.debug("[DAMAGE RECEIVE] debug max damage: invalid victim ref");
+            return -1.0f;
+        }
+        EntityStatMap statMap = store.getComponent(victimRef, EntityStatsModule.get().getEntityStatMapComponentType());
+        if (statMap == null) {
+            Logging.debug("[DAMAGE RECEIVE] debug max damage: missing stat map");
+            return -1.0f;
+        }
+        int healthIndex = DefaultEntityStatTypes.getHealth();
+        if (healthIndex == Integer.MIN_VALUE) {
+            Logging.debug("[DAMAGE RECEIVE] debug max damage: invalid health stat index");
+            return -1.0f;
+        }
+        EntityStatValue health = statMap.get(healthIndex);
+        if (health == null) {
+            Logging.debug("[DAMAGE RECEIVE] debug max damage: missing health stat");
+            return -1.0f;
+        }
+        float maxHealth = health.getMax();
+        if (!Float.isFinite(maxHealth) || maxHealth <= 0.0f) {
+            Logging.debug("[DAMAGE RECEIVE] debug max damage: invalid max health=" + maxHealth);
+            return -1.0f;
+        }
+        double raw = (double) maxHealth + 1.0;
+        if (raw >= Float.MAX_VALUE) {
+            Logging.debug("[DAMAGE RECEIVE] debug max damage: overflow, clamped to Float.MAX");
+            return Float.MAX_VALUE;
+        }
+        Logging.debug("[DAMAGE RECEIVE] debug max damage resolved=" + raw);
+        return (float) raw;
+    }
+
     private double resolveDamageMultiplier(String tierId, DamageCause cause) {
         double baseMultiplier = DifficultyManager.getSettings().get(tierId, DifficultyIO.SETTING_DAMAGE_MULTIPLIER);
         SpecificDamageMultiplier specific = resolveSpecificDamageMultiplier(cause);
         if (specific == null) {
+            Logging.debug("[DAMAGE RECEIVE] multiplier: using base=" + baseMultiplier + " (no specific for cause=" + cause + ")");
             return baseMultiplier;
         }
         if (!specific.allowed()) {
+            Logging.debug("[DAMAGE RECEIVE] multiplier: specific not allowed key=" + specific.key() + " cause=" + cause);
             return -1.0;
         }
         if (!hasTierOrBaseKey(tierId, specific.key())) {
+            Logging.debug("[DAMAGE RECEIVE] multiplier: using base=" + baseMultiplier + " (missing key=" + specific.key() + " tier=" + tierId + ")");
             return baseMultiplier;
         }
-        return DifficultyManager.getSettings().get(tierId, specific.key());
+        double resolved = DifficultyManager.getSettings().get(tierId, specific.key());
+        Logging.debug("[DAMAGE RECEIVE] multiplier: using specific " + specific.key() + "=" + resolved + " tier=" + tierId);
+        return resolved;
     }
 
     @Nullable

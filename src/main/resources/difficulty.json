@@ -37,8 +37,100 @@
             "dropModifier": true,
             "debugLogging": false,
             "spawnTierNameplate": false,
+            "killFeedTierTag": true,
+            "killFeedTierChat": false,
             "debugCommands": true,
             "eliteSpawn": true
+        },
+        "killFeedTierChatColors": {
+            "playerName": "#FFF2A0",
+            "middle": "#FFFFFF",
+            "deathCause": "#FF2A2A"
+        },
+        "killFeedTierChatMessages": {
+            "byCauseId": {
+                "fire": [
+                    " burnt to death",
+                    " went up in flames",
+                    " was reduced to ash",
+                    " was consumed by fire"
+                ],
+                "poison": [
+                    " died by poison",
+                    " succumbed to poison",
+                    " withered from poison",
+                    " was overcome by toxins"
+                ]
+            },
+            "fallback": [
+                " died",
+                " perished",
+                " met their end"
+            ],
+            "command": [
+                " died by the will of the goddess",
+                " killed by an eternal existence",
+                " was smitten by higher powers",
+                " was ended by a command"
+            ],
+            "drowning": [
+                " drowned",
+                " ran out of air",
+                " sank beneath the waves",
+                " couldn't keep afloat"
+            ],
+            "suffocation": [
+                " failed to breath",
+                " couldn't breathe",
+                " was buried alive",
+                " suffocated"
+            ],
+            "environment": [
+                " was killed by environment",
+                " was claimed by the elements",
+                " met the environment",
+                " was consumed by nature"
+            ],
+            "fall": [
+                " land to hard",
+                " tried to defeat gravity",
+                " hit ground way to hard",
+                " fell too far",
+                " forgot how to land",
+                " cratered"
+            ],
+            "outOfWorld": [
+                " doesn't want to live anymore",
+                " fell out of world",
+                " slipped into the void",
+                " left the world behind"
+            ],
+            "physical": {
+                "killerAction": [
+                    " killed ",
+                    " eliminated ",
+                    " defeated ",
+                    " took down ",
+                    " slew "
+                ],
+                "killerCause": [
+                    " by ",
+                    " using ",
+                    " with ",
+                    " through "
+                ],
+                "victimCause": [
+                    " was killed by ",
+                    " was defeated by ",
+                    " was taken down by ",
+                    " was slain by "
+                ],
+                "victimDied": [
+                    " died",
+                    " perished",
+                    " met their end"
+                ]
+            }
         },
         "eliteSpawnQueue": {
             "intervalMs": 0.0,

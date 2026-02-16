@@ -1,6 +1,7 @@
 package ascendant.core;
 
 import ascendant.core.adapter.KillFeedAdapter;
+import ascendant.core.adapter.KillFeedTierTagHandler;
 import ascendant.core.adapter.NotificationsAdapter;
 import ascendant.core.commands.debug.ClearAllEntityCommand;
 import ascendant.core.commands.debug.ClearDroppedItemsCommand;
@@ -10,6 +11,7 @@ import ascendant.core.commands.debug.SetTierLowestCommand;
 import ascendant.core.commands.debug.SpawnWraithCommand;
 import ascendant.core.commands.TierSelectCommand;
 import ascendant.core.commands.debug.TestAttackToggleCommand;
+import ascendant.core.commands.debug.TestDamageToggleCommand;
 import ascendant.core.config.DifficultyConfig;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultySettings;
@@ -52,6 +54,8 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
             this.getCommandRegistry().registerCommand(
                     new TestAttackToggleCommand("test_attack", "Toggle debug max attack damage", "ascendant.debug.test_attack"));
             this.getCommandRegistry().registerCommand(
+                    new TestDamageToggleCommand("test_damage", "Toggle debug max incoming damage", "ascendant.debug.test_damage"));
+            this.getCommandRegistry().registerCommand(
                     new SpawnWraithCommand("spawn_wraith", "Spawn a Wraith (debug)", "ascendant.debug.spawn_wraith"));
             this.getCommandRegistry().registerCommand(
                     new SetTierLowestCommand("tier_lowest", "Set tier to lowest (debug)", "ascendant.debug.tier_lowest"));
@@ -89,6 +93,9 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         NotificationsAdapter.register();
         // KillFeed adapter PACKET_ID = 213;
         KillFeedAdapter.register();
+        this.getEntityStoreRegistry().registerSystem(new KillFeedTierTagHandler.KillerSystem());
+        this.getEntityStoreRegistry().registerSystem(new KillFeedTierTagHandler.DecedentSystem());
+        this.getEntityStoreRegistry().registerSystem(new KillFeedTierTagHandler.DisplaySystem());
     }
 
     private void loadDifficultyConfig() {

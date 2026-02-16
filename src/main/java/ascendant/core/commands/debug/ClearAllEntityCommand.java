@@ -7,7 +7,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.entity.EntityUtils;
-import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -27,8 +26,7 @@ public final class ClearAllEntityCommand extends AbstractPlayerCommand {
         LongAdder removed = new LongAdder();
         store.forEachEntityParallel((index, archetypeChunk, commandBuffer) -> {
             if (!archetypeChunk.getArchetype().contains(Player.getComponentType())) {
-                LivingEntity livingEntity = (LivingEntity) EntityUtils.getEntity(index, archetypeChunk);
-                if(livingEntity != null) {
+                if (EntityUtils.getEntity(index, archetypeChunk) != null) {
                     Ref<EntityStore> ref = archetypeChunk.getReferenceTo(index);
                     if (ref.isValid()) {
                         commandBuffer.removeEntity(ref, RemoveReason.REMOVE);

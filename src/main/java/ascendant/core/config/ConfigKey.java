@@ -1,5 +1,6 @@
 package ascendant.core.config;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class ConfigKey<T> {
@@ -27,6 +28,10 @@ public final class ConfigKey<T> {
 
     public static ConfigKey<Boolean> ofBoolean(String path, boolean defaultValue) {
         return new ConfigKey<>(path, defaultValue, DifficultyConfig::getBoolean);
+    }
+
+    public static ConfigKey<List<String>> ofStringList(String path, List<String> defaultValue) {
+        return new ConfigKey<>(path, defaultValue, DifficultyConfig::getStringList);
     }
 
     public T read(DifficultyConfig config) {

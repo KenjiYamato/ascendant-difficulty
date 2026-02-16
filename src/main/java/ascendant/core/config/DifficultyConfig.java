@@ -8,7 +8,9 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -121,6 +123,44 @@ public final class DifficultyConfig {
 
     public boolean getBoolean(String path, boolean fallback) {
         return get(path).filter(JsonElement::isJsonPrimitive).map(JsonElement::getAsBoolean).orElse(fallback);
+    }
+
+    public List<String> getStringList(String path, List<String> fallback) {
+        List<String> safeFallback = fallback == null ? Collections.emptyList() : fallback;
+        Optional<JsonElement> element = get(path);
+        if (element.isEmpty()) {
+            return safeFallback;
+        }
+
+        JsonElement value = element.get();
+        if (value.isJsonArray()) {
+            List<String> values = new ArrayList<>();
+            for (JsonElement entry : value.getAsJsonArray()) {
+                if (entry == null || !entry.isJsonPrimitive()) {
+                    continue;
+                }
+                try {
+                    String text = entry.getAsString();
+                    if (text != null && !text.isBlank()) {
+                        values.add(text);
+                    }
+                } catch (UnsupportedOperationException ignored) {
+                }
+            }
+            return values.isEmpty() ? safeFallback : values;
+        }
+
+        if (value.isJsonPrimitive()) {
+            try {
+                String text = value.getAsString();
+                if (text != null && !text.isBlank()) {
+                    return List.of(text);
+                }
+            } catch (UnsupportedOperationException ignored) {
+            }
+        }
+
+        return safeFallback;
     }
 
     public JsonObject getSection(String path) {

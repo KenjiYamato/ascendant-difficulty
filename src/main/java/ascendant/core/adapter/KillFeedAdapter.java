@@ -45,7 +45,6 @@ public final class KillFeedAdapter {
             return;
         }
 
-
         if (!_allowDebugLogging) {
             return;
         }
@@ -53,8 +52,8 @@ public final class KillFeedAdapter {
         String killerDebug = FormattedMessageInspector.toDebugString(kf.killer);
         String decedentDebug = FormattedMessageInspector.toDebugString(kf.decedent);
 
-        Logging.info("[KILLFEED LOGGER] killer " + killerDebug);
-        Logging.info("[KILLFEED LOGGER] decedent " + decedentDebug);
-        Logging.info("[KILLFEED LOGGER] icon " + (kf.icon == null ? "null" : kf.icon));
+        Logging.debug("[KILLFEED LOGGER] killer " + killerDebug);
+        Logging.debug("[KILLFEED LOGGER] decedent " + decedentDebug);
+        Logging.debug("[KILLFEED LOGGER] icon " + (kf.icon == null ? "null" : kf.icon));
     }
 }
