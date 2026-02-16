@@ -15,7 +15,7 @@
 </style>
 <div class="page-overlay">
     <div class="decorated-container" data-hyui-title="{{$title}}" id="tier-container"
-         style="anchor-width: 1190; anchor-height: 600;">
+         style="anchor-width: 1210; anchor-height: {{#if !eliteSpawn}}600{{/if}}{{#if eliteSpawn}}700{{/if}};">
         <!-- Content Area -->
         <div style="background-color: #1a1a2e(0.95); anchor: 0; padding: 20; flex-direction: row;">
             <div style="flex-weight: 1; padding: 15; background-color: #16213e(0.5); flex-direction: row;">
@@ -29,9 +29,18 @@
 
                 <div style="background-color: #1a1a2e(0.95); anchor: 0; padding: 20; flex-direction: column;">
                     <div style="flex-weight: 1; padding: 15; background-color: #16213e(0.5); flex-direction: column;">
-
                         <div style="flex-direction: column;">
-                            <p style="color:#ffffff; font-size: 22">Select your desired Difficulty</p>
+                            <div style="flex-direction: row;">
+                                <p style="color:#ffffff; font-size: 22">Select your desired Difficulty</p>
+                                <button class="small-secondary-button" id="toggleBadgeVisibility"
+                                        style="anchor-left: 591; anchor-width: 128; anchor-height: 32;">
+                                    {{#if badgeVisible}}Badge{{/if}}{{#if !badgeVisible}}No Badge{{/if}}
+                                </button>
+                                <button class="small-secondary-button" id="toggleTierValuesFormat"
+                                        style="anchor-left: 10; anchor-width: 64; anchor-height: 32; font-size: 12;">
+                                    {{#if tierValuesAsPercent}}%{{/if}}{{#if !tierValuesAsPercent}}x1{{/if}}
+                                </button>
+                            </div>
                             <div style="flex-direction: row;">
                                 {{#each difficulty-tiers}}
                                 <div data-hyui-default-bg="{{#if !isAllowed}}@TierBackgroundDisabled{{/if}}"
@@ -40,20 +49,30 @@
                                             data-hyui-hovered-bg="@TierBackgroundHovered"
                                             data-hyui-pressed-bg="@TierBackgroundPressed"
                                             id="tier-button-{{$tierId}}"
-                                            style=" padding:6px; anchor-width: 260; anchor-height: 450;">
+                                            style="padding:6px; anchor-width: 260; anchor-height: {{#if !eliteSpawn}}450{{/if}}{{#if eliteSpawn}}550{{/if}};">
                                         <div style="flex-direction: column;">
                                             <div style="background-color: #2a2a3e; anchor-width: 260; padding:3px; align-items: center; justify-content: center">
                                                 <div style="background-image:url('{{$imagePath}}'); anchor-width: 248; anchor-height: 248;"></div>
                                             </div>
                                             <p>Tier details:</p>
                                             <p style="color:#ffffff">Difficulty: {{$displayName}}</p>
-                                            <p style="color:#e74c3c">Health: {{$maxHealth}}</p>
-                                            <p style="color:#e67e22">Damage: {{$baseDamage}}</p>
-                                            <p style="color:#95a5a6">Armor: {{$armor}}</p>
-                                            <p style="color:#f1c40f">XP/Cash: {{$xp}}/{{$cash}}</p>
-                                            <p style="color:#1abc9c">Drop-Rate: {{$dropRate}}</p>
-                                            <p style="color:#3498db">Drop-Amount: {{$dropQuantity}}</p>
-                                            <p style="color:#9b59b6">Drop-Quality: {{$dropQuality}}</p>
+                                            <p style="color:#e74c3c">Health: {{$maxHealth}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#e67e22">Damage: {{$baseDamage}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#95a5a6">Armor: {{$armor}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#f1c40f">XP/Cash: {{$xp}}{{#if tierValuesAsPercent}}%{{/if}}/{{$cash}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#1abc9c">Drop-Rate: {{$dropRate}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#3498db">Drop-Amount: {{$dropQuantity}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#9b59b6">Drop-Quality: {{$dropQuality}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+
+                                            {{#if eliteSpawn}}
+                                            <div style="anchor-height: 1; anchor-width: 200; padding:3px; anchor-top:6;
+                                            anchor-bottom: 6;align-items: center; justify-content: center; background-color: #e67e2222;"></div>
+                                            <p style="color:#8e44ad;">Elite spawn chance: {{$eliteMobsChance}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#27ae60">Uncommon: {{$eliteMobsChanceUncommon}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#2980B9">Rare: {{$eliteMobsChanceRare}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#e67e22">Legendary: {{$eliteMobsChanceLegendary}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            {{/if}}
+
                                             {{#if currentTierId == tierId}}
                                             <div style="border:2px solid #95a5a677; background-color: #e67e2277; anchor-width: 260; anchor-top: 8; padding:6px; align-items: center; justify-content: center">
                                                 <p style="text-align:center;">Currently selected</p>
@@ -74,7 +93,7 @@
                     </div>
                 </div>
 
-                <div style="anchor-width: 36; anchor-height: 210; margin-right: 8;">
+                <div style="anchor-width: 36; anchor-height: 210; margin-left: 8;">
                     <button class="small-secondary-button" id="tierNext"
                             style="anchor-width: 36; anchor-height: 210; {{#if pageIndex>=pageIndexMax}}visibility:hidden;{{/if}}{{#if pageIndex<pageIndexMax}}visibility:shown;{{/if}}">
                         >

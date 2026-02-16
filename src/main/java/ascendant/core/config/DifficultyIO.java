@@ -26,6 +26,7 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = "base.allow.difficultyChangeInCombat";
     public static final String PATH_ALLOW_BADGE = "base.allow.uiBadge";
     public static final String PATH_UI_BADGE_START_DELAY_MS = "base.uiBadgeStartDelayMs";
+    public static final String PATH_UI_TIER_VALUES_AS_PERCENT = "base.uiTierValuesAsPercent";
     public static final String PATH_DIFFICULTY_CHANGE_COOLDOWN_MS = "base.difficultyChangeCooldownMs";
     public static final String PATH_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS = "base.difficultyChangeCombatTimeoutMs";
     public static final String PATH_MIN_DAMAGE_FACTOR = "base.minDamageFactor";
@@ -132,6 +133,7 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE = true;
     public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = false;
     public static final double DEFAULT_UI_BADGE_START_DELAY_MS = 0.0;
+    public static final boolean DEFAULT_UI_TIER_VALUES_AS_PERCENT = true;
     public static final double DEFAULT_DIFFICULTY_CHANGE_COOLDOWN_MS = 0.0;
     public static final double DEFAULT_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS = 10000.0;
     public static final double DEFAULT_MIN_DAMAGE_FACTOR = 0.001;
@@ -211,6 +213,8 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_BADGE, DEFAULT_ALLOW_BADGE);
     public static final ConfigKey<Double> UI_BADGE_START_DELAY_MS =
             ConfigKey.ofDouble(PATH_UI_BADGE_START_DELAY_MS, DEFAULT_UI_BADGE_START_DELAY_MS);
+    public static final ConfigKey<Boolean> UI_TIER_VALUES_AS_PERCENT =
+            ConfigKey.ofBoolean(PATH_UI_TIER_VALUES_AS_PERCENT, DEFAULT_UI_TIER_VALUES_AS_PERCENT);
     public static final ConfigKey<Double> DIFFICULTY_CHANGE_COOLDOWN_MS =
             ConfigKey.ofDouble(PATH_DIFFICULTY_CHANGE_COOLDOWN_MS, DEFAULT_DIFFICULTY_CHANGE_COOLDOWN_MS);
     public static final ConfigKey<Double> DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS =

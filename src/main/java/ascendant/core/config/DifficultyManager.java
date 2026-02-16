@@ -17,6 +17,7 @@ public final class DifficultyManager {
     private static final Map<UUID, PlayerSettings> playerSettings = new ConcurrentHashMap<>();
     private static final String PLAYER_SETTING_DIFFICULTY = "difficulty";
     private static final String PLAYER_SETTING_SHOW_BADGE = "showBadge";
+    private static final String PLAYER_SETTING_SHOW_TIER_VALUES_AS_PERCENT = "showTierValuesAsPercent";
     private static final boolean DEFAULT_SHOW_BADGE = true;
     private static volatile boolean initialized = false;
     private static DifficultyConfig config;
@@ -92,7 +93,7 @@ public final class DifficultyManager {
             return;
         }
         PlayerSettings current = getPlayerSettings(playerUuid);
-        PlayerSettings updated = new PlayerSettings(tierId, current.showBadge());
+        PlayerSettings updated = new PlayerSettings(tierId, current.showBadge(), current.showTierValuesAsPercent());
         savePlayerSettings(playerUuid, updated);
     }
 
@@ -101,7 +102,7 @@ public final class DifficultyManager {
         Objects.requireNonNull(playerUuid, "playerUuid");
         ensureInitialized();
         PlayerSettings current = getPlayerSettings(playerUuid);
-        PlayerSettings updated = new PlayerSettings(null, current.showBadge());
+        PlayerSettings updated = new PlayerSettings(null, current.showBadge(), current.showTierValuesAsPercent());
         savePlayerSettings(playerUuid, updated);
     }
 
@@ -129,7 +130,23 @@ public final class DifficultyManager {
         ensureInitialized();
         PlayerSettings current = getPlayerSettings(playerUuid);
         boolean newValue = !current.showBadge();
-        savePlayerSettings(playerUuid, new PlayerSettings(current.difficultyOverride(), newValue));
+        savePlayerSettings(playerUuid, new PlayerSettings(current.difficultyOverride(), newValue, current.showTierValuesAsPercent()));
+        return newValue;
+    }
+
+    public static boolean isTierValuesAsPercent(UUID playerUuid) {
+        Objects.requireNonNull(playerUuid, "playerUuid");
+        ensureInitialized();
+        PlayerSettings settings = playerSettings.get(playerUuid);
+        return settings == null ? defaultShowTierValuesAsPercent() : settings.showTierValuesAsPercent();
+    }
+
+    public static boolean togglePlayerTierValuesAsPercent(UUID playerUuid) {
+        Objects.requireNonNull(playerUuid, "playerUuid");
+        ensureInitialized();
+        PlayerSettings current = getPlayerSettings(playerUuid);
+        boolean newValue = !current.showTierValuesAsPercent();
+        savePlayerSettings(playerUuid, new PlayerSettings(current.difficultyOverride(), current.showBadge(), newValue));
         return newValue;
     }
 
@@ -178,6 +195,14 @@ public final class DifficultyManager {
         return DifficultyIO.DEFAULT_BASE_DIFFICULTY;
     }
 
+    private static boolean defaultShowTierValuesAsPercent() {
+        DifficultyConfig currentConfig = config;
+        if (currentConfig == null) {
+            return DifficultyIO.DEFAULT_UI_TIER_VALUES_AS_PERCENT;
+        }
+        return DifficultyIO.UI_TIER_VALUES_AS_PERCENT.read(currentConfig);
+    }
+
     private static void loadPlayerSettings() {
         playerSettings.clear();
         boolean loaded = loadPlayerSettingsFromPath(DifficultyIO.PLAYER_SETTINGS_PATH);
@@ -213,8 +238,12 @@ public final class DifficultyManager {
                 }
                 if (value.isJsonPrimitive()) {
                     needsSave = true;
-                } else if (value.isJsonObject() && !value.getAsJsonObject().has(PLAYER_SETTING_SHOW_BADGE)) {
-                    needsSave = true;
+                } else if (value.isJsonObject()) {
+                    JsonObject settingsObject = value.getAsJsonObject();
+                    if (!settingsObject.has(PLAYER_SETTING_SHOW_BADGE)
+                            || !settingsObject.has(PLAYER_SETTING_SHOW_TIER_VALUES_AS_PERCENT)) {
+                        needsSave = true;
+                    }
                 }
                 PlayerSettings settings = parsePlayerSettings(value);
                 if (settings == null) {
@@ -242,7 +271,7 @@ public final class DifficultyManager {
             if (!isValidTier(tier)) {
                 return null;
             }
-            return new PlayerSettings(tier, DEFAULT_SHOW_BADGE);
+            return new PlayerSettings(tier, DEFAULT_SHOW_BADGE, defaultShowTierValuesAsPercent());
         }
         if (!value.isJsonObject()) {
             return null;
@@ -264,7 +293,15 @@ public final class DifficultyManager {
             } catch (UnsupportedOperationException ignored) {
             }
         }
-        return new PlayerSettings(difficulty, showBadge);
+        boolean showTierValuesAsPercent = defaultShowTierValuesAsPercent();
+        JsonElement showTierValuesElement = obj.get(PLAYER_SETTING_SHOW_TIER_VALUES_AS_PERCENT);
+        if (showTierValuesElement != null && showTierValuesElement.isJsonPrimitive()) {
+            try {
+                showTierValuesAsPercent = showTierValuesElement.getAsBoolean();
+            } catch (UnsupportedOperationException ignored) {
+            }
+        }
+        return new PlayerSettings(difficulty, showBadge, showTierValuesAsPercent);
     }
 
     private static PlayerSettings getPlayerSettings(UUID playerUuid) {
@@ -272,7 +309,7 @@ public final class DifficultyManager {
         if (existing != null) {
             return existing;
         }
-        return new PlayerSettings(null, DEFAULT_SHOW_BADGE);
+        return new PlayerSettings(null, DEFAULT_SHOW_BADGE, defaultShowTierValuesAsPercent());
     }
 
     private static void savePlayerSettings(UUID playerUuid, PlayerSettings settings) {
@@ -285,7 +322,9 @@ public final class DifficultyManager {
     }
 
     private static boolean shouldStore(PlayerSettings settings) {
-        return settings.difficultyOverride() != null || settings.showBadge() != DEFAULT_SHOW_BADGE;
+        return settings.difficultyOverride() != null
+                || settings.showBadge() != DEFAULT_SHOW_BADGE
+                || settings.showTierValuesAsPercent() != defaultShowTierValuesAsPercent();
     }
 
     private static void savePlayerSettings() {
@@ -302,6 +341,7 @@ public final class DifficultyManager {
                     playerNode.addProperty(PLAYER_SETTING_DIFFICULTY, settings.difficultyOverride());
                 }
                 playerNode.addProperty(PLAYER_SETTING_SHOW_BADGE, settings.showBadge());
+                playerNode.addProperty(PLAYER_SETTING_SHOW_TIER_VALUES_AS_PERCENT, settings.showTierValuesAsPercent());
                 root.add(entry.getKey().toString(), playerNode);
             }
             Files.writeString(DifficultyIO.PLAYER_SETTINGS_PATH, GSON.toJson(root), StandardCharsets.UTF_8);
@@ -310,6 +350,6 @@ public final class DifficultyManager {
         }
     }
 
-    private record PlayerSettings(String difficultyOverride, boolean showBadge) {
+    private record PlayerSettings(String difficultyOverride, boolean showBadge, boolean showTierValuesAsPercent) {
     }
 }

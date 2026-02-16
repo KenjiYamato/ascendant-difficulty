@@ -32,11 +32,14 @@ public class TierSelect {
     private static final int TIERS_PER_PAGE = 4;
     private static final Map<UUID, Integer> pageIndexByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> lastDifficultyChangeByPlayer = new ConcurrentHashMap<>();
+    private static final boolean _allowEliteSpawnModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_ELITE_SPAWN_MODIFIER);
 
     public static void openOrUpdateUi(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         TemplateProcessor template = new TemplateProcessor();
         List<String> tierIds = visibleTierIds();
         String currentTierId = DifficultyManager.getDifficulty(playerUuid);
+        boolean showTierValuesAsPercent = DifficultyManager.isTierValuesAsPercent(playerUuid);
+        boolean showBadge = DifficultyManager.isBadgeVisible(playerUuid);
         int pageIndex = pageIndexByPlayer.getOrDefault(playerUuid, 0);
         int maxPage = Math.max(0, (tierIds.size() - 1) / TIERS_PER_PAGE);
         if (pageIndex > maxPage) {
@@ -44,9 +47,12 @@ public class TierSelect {
             pageIndexByPlayer.put(playerUuid, pageIndex);
         }
 
-        List<DifficultyTier> tiersPage = buildDifficultyTiersPage(tierIds, pageIndex);
+        List<DifficultyTier> tiersPage = buildDifficultyTiersPage(tierIds, pageIndex, showTierValuesAsPercent);
         template.setVariable("difficulty-tiers", tiersPage)
                 .setVariable("currentTierId", currentTierId)
+                .setVariable("eliteSpawn", _allowEliteSpawnModifier)
+                .setVariable("tierValuesAsPercent", showTierValuesAsPercent)
+                .setVariable("badgeVisible", showBadge)
                 .setVariable("pageIndex", pageIndex)
                 .setVariable("pageIndexMax", maxPage);
 
@@ -62,7 +68,10 @@ public class TierSelect {
                 currentPage--;
             }
             pageIndexByPlayer.put(playerUuid, currentPage);
-            template.setVariable("difficulty-tiers", buildDifficultyTiersPage(currentTierIds, currentPage));
+            boolean currentShowAsPercent = DifficultyManager.isTierValuesAsPercent(playerUuid);
+            template.setVariable("difficulty-tiers", buildDifficultyTiersPage(currentTierIds, currentPage, currentShowAsPercent));
+            template.setVariable("tierValuesAsPercent", currentShowAsPercent);
+            template.setVariable("badgeVisible", DifficultyManager.isBadgeVisible(playerUuid));
             openOrUpdateUi(playerRef, store, playerUuid, commandContext);
         });
 
@@ -74,7 +83,32 @@ public class TierSelect {
                 currentPage++;
             }
             pageIndexByPlayer.put(playerUuid, currentPage);
-            template.setVariable("difficulty-tiers", buildDifficultyTiersPage(currentTierIds, currentPage));
+            boolean currentShowAsPercent = DifficultyManager.isTierValuesAsPercent(playerUuid);
+            template.setVariable("difficulty-tiers", buildDifficultyTiersPage(currentTierIds, currentPage, currentShowAsPercent));
+            template.setVariable("tierValuesAsPercent", currentShowAsPercent);
+            template.setVariable("badgeVisible", DifficultyManager.isBadgeVisible(playerUuid));
+            openOrUpdateUi(playerRef, store, playerUuid, commandContext);
+        });
+
+        builder.addEventListener("toggleTierValuesFormat", CustomUIEventBindingType.Activating, (ignored, _) -> {
+            boolean newValue = DifficultyManager.togglePlayerTierValuesAsPercent(playerUuid);
+            List<String> currentTierIds = visibleTierIds();
+            int currentPage = pageIndexByPlayer.getOrDefault(playerUuid, 0);
+            template.setVariable("difficulty-tiers", buildDifficultyTiersPage(currentTierIds, currentPage, newValue));
+            template.setVariable("tierValuesAsPercent", newValue);
+            template.setVariable("badgeVisible", DifficultyManager.isBadgeVisible(playerUuid));
+            openOrUpdateUi(playerRef, store, playerUuid, commandContext);
+        });
+
+        builder.addEventListener("toggleBadgeVisibility", CustomUIEventBindingType.Activating, (ignored, _) -> {
+            boolean newValue = DifficultyManager.togglePlayerBadgeVisibility(playerUuid);
+            DifficultyBadge.updateForPlayer(playerRef);
+            List<String> currentTierIds = visibleTierIds();
+            int currentPage = pageIndexByPlayer.getOrDefault(playerUuid, 0);
+            boolean currentShowAsPercent = DifficultyManager.isTierValuesAsPercent(playerUuid);
+            template.setVariable("difficulty-tiers", buildDifficultyTiersPage(currentTierIds, currentPage, currentShowAsPercent));
+            template.setVariable("tierValuesAsPercent", currentShowAsPercent);
+            template.setVariable("badgeVisible", newValue);
             openOrUpdateUi(playerRef, store, playerUuid, commandContext);
         });
 
@@ -123,7 +157,7 @@ public class TierSelect {
         builder.open(store);
     }
 
-    private static List<DifficultyTier> buildDifficultyTiersPage(List<String> tierIds, int pageIndex) {
+    private static List<DifficultyTier> buildDifficultyTiersPage(List<String> tierIds, int pageIndex, boolean showTierValuesAsPercent) {
         int from = Math.max(0, pageIndex * TIERS_PER_PAGE);
         int to = Math.min(tierIds.size(), from + TIERS_PER_PAGE);
 
@@ -153,22 +187,30 @@ public class TierSelect {
                     meta.description(),
                     meta.imagePath(),
                     meta.iconPath(),
-                    maxHealth,
-                    baseDamage,
-                    armor,
-                    dropRate,
-                    dropQuantity,
-                    dropQuality,
-                    xp,
-                    cash,
-                    eliteMobsChance,
-                    eliteMobsChanceUncommon,
-                    eliteMobsChanceRare,
-                    eliteMobsChanceLegendary,
+                    formatTierValue(maxHealth, showTierValuesAsPercent),
+                    formatTierValue(baseDamage, showTierValuesAsPercent),
+                    formatTierValue(armor, showTierValuesAsPercent),
+                    formatTierValue(dropRate, showTierValuesAsPercent),
+                    formatTierValue(dropQuantity, showTierValuesAsPercent),
+                    formatTierValue(dropQuality, showTierValuesAsPercent),
+                    formatTierValue(xp, showTierValuesAsPercent),
+                    formatTierValue(cash, showTierValuesAsPercent),
+                    formatTierValue(eliteMobsChance, showTierValuesAsPercent),
+                    formatTierValue(eliteMobsChanceUncommon, showTierValuesAsPercent),
+                    formatTierValue(eliteMobsChanceRare, showTierValuesAsPercent),
+                    formatTierValue(eliteMobsChanceLegendary, showTierValuesAsPercent),
                     isAllowed
             ));
         }
         return tiers;
+    }
+
+    private static double formatTierValue(double value, boolean showAsPercent) {
+        return showAsPercent ? toPercentageRoundedOneDecimal(value) : value;
+    }
+
+    public static double toPercentageRoundedOneDecimal(double _value) {
+        return Math.round(_value * 1000.0) / 10.0;
     }
 
     private static List<String> visibleTierIds() {
