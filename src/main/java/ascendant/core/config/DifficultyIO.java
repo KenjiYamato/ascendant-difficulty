@@ -87,6 +87,36 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_KILLFEED_TIER_CHAT = "base.allow.killFeedTierChat";
     public static final String PATH_ALLOW_CHAT_TIER_TAG = "base.allow.chatTierTag";
     public static final String PATH_ALLOW_SERVERLIST_TIER_TAG = "base.allow.serverListTierTag";
+    public static final String PATH_COMMAND_TIER_SELECT_NAME = "base.commands.tierSelect.name";
+    public static final String PATH_COMMAND_TIER_SELECT_ALIASES = "base.commands.tierSelect.aliases";
+    public static final String PATH_COMMAND_TIER_SELECT_PERMISSION = "base.commands.tierSelect.permission";
+    public static final String PATH_COMMAND_BADGE_TOGGLE_NAME = "base.commands.badgeToggle.name";
+    public static final String PATH_COMMAND_BADGE_TOGGLE_ALIASES = "base.commands.badgeToggle.aliases";
+    public static final String PATH_COMMAND_BADGE_TOGGLE_PERMISSION = "base.commands.badgeToggle.permission";
+    public static final String PATH_COMMAND_RELOAD_NAME = "base.commands.reload.name";
+    public static final String PATH_COMMAND_RELOAD_ALIASES = "base.commands.reload.aliases";
+    public static final String PATH_COMMAND_RELOAD_PERMISSION = "base.commands.reload.permission";
+    public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_NAME = "base.commands.debugClearEntities.name";
+    public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES = "base.commands.debugClearEntities.aliases";
+    public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION = "base.commands.debugClearEntities.permission";
+    public static final String PATH_COMMAND_DEBUG_CLEAR_ITEMS_NAME = "base.commands.debugClearItems.name";
+    public static final String PATH_COMMAND_DEBUG_CLEAR_ITEMS_ALIASES = "base.commands.debugClearItems.aliases";
+    public static final String PATH_COMMAND_DEBUG_CLEAR_ITEMS_PERMISSION = "base.commands.debugClearItems.permission";
+    public static final String PATH_COMMAND_DEBUG_TEST_ATTACK_NAME = "base.commands.debugTestAttack.name";
+    public static final String PATH_COMMAND_DEBUG_TEST_ATTACK_ALIASES = "base.commands.debugTestAttack.aliases";
+    public static final String PATH_COMMAND_DEBUG_TEST_ATTACK_PERMISSION = "base.commands.debugTestAttack.permission";
+    public static final String PATH_COMMAND_DEBUG_TEST_DAMAGE_NAME = "base.commands.debugTestDamage.name";
+    public static final String PATH_COMMAND_DEBUG_TEST_DAMAGE_ALIASES = "base.commands.debugTestDamage.aliases";
+    public static final String PATH_COMMAND_DEBUG_TEST_DAMAGE_PERMISSION = "base.commands.debugTestDamage.permission";
+    public static final String PATH_COMMAND_DEBUG_SPAWN_WRAITH_NAME = "base.commands.debugSpawnWraith.name";
+    public static final String PATH_COMMAND_DEBUG_SPAWN_WRAITH_ALIASES = "base.commands.debugSpawnWraith.aliases";
+    public static final String PATH_COMMAND_DEBUG_SPAWN_WRAITH_PERMISSION = "base.commands.debugSpawnWraith.permission";
+    public static final String PATH_COMMAND_DEBUG_TIER_LOWEST_NAME = "base.commands.debugTierLowest.name";
+    public static final String PATH_COMMAND_DEBUG_TIER_LOWEST_ALIASES = "base.commands.debugTierLowest.aliases";
+    public static final String PATH_COMMAND_DEBUG_TIER_LOWEST_PERMISSION = "base.commands.debugTierLowest.permission";
+    public static final String PATH_COMMAND_DEBUG_TIER_HIGHEST_NAME = "base.commands.debugTierHighest.name";
+    public static final String PATH_COMMAND_DEBUG_TIER_HIGHEST_ALIASES = "base.commands.debugTierHighest.aliases";
+    public static final String PATH_COMMAND_DEBUG_TIER_HIGHEST_PERMISSION = "base.commands.debugTierHighest.permission";
     public static final String PATH_KILLFEED_CHAT_COLOR_PLAYER = "base.killFeedTierChatColors.playerName";
     public static final String PATH_KILLFEED_CHAT_COLOR_MIDDLE = "base.killFeedTierChatColors.middle";
     public static final String PATH_KILLFEED_CHAT_COLOR_CAUSE = "base.killFeedTierChatColors.deathCause";
@@ -214,6 +244,36 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_CHAT = false;
     public static final boolean DEFAULT_ALLOW_CHAT_TIER_TAG = false;
     public static final boolean DEFAULT_ALLOW_SERVERLIST_TIER_TAG = true;
+    public static final String DEFAULT_COMMAND_TIER_SELECT_NAME = "ascendant-difficulty";
+    public static final List<String> DEFAULT_COMMAND_TIER_SELECT_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_TIER_SELECT_PERMISSION = "ascendant.difficulty";
+    public static final String DEFAULT_COMMAND_BADGE_TOGGLE_NAME = "ascendant-difficulty-badge-toggle";
+    public static final List<String> DEFAULT_COMMAND_BADGE_TOGGLE_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_BADGE_TOGGLE_PERMISSION = "ascendant.difficulty";
+    public static final String DEFAULT_COMMAND_RELOAD_NAME = "ascendant-difficulty-reload";
+    public static final List<String> DEFAULT_COMMAND_RELOAD_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_RELOAD_PERMISSION = "ascendant.difficulty.reload";
+    public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_NAME = "ce";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION = "ascendant.debug.clear_entities";
+    public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ITEMS_NAME = "ci";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_CLEAR_ITEMS_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ITEMS_PERMISSION = "ascendant.debug.clear_items";
+    public static final String DEFAULT_COMMAND_DEBUG_TEST_ATTACK_NAME = "test_attack";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_TEST_ATTACK_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_TEST_ATTACK_PERMISSION = "ascendant.debug.test_attack";
+    public static final String DEFAULT_COMMAND_DEBUG_TEST_DAMAGE_NAME = "test_damage";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_TEST_DAMAGE_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_TEST_DAMAGE_PERMISSION = "ascendant.debug.test_damage";
+    public static final String DEFAULT_COMMAND_DEBUG_SPAWN_WRAITH_NAME = "spawn_wraith";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_SPAWN_WRAITH_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_SPAWN_WRAITH_PERMISSION = "ascendant.debug.spawn_wraith";
+    public static final String DEFAULT_COMMAND_DEBUG_TIER_LOWEST_NAME = "tier_lowest";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_TIER_LOWEST_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_TIER_LOWEST_PERMISSION = "ascendant.debug.tier_lowest";
+    public static final String DEFAULT_COMMAND_DEBUG_TIER_HIGHEST_NAME = "tier_highest";
+    public static final List<String> DEFAULT_COMMAND_DEBUG_TIER_HIGHEST_ALIASES = List.of();
+    public static final String DEFAULT_COMMAND_DEBUG_TIER_HIGHEST_PERMISSION = "ascendant.debug.tier_highest";
     public static final String DEFAULT_KILLFEED_CHAT_COLOR_PLAYER = "#FFF2A0";
     public static final String DEFAULT_KILLFEED_CHAT_COLOR_MIDDLE = "#FFFFFF";
     public static final String DEFAULT_KILLFEED_CHAT_COLOR_CAUSE = "#FF2A2A";
@@ -387,6 +447,66 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_CHAT_TIER_TAG, DEFAULT_ALLOW_CHAT_TIER_TAG);
     public static final ConfigKey<Boolean> ALLOW_SERVERLIST_TIER_TAG =
             ConfigKey.ofBoolean(PATH_ALLOW_SERVERLIST_TIER_TAG, DEFAULT_ALLOW_SERVERLIST_TIER_TAG);
+    public static final ConfigKey<String> COMMAND_TIER_SELECT_NAME =
+            ConfigKey.ofString(PATH_COMMAND_TIER_SELECT_NAME, DEFAULT_COMMAND_TIER_SELECT_NAME);
+    public static final ConfigKey<List<String>> COMMAND_TIER_SELECT_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_TIER_SELECT_ALIASES, DEFAULT_COMMAND_TIER_SELECT_ALIASES);
+    public static final ConfigKey<String> COMMAND_TIER_SELECT_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_TIER_SELECT_PERMISSION, DEFAULT_COMMAND_TIER_SELECT_PERMISSION);
+    public static final ConfigKey<String> COMMAND_BADGE_TOGGLE_NAME =
+            ConfigKey.ofString(PATH_COMMAND_BADGE_TOGGLE_NAME, DEFAULT_COMMAND_BADGE_TOGGLE_NAME);
+    public static final ConfigKey<List<String>> COMMAND_BADGE_TOGGLE_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_BADGE_TOGGLE_ALIASES, DEFAULT_COMMAND_BADGE_TOGGLE_ALIASES);
+    public static final ConfigKey<String> COMMAND_BADGE_TOGGLE_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_BADGE_TOGGLE_PERMISSION, DEFAULT_COMMAND_BADGE_TOGGLE_PERMISSION);
+    public static final ConfigKey<String> COMMAND_RELOAD_NAME =
+            ConfigKey.ofString(PATH_COMMAND_RELOAD_NAME, DEFAULT_COMMAND_RELOAD_NAME);
+    public static final ConfigKey<List<String>> COMMAND_RELOAD_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_RELOAD_ALIASES, DEFAULT_COMMAND_RELOAD_ALIASES);
+    public static final ConfigKey<String> COMMAND_RELOAD_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_RELOAD_PERMISSION, DEFAULT_COMMAND_RELOAD_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_CLEAR_ENTITIES_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_CLEAR_ENTITIES_NAME, DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES, DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION, DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_CLEAR_ITEMS_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_CLEAR_ITEMS_NAME, DEFAULT_COMMAND_DEBUG_CLEAR_ITEMS_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_CLEAR_ITEMS_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_CLEAR_ITEMS_ALIASES, DEFAULT_COMMAND_DEBUG_CLEAR_ITEMS_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_CLEAR_ITEMS_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_CLEAR_ITEMS_PERMISSION, DEFAULT_COMMAND_DEBUG_CLEAR_ITEMS_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_TEST_ATTACK_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TEST_ATTACK_NAME, DEFAULT_COMMAND_DEBUG_TEST_ATTACK_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_TEST_ATTACK_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_TEST_ATTACK_ALIASES, DEFAULT_COMMAND_DEBUG_TEST_ATTACK_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_TEST_ATTACK_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TEST_ATTACK_PERMISSION, DEFAULT_COMMAND_DEBUG_TEST_ATTACK_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_TEST_DAMAGE_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TEST_DAMAGE_NAME, DEFAULT_COMMAND_DEBUG_TEST_DAMAGE_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_TEST_DAMAGE_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_TEST_DAMAGE_ALIASES, DEFAULT_COMMAND_DEBUG_TEST_DAMAGE_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_TEST_DAMAGE_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TEST_DAMAGE_PERMISSION, DEFAULT_COMMAND_DEBUG_TEST_DAMAGE_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_SPAWN_WRAITH_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_SPAWN_WRAITH_NAME, DEFAULT_COMMAND_DEBUG_SPAWN_WRAITH_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_SPAWN_WRAITH_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_SPAWN_WRAITH_ALIASES, DEFAULT_COMMAND_DEBUG_SPAWN_WRAITH_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_SPAWN_WRAITH_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_SPAWN_WRAITH_PERMISSION, DEFAULT_COMMAND_DEBUG_SPAWN_WRAITH_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_TIER_LOWEST_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TIER_LOWEST_NAME, DEFAULT_COMMAND_DEBUG_TIER_LOWEST_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_TIER_LOWEST_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_TIER_LOWEST_ALIASES, DEFAULT_COMMAND_DEBUG_TIER_LOWEST_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_TIER_LOWEST_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TIER_LOWEST_PERMISSION, DEFAULT_COMMAND_DEBUG_TIER_LOWEST_PERMISSION);
+    public static final ConfigKey<String> COMMAND_DEBUG_TIER_HIGHEST_NAME =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TIER_HIGHEST_NAME, DEFAULT_COMMAND_DEBUG_TIER_HIGHEST_NAME);
+    public static final ConfigKey<List<String>> COMMAND_DEBUG_TIER_HIGHEST_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_DEBUG_TIER_HIGHEST_ALIASES, DEFAULT_COMMAND_DEBUG_TIER_HIGHEST_ALIASES);
+    public static final ConfigKey<String> COMMAND_DEBUG_TIER_HIGHEST_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_DEBUG_TIER_HIGHEST_PERMISSION, DEFAULT_COMMAND_DEBUG_TIER_HIGHEST_PERMISSION);
     public static final ConfigKey<String> KILLFEED_CHAT_COLOR_PLAYER =
             ConfigKey.ofString(PATH_KILLFEED_CHAT_COLOR_PLAYER, DEFAULT_KILLFEED_CHAT_COLOR_PLAYER);
     public static final ConfigKey<String> KILLFEED_CHAT_COLOR_MIDDLE =

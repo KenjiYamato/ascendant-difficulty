@@ -44,6 +44,58 @@
             "debugCommands": true,
             "eliteSpawn": true
         },
+        "commands": {
+            "tierSelect": {
+                "name": "ascendant-difficulty",
+                "aliases": ["ad"],
+                "permission": "ascendant.difficulty"
+            },
+            "badgeToggle": {
+                "name": "ascendant-difficulty-badge-toggle",
+                "aliases": ["adbt"],
+                "permission": "ascendant.difficulty"
+            },
+            "reload": {
+                "name": "ascendant-difficulty-reload",
+                "aliases": ["adr"],
+                "permission": "ascendant.difficulty.reload"
+            },
+            "debugClearEntities": {
+                "name": "clear_entities",
+                "aliases": ["ce"],
+                "permission": "ascendant.debug.clear_entities"
+            },
+            "debugClearItems": {
+                "name": "clear_items",
+                "aliases": ["ci"],
+                "permission": "ascendant.debug.clear_items"
+            },
+            "debugTestAttack": {
+                "name": "test_attack",
+                "aliases": [],
+                "permission": "ascendant.debug.test_attack"
+            },
+            "debugTestDamage": {
+                "name": "test_damage",
+                "aliases": [],
+                "permission": "ascendant.debug.test_damage"
+            },
+            "debugSpawnWraith": {
+                "name": "spawn_wraith",
+                "aliases": [],
+                "permission": "ascendant.debug.spawn_wraith"
+            },
+            "debugTierLowest": {
+                "name": "tier_lowest",
+                "aliases": [],
+                "permission": "ascendant.debug.tier_lowest"
+            },
+            "debugTierHighest": {
+                "name": "tier_highest",
+                "aliases": [],
+                "permission": "ascendant.debug.tier_highest"
+            }
+        },
         "killFeedTierChatColors": {
             "playerName": "#FFF2A0",
             "middle": "#FFFFFF",
