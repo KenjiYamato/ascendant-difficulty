@@ -46,6 +46,82 @@ public final class EliteSpawnQueueTickSystem extends TickingSystem<EntityStore> 
         _maxPerDrain = maxPer <= 0 ? Integer.MAX_VALUE : maxPer;
     }
 
+    private static long toNs(double ms) {
+        if (!Double.isFinite(ms) || ms <= 0.0) {
+            return 0L;
+        }
+        return (long) (ms * 1_000_000.0);
+    }
+
+    private static double clampChance(double v) {
+        if (!Double.isFinite(v) || v <= 0.0) {
+            return 0.0;
+        }
+        return v;
+    }
+
+    private static double clampMultiplier(double v) {
+        if (!Double.isFinite(v)) {
+            return 1.0;
+        }
+        if (v < 0.0) {
+            return 0.0;
+        }
+        return v;
+    }
+
+    private static CommandBuffer<EntityStore> newCommandBuffer(Store<EntityStore> store) {
+        if (COMMAND_BUFFER_CTOR == null) {
+            return null;
+        }
+        try {
+            Object created = COMMAND_BUFFER_CTOR.newInstance(store);
+            @SuppressWarnings("unchecked")
+            CommandBuffer<EntityStore> buffer = (CommandBuffer<EntityStore>) created;
+            return buffer;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static void consume(CommandBuffer<?> buffer) {
+        if (buffer == null || COMMAND_BUFFER_CONSUME == null) {
+            return;
+        }
+        try {
+            COMMAND_BUFFER_CONSUME.invoke(buffer);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static void logTiming(
+            EntityEliteSpawn.SpawnTask task,
+            long rollStartNs,
+            long rollEndNs,
+            double mult,
+            double uncommon,
+            double rare,
+            double legendary,
+            boolean rolled
+    ) {
+        long totalNs = rollEndNs - task.enqueuedAtNs;
+        long queueNs = rollStartNs - task.enqueuedAtNs;
+        long rollNs = rollEndNs - rollStartNs;
+        String msg = String.format(
+                Locale.ROOT,
+                "[ELITEMOBS] onSpawn->roll total=%.3fms queue=%.3fms roll=%.3fms chances(u=%.6f r=%.6f l=%.6f m=%.6f) rolled=%s",
+                totalNs / 1_000_000.0,
+                queueNs / 1_000_000.0,
+                rollNs / 1_000_000.0,
+                uncommon,
+                rare,
+                legendary,
+                mult,
+                rolled
+        );
+        Logging.debug(msg);
+    }
+
     @Override
     public void tick(float dt, int tick, @Nonnull Store<EntityStore> store) {
         if (!_allowEliteSpawnModifier || !_integrationEliteMobs) {
@@ -131,81 +207,5 @@ public final class EliteSpawnQueueTickSystem extends TickingSystem<EntityStore> 
         if (state.queue.isEmpty()) {
             EntityEliteSpawn.cleanupQueueState(store, state);
         }
-    }
-
-    private static long toNs(double ms) {
-        if (!Double.isFinite(ms) || ms <= 0.0) {
-            return 0L;
-        }
-        return (long) (ms * 1_000_000.0);
-    }
-
-    private static double clampChance(double v) {
-        if (!Double.isFinite(v) || v <= 0.0) {
-            return 0.0;
-        }
-        return v;
-    }
-
-    private static double clampMultiplier(double v) {
-        if (!Double.isFinite(v)) {
-            return 1.0;
-        }
-        if (v < 0.0) {
-            return 0.0;
-        }
-        return v;
-    }
-
-    private static CommandBuffer<EntityStore> newCommandBuffer(Store<EntityStore> store) {
-        if (COMMAND_BUFFER_CTOR == null) {
-            return null;
-        }
-        try {
-            Object created = COMMAND_BUFFER_CTOR.newInstance(store);
-            @SuppressWarnings("unchecked")
-            CommandBuffer<EntityStore> buffer = (CommandBuffer<EntityStore>) created;
-            return buffer;
-        } catch (Throwable ignored) {
-            return null;
-        }
-    }
-
-    private static void consume(CommandBuffer<?> buffer) {
-        if (buffer == null || COMMAND_BUFFER_CONSUME == null) {
-            return;
-        }
-        try {
-            COMMAND_BUFFER_CONSUME.invoke(buffer);
-        } catch (Throwable ignored) {
-        }
-    }
-
-    private static void logTiming(
-            EntityEliteSpawn.SpawnTask task,
-            long rollStartNs,
-            long rollEndNs,
-            double mult,
-            double uncommon,
-            double rare,
-            double legendary,
-            boolean rolled
-    ) {
-        long totalNs = rollEndNs - task.enqueuedAtNs;
-        long queueNs = rollStartNs - task.enqueuedAtNs;
-        long rollNs = rollEndNs - rollStartNs;
-        String msg = String.format(
-                Locale.ROOT,
-                "[ELITEMOBS] onSpawn->roll total=%.3fms queue=%.3fms roll=%.3fms chances(u=%.6f r=%.6f l=%.6f m=%.6f) rolled=%s",
-                totalNs / 1_000_000.0,
-                queueNs / 1_000_000.0,
-                rollNs / 1_000_000.0,
-                uncommon,
-                rare,
-                legendary,
-                mult,
-                rolled
-        );
-        Logging.debug(msg);
     }
 }

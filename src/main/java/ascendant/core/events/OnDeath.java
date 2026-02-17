@@ -42,6 +42,9 @@ import java.util.UUID;
 
 public class OnDeath extends DeathSystems.OnDeathSystem {
 
+    @Nonnull
+    private static final Query<EntityStore> QUERY =
+            Query.and(new Query[]{DeathComponent.getComponentType(), Query.not(Player.getComponentType())});
     private final float _minDamageFactor;
 
     public OnDeath() {
@@ -49,9 +52,75 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
         _minDamageFactor = (float) minDamageFactor;
     }
 
-    @Nonnull
-    private static final Query<EntityStore> QUERY =
-            Query.and(new Query[]{DeathComponent.getComponentType(), Query.not(Player.getComponentType())});
+    private static long _calculateXpRewardHardDownscaled(double _finalFactor, int _level) {
+        if (!Double.isFinite(_finalFactor) || _finalFactor <= 0.0) {
+            return 0L;
+        }
+
+        int safeLevel = Math.max(1, _level);
+
+        double downScale = RuntimeSettings.customLevelingDownscaleBase()
+                + Math.pow(safeLevel, RuntimeSettings.customLevelingDownscaleLevelExponent())
+                * RuntimeSettings.customLevelingDownscaleLevelMultiplier();
+        double xp = _finalFactor / downScale;
+
+        if (!Double.isFinite(xp) || xp <= 0.0) {
+            return 0L;
+        }
+
+        return Math.max(0L, Math.round(xp));
+    }
+
+    private static float _statMax(@Nonnull EntityStatMap map, int stat) {
+        EntityStatValue v = map.get(stat);
+        return v != null ? v.getMax() : 0.0f;
+    }
+
+    private static double _applyAttitudeMultiplier(double _f, float _attitudeScore) {
+        double m = 1.0;
+
+        if (_attitudeScore <= RuntimeSettings.customLevelingAttitudeThresholdLow()) {
+            m = RuntimeSettings.customLevelingAttitudeMultiplierLow();
+        } else if (_attitudeScore <= RuntimeSettings.customLevelingAttitudeThresholdMid()) {
+            m = RuntimeSettings.customLevelingAttitudeMultiplierMid();
+        } else if (_attitudeScore >= RuntimeSettings.customLevelingAttitudeThresholdHigh()) {
+            m = RuntimeSettings.customLevelingAttitudeMultiplierHigh();
+        }
+
+        return _f * m;
+    }
+
+    private static long scaleRewardAmount(long amount, double rewardScale) {
+        if (amount <= 0L) {
+            return 0L;
+        }
+        if (!Double.isFinite(rewardScale) || rewardScale <= 0.0) {
+            return 0L;
+        }
+        if (Math.abs(rewardScale - 1.0) < 0.000001) {
+            return amount;
+        }
+        double scaled = (double) amount * rewardScale;
+        if (scaled >= Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
+        }
+        return Math.max(0L, (long) Math.floor(scaled));
+    }
+
+    private static void queueRewardTierOverride(@Nonnull UUID playerUuid, @Nullable String playerTier, @Nullable String spawnTier) {
+        if (spawnTier == null || spawnTier.isBlank() || playerTier == null || playerTier.isBlank()) {
+            return;
+        }
+        if (spawnTier.equals(playerTier)) {
+            return;
+        }
+        String lower = ExperienceAndCashMultiplier.resolveLowerTier(playerTier, spawnTier);
+        if (lower == null || lower.isBlank()) {
+            return;
+        }
+        double scale = ExperienceAndCashMultiplier.computeTierMismatchScale(playerTier, spawnTier);
+        ExperienceAndCashMultiplier.queueRewardTierOverride(playerUuid, lower, scale);
+    }
 
     @Nonnull
     @Override
@@ -206,12 +275,6 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
                 Message.translation("commands.levelingcore.gained").param("xp", xpToReward), NotificationStyle.Success);
     }
 
-    public record RoleAndRangeResult(
-            Role role,
-            float range
-    ) {
-    }
-
     private RoleAndRangeResult _getMaxRange(NPCEntity entity) {
         Role role = entity.getRole();
         if (role == null) {
@@ -225,26 +288,6 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
         int maxRange = ranges.length > 0 ? ranges[ranges.length - 1] : 0;
         return new RoleAndRangeResult(role, (float) maxRange);
     }
-
-    private static long _calculateXpRewardHardDownscaled(double _finalFactor, int _level) {
-        if (!Double.isFinite(_finalFactor) || _finalFactor <= 0.0) {
-            return 0L;
-        }
-
-        int safeLevel = Math.max(1, _level);
-
-        double downScale = RuntimeSettings.customLevelingDownscaleBase()
-                + Math.pow(safeLevel, RuntimeSettings.customLevelingDownscaleLevelExponent())
-                * RuntimeSettings.customLevelingDownscaleLevelMultiplier();
-        double xp = _finalFactor / downScale;
-
-        if (!Double.isFinite(xp) || xp <= 0.0) {
-            return 0L;
-        }
-
-        return Math.max(0L, Math.round(xp));
-    }
-
 
     // attacker
     private float _getCalculatedBaseDamage(@Nonnull NPCEntity entity) {
@@ -274,11 +317,6 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
         );
     }
 
-    private static float _statMax(@Nonnull EntityStatMap map, int stat) {
-        EntityStatValue v = map.get(stat);
-        return v != null ? v.getMax() : 0.0f;
-    }
-
     private float _attitudeScore(Role role) {
         if (role == null) {
             return 0;
@@ -289,7 +327,8 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
 
         int base = switch (againstPlayer) {
             case REVERED -> (int) Math.round(RuntimeSettings.customLevelingAttitudePlayerReveredScore());
-            case FRIENDLY, NEUTRAL, IGNORE -> (int) Math.round(RuntimeSettings.customLevelingAttitudePlayerFriendlyScore());
+            case FRIENDLY, NEUTRAL, IGNORE ->
+                    (int) Math.round(RuntimeSettings.customLevelingAttitudePlayerFriendlyScore());
             case HOSTILE -> (int) Math.round(RuntimeSettings.customLevelingAttitudePlayerHostileScore());
             default -> 0;
         };
@@ -301,37 +340,6 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
         return (float) base;
     }
 
-    private static double _applyAttitudeMultiplier(double _f, float _attitudeScore) {
-        double m = 1.0;
-
-        if (_attitudeScore <= RuntimeSettings.customLevelingAttitudeThresholdLow()) {
-            m = RuntimeSettings.customLevelingAttitudeMultiplierLow();
-        } else if (_attitudeScore <= RuntimeSettings.customLevelingAttitudeThresholdMid()) {
-            m = RuntimeSettings.customLevelingAttitudeMultiplierMid();
-        } else if (_attitudeScore >= RuntimeSettings.customLevelingAttitudeThresholdHigh()) {
-            m = RuntimeSettings.customLevelingAttitudeMultiplierHigh();
-        }
-
-        return _f * m;
-    }
-
-    private static long scaleRewardAmount(long amount, double rewardScale) {
-        if (amount <= 0L) {
-            return 0L;
-        }
-        if (!Double.isFinite(rewardScale) || rewardScale <= 0.0) {
-            return 0L;
-        }
-        if (Math.abs(rewardScale - 1.0) < 0.000001) {
-            return amount;
-        }
-        double scaled = (double) amount * rewardScale;
-        if (scaled >= Long.MAX_VALUE) {
-            return Long.MAX_VALUE;
-        }
-        return Math.max(0L, (long) Math.floor(scaled));
-    }
-
     public float applyDamageMultiplier(float damage, float damageMultiplier) {
         float d = Math.max(0.0f, damage);
         float m = Math.max(0.0f, damageMultiplier);
@@ -339,18 +347,9 @@ public class OnDeath extends DeathSystems.OnDeathSystem {
         return Math.max(d * _minDamageFactor, scaled);
     }
 
-    private static void queueRewardTierOverride(@Nonnull UUID playerUuid, @Nullable String playerTier, @Nullable String spawnTier) {
-        if (spawnTier == null || spawnTier.isBlank() || playerTier == null || playerTier.isBlank()) {
-            return;
-        }
-        if (spawnTier.equals(playerTier)) {
-            return;
-        }
-        String lower = ExperienceAndCashMultiplier.resolveLowerTier(playerTier, spawnTier);
-        if (lower == null || lower.isBlank()) {
-            return;
-        }
-        double scale = ExperienceAndCashMultiplier.computeTierMismatchScale(playerTier, spawnTier);
-        ExperienceAndCashMultiplier.queueRewardTierOverride(playerUuid, lower, scale);
+    public record RoleAndRangeResult(
+            Role role,
+            float range
+    ) {
     }
 }

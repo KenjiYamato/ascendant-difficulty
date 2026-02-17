@@ -10,7 +10,7 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 
 ![Game](https://img.shields.io/badge/Game-Hytale-2a2a2a)
 ![Status](https://img.shields.io/badge/Status-Experimental-6b7280)
-![Build](https://img.shields.io/badge/Build-2026.02.06--aa1b071c2-444)
+![Build](https://img.shields.io/badge/Build-2026.02.17--255364b8e-444)
 ![Requires](https://img.shields.io/badge/Requires-HyUI-1f6feb)
 
 
@@ -37,16 +37,19 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 
 - Per-player difficulty tiers with a configurable list (defaults include Ascendant I-XX).
 - Tier selection UI (`/ascendant-difficulty`) with paging; respects `is_hidden` and `is_allowed`.
-- HUD badge for the current tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.uiBadge` is enabled.
+- HUD badge for the current tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.ui.badge` is enabled.
 - Enemy HP scales to the nearest player in range.
 - Spawn tier is stored on mobs and used for reward scaling (configurable).
 - Optional debug nameplate shows the spawn tier on mobs.
 - Incoming damage to players scales by tier; enemy armor reduces player damage dealt.
 - Loot scaling: drop rate, drop quantity, and drop quality per tier, with optional spawn-tier mismatch scaling.
-- EliteMobs spawns are queued and rolled on tick to avoid spawn spikes; optional timing logs via `base.allow.debugLogging`.
+- Spawn count multiplier per tier (supports reductions < 1.0 and extra spawns > 1.0).
+- EliteMobs spawns are queued and rolled on tick to avoid spawn spikes; optional timing logs via `base.allow.debug.logging`.
 - XP and cash multipliers per tier (with cash variance) when integrations are present; optional spawn-tier mismatch scaling.
 - Difficulty change cooldown and combat lock (configurable).
 - Per-player tier overrides and badge visibility are persisted.
+- Tier tags for chat/killfeed/server list with per-tier prefixes.
+- Commands, aliases, and permissions are fully configurable; config reload command included.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -60,7 +63,18 @@ Per-tier drop-ins live in `config/ascendant/difficultys/*.json`.
 Base file (`difficulty.json`) sections:
 
 - `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`, `difficultyChangeCooldownMs`, `difficultyChangeCombatTimeoutMs`, `spawnTierRewardOverFactor`, `spawnTierRewardUnderFactor`, `eliteSpawnQueue`.
-- `base.allow`: feature toggles: `difficultyChange`, `difficultyChangeInCombat`, `uiBadge`, `healthModifier`, `damageModifier`, `damagePhysical`, `damageProjectile`, `damageCommand`, `damageDrowning`, `damageEnvironment`, `damageFall`, `damageOutOfWorld`, `damageSuffocation`, `armorModifier`, `dropModifier`, `xpReward`, `cashReward`, `cashRewardEvenWithPhysical`, `spawnTierReward`, `spawnTierNameplate`, `debugCommands`, `debugLogging`, `eliteSpawn`.
+- `base.allow`: feature toggles grouped by function:
+  - `difficulty`: `change`, `changeInCombat`
+  - `ui`: `badge`
+  - `rewards`: `xp`, `cash`, `cashEvenWithPhysical`, `spawnTierReward`
+  - `modifiers`: `health`, `armor`, `damage`, `drop`
+  - `spawn`: `countMultiplier`, `elite`, `tierNameplate`
+  - `leveling`: `custom`
+  - `damage`: `physical`, `projectile`, `command`, `drowning`, `environment`, `fall`, `outOfWorld`, `suffocation`
+  - `tags`: `killFeedTierTag`, `killFeedTierChat`, `chatTierTag`, `serverListTierTag`
+  - `debug`: `commands`, `logging`
+- Legacy flat keys (e.g. `base.allow.debugCommands`) are still accepted for backward compatibility.
+- `base.commands`: command `name`, `aliases`, and `permission` for tier select, badge toggle, reload, and debug commands.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
 - `base.mmoSkillTree`: MMO SkillTree config: `xpBonusWhitelist`.
 - Default `base.mmoSkillTree.xpBonusWhitelist`: `Swords`, `Daggers`, `Polearms`, `Staves`, `Axes`, `Blunt`, `Archery`, `Unarmed`.
@@ -70,8 +84,8 @@ Drop-in file format (`config/ascendant/difficultys/*.json`):
 
 - `id` (required): tier identifier (used everywhere else, e.g. `very_easy`, `ascendant_III`).
 - `order` (required): numeric sort key for UI order (can be fractional, e.g. `13.5`).
-- `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`, `color`.
-- Tier overrides: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`, `elite_mobs_chance_multiplier` (percent scale), `elite_mobs_chance_uncommon`, `elite_mobs_chance_rare`, `elite_mobs_chance_legendary`.
+- `meta`: UI metadata per tier: `displayName`, `description`, `imagePath`, `iconPath`, `color`, `killFeedPrefix`, `chatPrefix`.
+- Tier overrides: `is_allowed`, `is_hidden`, `health_multiplier`, `damage_multiplier` (optional overrides: `damage_multiplier_physical`, `damage_multiplier_projectile`, `damage_multiplier_command`, `damage_multiplier_drowning`, `damage_multiplier_environment`, `damage_multiplier_fall`, `damage_multiplier_out_of_world`, `damage_multiplier_suffocation`), `armor_multiplier`, `drop_rate_multiplier`, `drop_quantity_multiplier`, `spawn_count_multiplier`, `drop_quality_multiplier`, `xp_multiplier`, `cash_multiplier`, `elite_mobs_chance_multiplier` (percent scale), `elite_mobs_chance_uncommon`, `elite_mobs_chance_rare`, `elite_mobs_chance_legendary`.
 - Missing keys fall back to the base template (defaults to `1.0` for multipliers).
 
 Ordering:
@@ -98,11 +112,18 @@ Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if
 
 ## Command and Permission
 
+All command names, aliases, and permissions are configurable in `base.commands`.
+
+Defaults:
+
 - Command: `/ascendant-difficulty` (open tier selection UI)
 - Command: `/ascendant-difficulty-badge-toggle` (toggle badge visibility)
-- Permission: `ascendant.difficulty` (required for both commands)
+- Command: `/ascendant-difficulty-reload` (reload config)
+- Permission: `ascendant.difficulty` (tier select + badge toggle)
+- Permission: `ascendant.difficulty.reload` (reload)
 
-Debug commands (only registered when `base.allow.debugCommands` is `true`):
+Debug commands (only registered when `base.allow.debug.commands` is `true`):
+Names/aliases/permissions are configurable via `base.commands.*`.
 
 - Command: `/ce` (clear non-player living entities)
 - Permission: `ascendant.debug.clear_entities`

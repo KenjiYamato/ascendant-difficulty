@@ -32,12 +32,6 @@ public final class ExperienceAndCashMultiplier {
     private static final double MIN_REWARD_SCALE = 0.01;
     private static final double MAX_REWARD_SCALE = 100.0;
 
-    public record RewardTierResolution(String tierId, double rewardScale) {
-    }
-
-    private record RewardTierOverride(String tierId, double rewardScale) {
-    }
-
     public ExperienceAndCashMultiplier() {
         initialize();
     }
@@ -446,6 +440,12 @@ public final class ExperienceAndCashMultiplier {
             return DEFAULT_BASE_DIFFICULTY;
         }
         return tierId;
+    }
+
+    public record RewardTierResolution(String tierId, double rewardScale) {
+    }
+
+    private record RewardTierOverride(String tierId, double rewardScale) {
     }
 
     public record MultiplierResult(

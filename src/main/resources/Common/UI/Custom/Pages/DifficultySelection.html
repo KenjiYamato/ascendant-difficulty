@@ -45,7 +45,8 @@
                                 {{#each difficulty-tiers}}
                                 <div data-hyui-default-bg="{{#if !isAllowed}}@TierBackgroundDisabled{{/if}}"
                                      style="flex-direction: column; {{#if !isAllowed}}@TierBackgroundDisabled{{/if}}">
-                                    <button class="custom-button" data-hyui-default-bg="{{#if isAllowed}}{{#if currentTierId == tierId}}@TierBackgroundSelected{{/if}}{{#if currentTierId != tierId}}@TierBackgroundDefault{{/if}}{{else}}@TierBackgroundDisabled{{/if}}"
+                                    <button class="custom-button"
+                                            data-hyui-default-bg="{{#if isAllowed}}{{#if currentTierId == tierId}}@TierBackgroundSelected{{/if}}{{#if currentTierId != tierId}}@TierBackgroundDefault{{/if}}{{else}}@TierBackgroundDisabled{{/if}}"
                                             data-hyui-hovered-bg="@TierBackgroundHovered"
                                             data-hyui-pressed-bg="@TierBackgroundPressed"
                                             id="tier-button-{{$tierId}}"
@@ -56,21 +57,33 @@
                                             </div>
                                             <p>Tier details:</p>
                                             <p style="color:#ffffff">Difficulty: {{$displayName}}</p>
-                                            <p style="color:#e74c3c">Health: {{$maxHealth}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#e67e22">Damage: {{$baseDamage}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#95a5a6">Armor: {{$armor}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#f1c40f">XP/Cash: {{$xp}}{{#if tierValuesAsPercent}}%{{/if}}/{{$cash}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#1abc9c">Drop-Rate: {{$dropRate}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#3498db">Drop-Amount: {{$dropQuantity}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#9b59b6">Drop-Quality: {{$dropQuality}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#e74c3c">Health: {{$maxHealth}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#e67e22">Damage: {{$baseDamage}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#95a5a6">Armor: {{$armor}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#f1c40f">XP/Cash: {{$xp}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}/{{$cash}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#1abc9c">Drop-Rate: {{$dropRate}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#3498db">Drop-Amount: {{$dropQuantity}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#9b59b6">Drop-Quality: {{$dropQuality}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
 
                                             {{#if eliteSpawn}}
                                             <div style="anchor-height: 1; anchor-width: 200; padding:3px; anchor-top:6;
                                             anchor-bottom: 6;align-items: center; justify-content: center; background-color: #e67e2222;"></div>
-                                            <p style="color:#8e44ad;">Elite spawn chance: {{$eliteMobsChance}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#27ae60">Uncommon: {{$eliteMobsChanceUncommon}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#2980B9">Rare: {{$eliteMobsChanceRare}}{{#if tierValuesAsPercent}}%{{/if}}</p>
-                                            <p style="color:#e67e22">Legendary: {{$eliteMobsChanceLegendary}}{{#if tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#8e44ad;">Elite spawn chance: {{$eliteMobsChance}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#27ae60">Uncommon: {{$eliteMobsChanceUncommon}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#2980B9">Rare: {{$eliteMobsChanceRare}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
+                                            <p style="color:#e67e22">Legendary: {{$eliteMobsChanceLegendary}}{{#if
+                                                tierValuesAsPercent}}%{{/if}}</p>
                                             {{/if}}
 
                                             {{#if currentTierId == tierId}}

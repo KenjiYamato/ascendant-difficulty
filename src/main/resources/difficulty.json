@@ -1,249 +1,278 @@
 {
-    "base": {
-        "defaultDifficulty": "normal",
-        "uiBadgeStartDelayMs": 680.0,
-        "uiTierValuesAsPercent": true,
-        "difficultyChangeCooldownMs": 0.0,
-        "difficultyChangeCombatTimeoutMs": 10000.0,
-        "minDamageFactor": 0.001,
-        "playerDistanceRadiusToCheck": 128.0,
-        "healthScalingTolerance": 0.0001,
-        "minHealthScalingFactor": 0.05,
-        "maxHealthScalingFactor": 300.0,
-        "cashVarianceFactor": 0.23,
-        "roundingDigits": 3,
-        "spawnTierRewardOverFactor": 1.05,
-        "spawnTierRewardUnderFactor": 0.4,
-        "allow": {
-            "difficultyChange": true,
-            "difficultyChangeInCombat": false,
-            "uiBadge": true,
-            "cashReward": true,
-            "cashRewardEvenWithPhysical": true,
-            "xpReward": true,
-            "spawnTierReward": true,
-            "customLeveling": true,
-            "healthModifier": true,
-            "damageModifier": true,
-            "damagePhysical": true,
-            "damageProjectile": true,
-            "damageCommand": true,
-            "damageDrowning": true,
-            "damageEnvironment": true,
-            "damageFall": true,
-            "damageOutOfWorld": true,
-            "damageSuffocation": true,
-            "armorModifier": true,
-            "dropModifier": true,
-            "debugLogging": false,
-            "spawnTierNameplate": false,
-            "killFeedTierTag": true,
-            "killFeedTierChat": false,
-            "chatTierTag": false,
-            "serverListTierTag": false,
-            "debugCommands": true,
-            "eliteSpawn": true
-        },
-        "commands": {
-            "tierSelect": {
-                "name": "ascendant-difficulty",
-                "aliases": ["ad"],
-                "permission": "ascendant.difficulty"
-            },
-            "badgeToggle": {
-                "name": "ascendant-difficulty-badge-toggle",
-                "aliases": ["adbt"],
-                "permission": "ascendant.difficulty"
-            },
-            "reload": {
-                "name": "ascendant-difficulty-reload",
-                "aliases": ["adr"],
-                "permission": "ascendant.difficulty.reload"
-            },
-            "debugClearEntities": {
-                "name": "clear_entities",
-                "aliases": ["ce"],
-                "permission": "ascendant.debug.clear_entities"
-            },
-            "debugClearItems": {
-                "name": "clear_items",
-                "aliases": ["ci"],
-                "permission": "ascendant.debug.clear_items"
-            },
-            "debugTestAttack": {
-                "name": "test_attack",
-                "aliases": [],
-                "permission": "ascendant.debug.test_attack"
-            },
-            "debugTestDamage": {
-                "name": "test_damage",
-                "aliases": [],
-                "permission": "ascendant.debug.test_damage"
-            },
-            "debugSpawnWraith": {
-                "name": "spawn_wraith",
-                "aliases": [],
-                "permission": "ascendant.debug.spawn_wraith"
-            },
-            "debugTierLowest": {
-                "name": "tier_lowest",
-                "aliases": [],
-                "permission": "ascendant.debug.tier_lowest"
-            },
-            "debugTierHighest": {
-                "name": "tier_highest",
-                "aliases": [],
-                "permission": "ascendant.debug.tier_highest"
-            }
-        },
-        "killFeedTierChatColors": {
-            "playerName": "#FFF2A0",
-            "middle": "#FFFFFF",
-            "deathCause": "#FF2A2A"
-        },
-        "killFeedTierChatMessages": {
-            "byCauseId": {
-                "fire": [
-                    " burnt to death",
-                    " went up in flames",
-                    " was reduced to ash",
-                    " was consumed by fire"
-                ],
-                "poison": [
-                    " died by poison",
-                    " succumbed to poison",
-                    " withered from poison",
-                    " was overcome by toxins"
-                ]
-            },
-            "fallback": [
-                " died",
-                " perished",
-                " met their end"
-            ],
-            "command": [
-                " died by the will of the goddess",
-                " killed by an eternal existence",
-                " was smitten by higher powers",
-                " was ended by a command"
-            ],
-            "drowning": [
-                " drowned",
-                " ran out of air",
-                " sank beneath the waves",
-                " couldn't keep afloat"
-            ],
-            "suffocation": [
-                " failed to breath",
-                " couldn't breathe",
-                " was buried alive",
-                " suffocated"
-            ],
-            "environment": [
-                " was killed by environment",
-                " was claimed by the elements",
-                " met the environment",
-                " was consumed by nature"
-            ],
-            "fall": [
-                " land to hard",
-                " tried to defeat gravity",
-                " hit ground way to hard",
-                " fell too far",
-                " forgot how to land",
-                " cratered"
-            ],
-            "outOfWorld": [
-                " doesn't want to live anymore",
-                " fell out of world",
-                " slipped into the void",
-                " left the world behind"
-            ],
-            "physical": {
-                "killerAction": [
-                    " killed ",
-                    " eliminated ",
-                    " defeated ",
-                    " took down ",
-                    " slew "
-                ],
-                "killerCause": [
-                    " by ",
-                    " using ",
-                    " with ",
-                    " through "
-                ],
-                "victimCause": [
-                    " was killed by ",
-                    " was defeated by ",
-                    " was taken down by ",
-                    " was slain by "
-                ],
-                "victimDied": [
-                    " died",
-                    " perished",
-                    " met their end"
-                ]
-            }
-        },
-        "eliteSpawnQueue": {
-            "intervalMs": 0.0,
-            "maxPerDrain": 2,
-            "maxDrainMs": 4.0
-        },
-        "customLeveling": {
-            "useMostDamageAttacker": true,
-            "mostDamageAttackerMultiplier": 1.1,
-            "otherAttackerMultiplier": 0.1,
-            "rewardMostDamageAttacker": true,
-            "includeRange": true,
-            "includeDefaultEntityStats": true,
-            "includeScaledDamage": true,
-            "scaledDamageFactor": 4.0,
-            "statsManaMultiplier": 4.0,
-            "statsAmmoMultiplier": 4.0,
-            "statsSignatureEnergyMultiplier": 10.0,
-            "useAttitudeMultiplier": true,
-            "attitude": {
-                "playerReveredScore": -1000.0,
-                "playerFriendlyNeutralIgnoreScore": -500.0,
-                "playerHostileScore": 50.0,
-                "npcHostileBonus": 50.0,
-                "thresholdLow": -900.0,
-                "thresholdMid": -400.0,
-                "thresholdHigh": 50.0,
-                "multiplierLow": 0.05,
-                "multiplierMid": 0.2,
-                "multiplierHigh": 1.1
-            },
-            "downscale": {
-                "base": 12.0,
-                "levelExponent": 0.75,
-                "levelMultiplier": 1.8
-            }
-        },
-        "integrations": {
-            "eliteMobs": true,
-            "ecotale": true,
-            "levelingCore": true,
-            "mmoSkillTree": true
-        },
-        "mmoSkillTree": {
-            "xpBonusWhitelist": [
-                "Swords",
-                "Daggers",
-                "Polearms",
-                "Staves",
-                "Axes",
-                "Blunt",
-                "Archery",
-                "Unarmed"
-            ]
-        },
-        "integrationMultipliers": {
-            "levelingCore": 0.0,
-            "mmoSkillTree": 0.0,
-            "ecotale": 0.0
-        }
-    }
+	"base": {
+		"defaultDifficulty": "normal",
+		"uiBadgeStartDelayMs": 680.0,
+		"uiTierValuesAsPercent": true,
+		"difficultyChangeCooldownMs": 0.0,
+		"difficultyChangeCombatTimeoutMs": 10000.0,
+		"minDamageFactor": 0.001,
+		"playerDistanceRadiusToCheck": 128.0,
+		"healthScalingTolerance": 0.0001,
+		"minHealthScalingFactor": 0.05,
+		"maxHealthScalingFactor": 300.0,
+		"cashVarianceFactor": 0.23,
+		"roundingDigits": 3,
+		"spawnTierRewardOverFactor": 1.05,
+		"spawnTierRewardUnderFactor": 0.4,
+		"allow": {
+			"difficulty": {
+				"change": true,
+				"changeInCombat": false
+			},
+			"ui": {
+				"badge": true
+			},
+			"rewards": {
+				"xp": true,
+				"cash": true,
+				"cashEvenWithPhysical": true,
+				"spawnTierReward": true
+			},
+			"modifiers": {
+				"health": true,
+				"armor": true,
+				"damage": true,
+				"drop": true
+			},
+			"spawn": {
+				"countMultiplier": true,
+				"elite": true,
+				"tierNameplate": false
+			},
+			"leveling": {
+				"custom": true
+			},
+			"damage": {
+				"physical": true,
+				"projectile": true,
+				"command": true,
+				"drowning": true,
+				"environment": true,
+				"fall": true,
+				"outOfWorld": true,
+				"suffocation": true
+			},
+			"tags": {
+				"killFeedTierTag": true,
+				"killFeedTierChat": false,
+				"chatTierTag": false,
+				"serverListTierTag": false
+			},
+			"debug": {
+				"commands": true,
+				"logging": false
+			}
+		},
+		"commands": {
+			"tierSelect": {
+				"name": "ascendant-difficulty",
+				"aliases": [
+					"ad"
+				],
+				"permission": "ascendant.difficulty"
+			},
+			"badgeToggle": {
+				"name": "ascendant-difficulty-badge-toggle",
+				"aliases": [
+					"adbt"
+				],
+				"permission": "ascendant.difficulty"
+			},
+			"reload": {
+				"name": "ascendant-difficulty-reload",
+				"aliases": [
+					"adr"
+				],
+				"permission": "ascendant.difficulty.reload"
+			},
+			"debugClearEntities": {
+				"name": "clear_entities",
+				"aliases": [
+					"ce"
+				],
+				"permission": "ascendant.debug.clear_entities"
+			},
+			"debugClearItems": {
+				"name": "clear_items",
+				"aliases": [
+					"ci"
+				],
+				"permission": "ascendant.debug.clear_items"
+			},
+			"debugTestAttack": {
+				"name": "test_attack",
+				"aliases": [],
+				"permission": "ascendant.debug.test_attack"
+			},
+			"debugTestDamage": {
+				"name": "test_damage",
+				"aliases": [],
+				"permission": "ascendant.debug.test_damage"
+			},
+			"debugSpawnWraith": {
+				"name": "spawn_wraith",
+				"aliases": [],
+				"permission": "ascendant.debug.spawn_wraith"
+			},
+			"debugTierLowest": {
+				"name": "tier_lowest",
+				"aliases": [],
+				"permission": "ascendant.debug.tier_lowest"
+			},
+			"debugTierHighest": {
+				"name": "tier_highest",
+				"aliases": [],
+				"permission": "ascendant.debug.tier_highest"
+			}
+		},
+		"killFeedTierChatColors": {
+			"playerName": "#FFF2A0",
+			"middle": "#FFFFFF",
+			"deathCause": "#FF2A2A"
+		},
+		"killFeedTierChatMessages": {
+			"byCauseId": {
+				"fire": [
+					" burnt to death",
+					" went up in flames",
+					" was reduced to ash",
+					" was consumed by fire"
+				],
+				"poison": [
+					" died by poison",
+					" succumbed to poison",
+					" withered from poison",
+					" was overcome by toxins"
+				]
+			},
+			"fallback": [
+				" died",
+				" perished",
+				" met their end"
+			],
+			"command": [
+				" died by the will of the goddess",
+				" killed by an eternal existence",
+				" was smitten by higher powers",
+				" was ended by a command"
+			],
+			"drowning": [
+				" drowned",
+				" ran out of air",
+				" sank beneath the waves",
+				" couldn't keep afloat"
+			],
+			"suffocation": [
+				" failed to breath",
+				" couldn't breathe",
+				" was buried alive",
+				" suffocated"
+			],
+			"environment": [
+				" was killed by environment",
+				" was claimed by the elements",
+				" met the environment",
+				" was consumed by nature"
+			],
+			"fall": [
+				" land to hard",
+				" tried to defeat gravity",
+				" hit ground way to hard",
+				" fell too far",
+				" forgot how to land",
+				" cratered"
+			],
+			"outOfWorld": [
+				" doesn't want to live anymore",
+				" fell out of world",
+				" slipped into the void",
+				" left the world behind"
+			],
+			"physical": {
+				"killerAction": [
+					" killed ",
+					" eliminated ",
+					" defeated ",
+					" took down ",
+					" slew "
+				],
+				"killerCause": [
+					" by ",
+					" using ",
+					" with ",
+					" through "
+				],
+				"victimCause": [
+					" was killed by ",
+					" was defeated by ",
+					" was taken down by ",
+					" was slain by "
+				],
+				"victimDied": [
+					" died",
+					" perished",
+					" met their end"
+				]
+			}
+		},
+		"eliteSpawnQueue": {
+			"intervalMs": 0.0,
+			"maxPerDrain": 2,
+			"maxDrainMs": 4.0
+		},
+		"customLeveling": {
+			"useMostDamageAttacker": true,
+			"mostDamageAttackerMultiplier": 1.1,
+			"otherAttackerMultiplier": 0.1,
+			"rewardMostDamageAttacker": true,
+			"includeRange": true,
+			"includeDefaultEntityStats": true,
+			"includeScaledDamage": true,
+			"scaledDamageFactor": 4.0,
+			"statsManaMultiplier": 4.0,
+			"statsAmmoMultiplier": 4.0,
+			"statsSignatureEnergyMultiplier": 10.0,
+			"useAttitudeMultiplier": true,
+			"attitude": {
+				"playerReveredScore": -1000.0,
+				"playerFriendlyNeutralIgnoreScore": -500.0,
+				"playerHostileScore": 50.0,
+				"npcHostileBonus": 50.0,
+				"thresholdLow": -900.0,
+				"thresholdMid": -400.0,
+				"thresholdHigh": 50.0,
+				"multiplierLow": 0.05,
+				"multiplierMid": 0.2,
+				"multiplierHigh": 1.1
+			},
+			"downscale": {
+				"base": 12.0,
+				"levelExponent": 0.75,
+				"levelMultiplier": 1.8
+			}
+		},
+		"integrations": {
+			"eliteMobs": true,
+			"ecotale": true,
+			"levelingCore": true,
+			"mmoSkillTree": true
+		},
+		"mmoSkillTree": {
+			"xpBonusWhitelist": [
+				"Swords",
+				"Daggers",
+				"Polearms",
+				"Staves",
+				"Axes",
+				"Blunt",
+				"Archery",
+				"Unarmed"
+			]
+		},
+		"integrationMultipliers": {
+			"levelingCore": 0.0,
+			"mmoSkillTree": 0.0,
+			"ecotale": 0.0
+		}
+	}
 }

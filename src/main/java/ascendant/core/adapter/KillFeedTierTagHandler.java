@@ -28,82 +28,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class KillFeedTierTagHandler {
     private static final String KILLED_BY_KEY = "server.general.killedBy";
 
     private KillFeedTierTagHandler() {
-    }
-
-    public static final class KillerSystem extends EntityEventSystem<EntityStore, KillFeedEvent.KillerMessage> {
-        public KillerSystem() {
-            super(KillFeedEvent.KillerMessage.class);
-        }
-
-        @Override
-        public void handle(int index,
-                           ArchetypeChunk<EntityStore> chunk,
-                           Store<EntityStore> store,
-                           CommandBuffer<EntityStore> commandBuffer,
-                           KillFeedEvent.KillerMessage event) {
-            if (store == null || event == null) {
-                return;
-            }
-            handleKiller(store, chunk.getReferenceTo(index), event);
-        }
-
-        @Override
-        public Query<EntityStore> getQuery() {
-            return Query.any();
-        }
-    }
-
-    public static final class DecedentSystem extends EntityEventSystem<EntityStore, KillFeedEvent.DecedentMessage> {
-        public DecedentSystem() {
-            super(KillFeedEvent.DecedentMessage.class);
-        }
-
-        @Override
-        public void handle(int index,
-                           ArchetypeChunk<EntityStore> chunk,
-                           Store<EntityStore> store,
-                           CommandBuffer<EntityStore> commandBuffer,
-                           KillFeedEvent.DecedentMessage event) {
-            if (store == null || event == null) {
-                return;
-            }
-            handleDecedent(store, chunk.getReferenceTo(index), event);
-        }
-
-        @Override
-        public Query<EntityStore> getQuery() {
-            return Query.any();
-        }
-    }
-
-    public static final class DisplaySystem extends EntityEventSystem<EntityStore, KillFeedEvent.Display> {
-        public DisplaySystem() {
-            super(KillFeedEvent.Display.class);
-        }
-
-        @Override
-        public void handle(int index,
-                           ArchetypeChunk<EntityStore> chunk,
-                           Store<EntityStore> store,
-                           CommandBuffer<EntityStore> commandBuffer,
-                           KillFeedEvent.Display event) {
-            if (store == null || event == null) {
-                return;
-            }
-            handleDisplay(store, commandBuffer, chunk.getReferenceTo(index), event);
-        }
-
-        @Override
-        public Query<EntityStore> getQuery() {
-            return Query.any();
-        }
     }
 
     private static void handleKiller(@Nonnull Store<EntityStore> store,
@@ -476,5 +406,74 @@ public final class KillFeedTierTagHandler {
         }
         universe.sendMessage(chat);
         return true;
+    }
+
+    public static final class KillerSystem extends EntityEventSystem<EntityStore, KillFeedEvent.KillerMessage> {
+        public KillerSystem() {
+            super(KillFeedEvent.KillerMessage.class);
+        }
+
+        @Override
+        public void handle(int index,
+                           ArchetypeChunk<EntityStore> chunk,
+                           Store<EntityStore> store,
+                           CommandBuffer<EntityStore> commandBuffer,
+                           KillFeedEvent.KillerMessage event) {
+            if (store == null || event == null) {
+                return;
+            }
+            handleKiller(store, chunk.getReferenceTo(index), event);
+        }
+
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.any();
+        }
+    }
+
+    public static final class DecedentSystem extends EntityEventSystem<EntityStore, KillFeedEvent.DecedentMessage> {
+        public DecedentSystem() {
+            super(KillFeedEvent.DecedentMessage.class);
+        }
+
+        @Override
+        public void handle(int index,
+                           ArchetypeChunk<EntityStore> chunk,
+                           Store<EntityStore> store,
+                           CommandBuffer<EntityStore> commandBuffer,
+                           KillFeedEvent.DecedentMessage event) {
+            if (store == null || event == null) {
+                return;
+            }
+            handleDecedent(store, chunk.getReferenceTo(index), event);
+        }
+
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.any();
+        }
+    }
+
+    public static final class DisplaySystem extends EntityEventSystem<EntityStore, KillFeedEvent.Display> {
+        public DisplaySystem() {
+            super(KillFeedEvent.Display.class);
+        }
+
+        @Override
+        public void handle(int index,
+                           ArchetypeChunk<EntityStore> chunk,
+                           Store<EntityStore> store,
+                           CommandBuffer<EntityStore> commandBuffer,
+                           KillFeedEvent.Display event) {
+            if (store == null || event == null) {
+                return;
+            }
+            handleDisplay(store, commandBuffer, chunk.getReferenceTo(index), event);
+        }
+
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.any();
+        }
     }
 }

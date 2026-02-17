@@ -57,18 +57,6 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         _allowArmorModifier = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_ARMOR_MODIFIER);
     }
 
-    @Nonnull
-    @Override
-    public Set<Dependency<EntityStore>> getDependencies() {
-        return _dependencies;
-    }
-
-    @Nonnull
-    @Override
-    public Query<EntityStore> getQuery() {
-        return AllLegacyLivingEntityTypesQuery.INSTANCE;
-    }
-
     public static boolean toggleDebugMaxAttack(@Nonnull UUID playerUuid) {
         Boolean current = DEBUG_MAX_ATTACK.get(playerUuid);
         boolean next = current == null || !current;
@@ -85,6 +73,17 @@ public final class EntityDamageReceiveMultiplier extends DamageEventSystem {
         return enabled != null && enabled;
     }
 
+    @Nonnull
+    @Override
+    public Set<Dependency<EntityStore>> getDependencies() {
+        return _dependencies;
+    }
+
+    @Nonnull
+    @Override
+    public Query<EntityStore> getQuery() {
+        return AllLegacyLivingEntityTypesQuery.INSTANCE;
+    }
 
     //public static class ArmorDamageReduction/ DamageArmor
     @Override

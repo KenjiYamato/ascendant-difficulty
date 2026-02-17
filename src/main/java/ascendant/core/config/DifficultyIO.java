@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.Reader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,9 +23,9 @@ public final class DifficultyIO {
     public static final Path NPC_ROLES_PATH = Path.of("config", "ascendant", "npc_roles.json");
 
     public static final String PATH_DEFAULT_DIFFICULTY = "base.defaultDifficulty";
-    public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
-    public static final String PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = "base.allow.difficultyChangeInCombat";
-    public static final String PATH_ALLOW_BADGE = "base.allow.uiBadge";
+    public static final String PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficulty.change";
+    public static final String PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = "base.allow.difficulty.changeInCombat";
+    public static final String PATH_ALLOW_BADGE = "base.allow.ui.badge";
     public static final String PATH_UI_BADGE_START_DELAY_MS = "base.uiBadgeStartDelayMs";
     public static final String PATH_UI_TIER_VALUES_AS_PERCENT = "base.uiTierValuesAsPercent";
     public static final String PATH_DIFFICULTY_CHANGE_COOLDOWN_MS = "base.difficultyChangeCooldownMs";
@@ -37,13 +37,13 @@ public final class DifficultyIO {
     public static final String PATH_MAX_HEALTH_SCALING_FACTOR = "base.maxHealthScalingFactor";
     public static final String PATH_CASH_VARIANCE_FACTOR = "base.cashVarianceFactor";
     public static final String PATH_ROUNDING_DIGITS = "base.roundingDigits";
-    public static final String PATH_ALLOW_CASH_REWARD = "base.allow.cashReward";
-    public static final String PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allow.cashRewardEvenWithPhysical";
-    public static final String PATH_ALLOW_XP_REWARD = "base.allow.xpReward";
-    public static final String PATH_ALLOW_SPAWN_TIER_REWARD = "base.allow.spawnTierReward";
+    public static final String PATH_ALLOW_CASH_REWARD = "base.allow.rewards.cash";
+    public static final String PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allow.rewards.cashEvenWithPhysical";
+    public static final String PATH_ALLOW_XP_REWARD = "base.allow.rewards.xp";
+    public static final String PATH_ALLOW_SPAWN_TIER_REWARD = "base.allow.rewards.spawnTierReward";
     public static final String PATH_SPAWN_TIER_REWARD_OVER_FACTOR = "base.spawnTierRewardOverFactor";
     public static final String PATH_SPAWN_TIER_REWARD_UNDER_FACTOR = "base.spawnTierRewardUnderFactor";
-    public static final String PATH_ALLOW_CUSTOM_LEVELING = "base.allow.customLeveling";
+    public static final String PATH_ALLOW_CUSTOM_LEVELING = "base.allow.leveling.custom";
     public static final String PATH_CUSTOM_LEVELING_USE_MOST_DAMAGE = "base.customLeveling.useMostDamageAttacker";
     public static final String PATH_CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER = "base.customLeveling.mostDamageAttackerMultiplier";
     public static final String PATH_CUSTOM_LEVELING_OTHER_ATTACKER_MULTIPLIER = "base.customLeveling.otherAttackerMultiplier";
@@ -69,24 +69,57 @@ public final class DifficultyIO {
     public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_BASE = "base.customLeveling.downscale.base";
     public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_EXPONENT = "base.customLeveling.downscale.levelExponent";
     public static final String PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER = "base.customLeveling.downscale.levelMultiplier";
-    public static final String PATH_ALLOW_HEALTH_MODIFIER = "base.allow.healthModifier";
-    public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allow.damageModifier";
-    public static final String PATH_ALLOW_DAMAGE_PHYSICAL = "base.allow.damagePhysical";
-    public static final String PATH_ALLOW_DAMAGE_PROJECTILE = "base.allow.damageProjectile";
-    public static final String PATH_ALLOW_DAMAGE_COMMAND = "base.allow.damageCommand";
-    public static final String PATH_ALLOW_DAMAGE_DROWNING = "base.allow.damageDrowning";
-    public static final String PATH_ALLOW_DAMAGE_ENVIRONMENT = "base.allow.damageEnvironment";
-    public static final String PATH_ALLOW_DAMAGE_FALL = "base.allow.damageFall";
-    public static final String PATH_ALLOW_DAMAGE_OUT_OF_WORLD = "base.allow.damageOutOfWorld";
-    public static final String PATH_ALLOW_DAMAGE_SUFFOCATION = "base.allow.damageSuffocation";
-    public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allow.armorModifier";
-    public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
-    public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
-    public static final String PATH_ALLOW_SPAWN_TIER_NAMEPLATE = "base.allow.spawnTierNameplate";
-    public static final String PATH_ALLOW_KILLFEED_TIER_TAG = "base.allow.killFeedTierTag";
-    public static final String PATH_ALLOW_KILLFEED_TIER_CHAT = "base.allow.killFeedTierChat";
-    public static final String PATH_ALLOW_CHAT_TIER_TAG = "base.allow.chatTierTag";
-    public static final String PATH_ALLOW_SERVERLIST_TIER_TAG = "base.allow.serverListTierTag";
+    public static final String PATH_ALLOW_HEALTH_MODIFIER = "base.allow.modifiers.health";
+    public static final String PATH_ALLOW_DAMAGE_MODIFIER = "base.allow.modifiers.damage";
+    public static final String PATH_ALLOW_DAMAGE_PHYSICAL = "base.allow.damage.physical";
+    public static final String PATH_ALLOW_DAMAGE_PROJECTILE = "base.allow.damage.projectile";
+    public static final String PATH_ALLOW_DAMAGE_COMMAND = "base.allow.damage.command";
+    public static final String PATH_ALLOW_DAMAGE_DROWNING = "base.allow.damage.drowning";
+    public static final String PATH_ALLOW_DAMAGE_ENVIRONMENT = "base.allow.damage.environment";
+    public static final String PATH_ALLOW_DAMAGE_FALL = "base.allow.damage.fall";
+    public static final String PATH_ALLOW_DAMAGE_OUT_OF_WORLD = "base.allow.damage.outOfWorld";
+    public static final String PATH_ALLOW_DAMAGE_SUFFOCATION = "base.allow.damage.suffocation";
+    public static final String PATH_ALLOW_ARMOR_MODIFIER = "base.allow.modifiers.armor";
+    public static final String PATH_ALLOW_DROP_MODIFIER = "base.allow.modifiers.drop";
+    public static final String PATH_ALLOW_DEBUG_LOGGING = "base.allow.debug.logging";
+    public static final String PATH_ALLOW_SPAWN_TIER_NAMEPLATE = "base.allow.spawn.tierNameplate";
+    public static final String PATH_ALLOW_SPAWN_COUNT_MULTIPLIER = "base.allow.spawn.countMultiplier";
+    public static final String PATH_ALLOW_KILLFEED_TIER_TAG = "base.allow.tags.killFeedTierTag";
+    public static final String PATH_ALLOW_KILLFEED_TIER_CHAT = "base.allow.tags.killFeedTierChat";
+    public static final String PATH_ALLOW_CHAT_TIER_TAG = "base.allow.tags.chatTierTag";
+    public static final String PATH_ALLOW_SERVERLIST_TIER_TAG = "base.allow.tags.serverListTierTag";
+    public static final String PATH_ALLOW_DEBUG_COMMANDS = "base.allow.debug.commands";
+    public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.spawn.elite";
+
+    public static final String LEGACY_PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
+    public static final String LEGACY_PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = "base.allow.difficultyChangeInCombat";
+    public static final String LEGACY_PATH_ALLOW_BADGE = "base.allow.uiBadge";
+    public static final String LEGACY_PATH_ALLOW_CASH_REWARD = "base.allow.cashReward";
+    public static final String LEGACY_PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL = "base.allow.cashRewardEvenWithPhysical";
+    public static final String LEGACY_PATH_ALLOW_XP_REWARD = "base.allow.xpReward";
+    public static final String LEGACY_PATH_ALLOW_SPAWN_TIER_REWARD = "base.allow.spawnTierReward";
+    public static final String LEGACY_PATH_ALLOW_CUSTOM_LEVELING = "base.allow.customLeveling";
+    public static final String LEGACY_PATH_ALLOW_HEALTH_MODIFIER = "base.allow.healthModifier";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_MODIFIER = "base.allow.damageModifier";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_PHYSICAL = "base.allow.damagePhysical";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_PROJECTILE = "base.allow.damageProjectile";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_COMMAND = "base.allow.damageCommand";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_DROWNING = "base.allow.damageDrowning";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_ENVIRONMENT = "base.allow.damageEnvironment";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_FALL = "base.allow.damageFall";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_OUT_OF_WORLD = "base.allow.damageOutOfWorld";
+    public static final String LEGACY_PATH_ALLOW_DAMAGE_SUFFOCATION = "base.allow.damageSuffocation";
+    public static final String LEGACY_PATH_ALLOW_ARMOR_MODIFIER = "base.allow.armorModifier";
+    public static final String LEGACY_PATH_ALLOW_DROP_MODIFIER = "base.allow.dropModifier";
+    public static final String LEGACY_PATH_ALLOW_DEBUG_LOGGING = "base.allow.debugLogging";
+    public static final String LEGACY_PATH_ALLOW_SPAWN_TIER_NAMEPLATE = "base.allow.spawnTierNameplate";
+    public static final String LEGACY_PATH_ALLOW_SPAWN_COUNT_MULTIPLIER = "base.allow.spawnCountMultiplier";
+    public static final String LEGACY_PATH_ALLOW_KILLFEED_TIER_TAG = "base.allow.killFeedTierTag";
+    public static final String LEGACY_PATH_ALLOW_KILLFEED_TIER_CHAT = "base.allow.killFeedTierChat";
+    public static final String LEGACY_PATH_ALLOW_CHAT_TIER_TAG = "base.allow.chatTierTag";
+    public static final String LEGACY_PATH_ALLOW_SERVERLIST_TIER_TAG = "base.allow.serverListTierTag";
+    public static final String LEGACY_PATH_ALLOW_DEBUG_COMMANDS = "base.allow.debugCommands";
+    public static final String LEGACY_PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.eliteSpawn";
     public static final String PATH_COMMAND_TIER_SELECT_NAME = "base.commands.tierSelect.name";
     public static final String PATH_COMMAND_TIER_SELECT_ALIASES = "base.commands.tierSelect.aliases";
     public static final String PATH_COMMAND_TIER_SELECT_PERMISSION = "base.commands.tierSelect.permission";
@@ -132,9 +165,7 @@ public final class DifficultyIO {
     public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_KILLER_CAUSE = "base.killFeedTierChatMessages.physical.killerCause";
     public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_CAUSE = "base.killFeedTierChatMessages.physical.victimCause";
     public static final String PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED = "base.killFeedTierChatMessages.physical.victimDied";
-    public static final String PATH_ALLOW_DEBUG_COMMANDS = "base.allow.debugCommands";
     public static final String PATH_MMO_SKILLTREE_XP_BONUS_WHITELIST = "base.mmoSkillTree.xpBonusWhitelist";
-    public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.eliteSpawn";
     public static final String PATH_ELITE_SPAWN_QUEUE_INTERVAL_MS = "base.eliteSpawnQueue.intervalMs";
     public static final String PATH_ELITE_SPAWN_QUEUE_MAX_PER_DRAIN = "base.eliteSpawnQueue.maxPerDrain";
     public static final String PATH_ELITE_SPAWN_QUEUE_MAX_DRAIN_MS = "base.eliteSpawnQueue.maxDrainMs";
@@ -168,6 +199,7 @@ public final class DifficultyIO {
     public static final String SETTING_REGENERATION = "regeneration";
     public static final String SETTING_DROP_RATE_MULTIPLIER = "drop_rate_multiplier";
     public static final String SETTING_DROP_QUANTITY_MULTIPLIER = "drop_quantity_multiplier";
+    public static final String SETTING_SPAWN_COUNT_MULTIPLIER = "spawn_count_multiplier";
     public static final String SETTING_DROP_QUALITY_MULTIPLIER = "drop_quality_multiplier";
     public static final String SETTING_XP_MULTIPLIER = "xp_multiplier";
     public static final String SETTING_CASH_MULTIPLIER = "cash_multiplier";
@@ -240,6 +272,7 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_DROP_MODIFIER = true;
     public static final boolean DEFAULT_ALLOW_DEBUG_LOGGING = false;
     public static final boolean DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE = false;
+    public static final boolean DEFAULT_ALLOW_SPAWN_COUNT_MULTIPLIER = true;
     public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_TAG = false;
     public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_CHAT = false;
     public static final boolean DEFAULT_ALLOW_CHAT_TIER_TAG = false;
@@ -320,11 +353,11 @@ public final class DifficultyIO {
     public static final ConfigKey<String> DEFAULT_DIFFICULTY =
             ConfigKey.ofString(PATH_DEFAULT_DIFFICULTY, DEFAULT_BASE_DIFFICULTY);
     public static final ConfigKey<Boolean> ALLOW_DIFFICULTY_CHANGE =
-            ConfigKey.ofBoolean(PATH_ALLOW_DIFFICULTY_CHANGE, DEFAULT_ALLOW_DIFFICULTY_CHANGE);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DIFFICULTY_CHANGE, LEGACY_PATH_ALLOW_DIFFICULTY_CHANGE, DEFAULT_ALLOW_DIFFICULTY_CHANGE);
     public static final ConfigKey<Boolean> ALLOW_DIFFICULTY_CHANGE_IN_COMBAT =
-            ConfigKey.ofBoolean(PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT, DEFAULT_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT, LEGACY_PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT, DEFAULT_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT);
     public static final ConfigKey<Boolean> ALLOW_BADGE =
-            ConfigKey.ofBoolean(PATH_ALLOW_BADGE, DEFAULT_ALLOW_BADGE);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_BADGE, LEGACY_PATH_ALLOW_BADGE, DEFAULT_ALLOW_BADGE);
     public static final ConfigKey<Double> UI_BADGE_START_DELAY_MS =
             ConfigKey.ofDouble(PATH_UI_BADGE_START_DELAY_MS, DEFAULT_UI_BADGE_START_DELAY_MS);
     public static final ConfigKey<Boolean> UI_TIER_VALUES_AS_PERCENT =
@@ -348,19 +381,19 @@ public final class DifficultyIO {
     public static final ConfigKey<Integer> ROUNDING_DIGITS =
             ConfigKey.ofInt(PATH_ROUNDING_DIGITS, DEFAULT_ROUNDING_DIGITS);
     public static final ConfigKey<Boolean> ALLOW_CASH_REWARD =
-            ConfigKey.ofBoolean(PATH_ALLOW_CASH_REWARD, DEFAULT_ALLOW_CASH_REWARD);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_CASH_REWARD, LEGACY_PATH_ALLOW_CASH_REWARD, DEFAULT_ALLOW_CASH_REWARD);
     public static final ConfigKey<Boolean> ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL =
-            ConfigKey.ofBoolean(PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL, DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL, LEGACY_PATH_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL, DEFAULT_ALLOW_CASH_REWARD_EVEN_WITH_PHYSICAL);
     public static final ConfigKey<Boolean> ALLOW_XP_REWARD =
-            ConfigKey.ofBoolean(PATH_ALLOW_XP_REWARD, DEFAULT_ALLOW_XP_REWARD);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_XP_REWARD, LEGACY_PATH_ALLOW_XP_REWARD, DEFAULT_ALLOW_XP_REWARD);
     public static final ConfigKey<Boolean> ALLOW_SPAWN_TIER_REWARD =
-            ConfigKey.ofBoolean(PATH_ALLOW_SPAWN_TIER_REWARD, DEFAULT_ALLOW_SPAWN_TIER_REWARD);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_SPAWN_TIER_REWARD, LEGACY_PATH_ALLOW_SPAWN_TIER_REWARD, DEFAULT_ALLOW_SPAWN_TIER_REWARD);
     public static final ConfigKey<Double> SPAWN_TIER_REWARD_OVER_FACTOR =
             ConfigKey.ofDouble(PATH_SPAWN_TIER_REWARD_OVER_FACTOR, DEFAULT_SPAWN_TIER_REWARD_OVER_FACTOR);
     public static final ConfigKey<Double> SPAWN_TIER_REWARD_UNDER_FACTOR =
             ConfigKey.ofDouble(PATH_SPAWN_TIER_REWARD_UNDER_FACTOR, DEFAULT_SPAWN_TIER_REWARD_UNDER_FACTOR);
     public static final ConfigKey<Boolean> ALLOW_CUSTOM_LEVELING =
-            ConfigKey.ofBoolean(PATH_ALLOW_CUSTOM_LEVELING, DEFAULT_ALLOW_CUSTOM_LEVELING);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_CUSTOM_LEVELING, LEGACY_PATH_ALLOW_CUSTOM_LEVELING, DEFAULT_ALLOW_CUSTOM_LEVELING);
     public static final ConfigKey<Boolean> CUSTOM_LEVELING_USE_MOST_DAMAGE =
             ConfigKey.ofBoolean(PATH_CUSTOM_LEVELING_USE_MOST_DAMAGE, DEFAULT_CUSTOM_LEVELING_USE_MOST_DAMAGE);
     public static final ConfigKey<Double> CUSTOM_LEVELING_MOST_DAMAGE_MULTIPLIER =
@@ -412,41 +445,43 @@ public final class DifficultyIO {
     public static final ConfigKey<Double> CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER =
             ConfigKey.ofDouble(PATH_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER, DEFAULT_CUSTOM_LEVELING_DOWNSCALE_LEVEL_MULTIPLIER);
     public static final ConfigKey<Boolean> ALLOW_HEALTH_MODIFIER =
-            ConfigKey.ofBoolean(PATH_ALLOW_HEALTH_MODIFIER, DEFAULT_ALLOW_HEALTH_MODIFIER);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_HEALTH_MODIFIER, LEGACY_PATH_ALLOW_HEALTH_MODIFIER, DEFAULT_ALLOW_HEALTH_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_MODIFIER =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_MODIFIER, DEFAULT_ALLOW_DAMAGE_MODIFIER);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_MODIFIER, LEGACY_PATH_ALLOW_DAMAGE_MODIFIER, DEFAULT_ALLOW_DAMAGE_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_PHYSICAL =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_PHYSICAL, DEFAULT_ALLOW_DAMAGE_PHYSICAL);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_PHYSICAL, LEGACY_PATH_ALLOW_DAMAGE_PHYSICAL, DEFAULT_ALLOW_DAMAGE_PHYSICAL);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_PROJECTILE =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_PROJECTILE, DEFAULT_ALLOW_DAMAGE_PROJECTILE);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_PROJECTILE, LEGACY_PATH_ALLOW_DAMAGE_PROJECTILE, DEFAULT_ALLOW_DAMAGE_PROJECTILE);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_COMMAND =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_COMMAND, DEFAULT_ALLOW_DAMAGE_COMMAND);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_COMMAND, LEGACY_PATH_ALLOW_DAMAGE_COMMAND, DEFAULT_ALLOW_DAMAGE_COMMAND);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_DROWNING =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_DROWNING, DEFAULT_ALLOW_DAMAGE_DROWNING);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_DROWNING, LEGACY_PATH_ALLOW_DAMAGE_DROWNING, DEFAULT_ALLOW_DAMAGE_DROWNING);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_ENVIRONMENT =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_ENVIRONMENT, DEFAULT_ALLOW_DAMAGE_ENVIRONMENT);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_ENVIRONMENT, LEGACY_PATH_ALLOW_DAMAGE_ENVIRONMENT, DEFAULT_ALLOW_DAMAGE_ENVIRONMENT);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_FALL =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_FALL, DEFAULT_ALLOW_DAMAGE_FALL);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_FALL, LEGACY_PATH_ALLOW_DAMAGE_FALL, DEFAULT_ALLOW_DAMAGE_FALL);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_OUT_OF_WORLD =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_OUT_OF_WORLD, DEFAULT_ALLOW_DAMAGE_OUT_OF_WORLD);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_OUT_OF_WORLD, LEGACY_PATH_ALLOW_DAMAGE_OUT_OF_WORLD, DEFAULT_ALLOW_DAMAGE_OUT_OF_WORLD);
     public static final ConfigKey<Boolean> ALLOW_DAMAGE_SUFFOCATION =
-            ConfigKey.ofBoolean(PATH_ALLOW_DAMAGE_SUFFOCATION, DEFAULT_ALLOW_DAMAGE_SUFFOCATION);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DAMAGE_SUFFOCATION, LEGACY_PATH_ALLOW_DAMAGE_SUFFOCATION, DEFAULT_ALLOW_DAMAGE_SUFFOCATION);
     public static final ConfigKey<Boolean> ALLOW_ARMOR_MODIFIER =
-            ConfigKey.ofBoolean(PATH_ALLOW_ARMOR_MODIFIER, DEFAULT_ALLOW_ARMOR_MODIFIER);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_ARMOR_MODIFIER, LEGACY_PATH_ALLOW_ARMOR_MODIFIER, DEFAULT_ALLOW_ARMOR_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DROP_MODIFIER =
-            ConfigKey.ofBoolean(PATH_ALLOW_DROP_MODIFIER, DEFAULT_ALLOW_DROP_MODIFIER);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DROP_MODIFIER, LEGACY_PATH_ALLOW_DROP_MODIFIER, DEFAULT_ALLOW_DROP_MODIFIER);
     public static final ConfigKey<Boolean> ALLOW_DEBUG_LOGGING =
-            ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DEBUG_LOGGING, LEGACY_PATH_ALLOW_DEBUG_LOGGING, DEFAULT_ALLOW_DEBUG_LOGGING);
     public static final ConfigKey<Boolean> ALLOW_SPAWN_TIER_NAMEPLATE =
-            ConfigKey.ofBoolean(PATH_ALLOW_SPAWN_TIER_NAMEPLATE, DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_SPAWN_TIER_NAMEPLATE, LEGACY_PATH_ALLOW_SPAWN_TIER_NAMEPLATE, DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE);
+    public static final ConfigKey<Boolean> ALLOW_SPAWN_COUNT_MULTIPLIER =
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_SPAWN_COUNT_MULTIPLIER, LEGACY_PATH_ALLOW_SPAWN_COUNT_MULTIPLIER, DEFAULT_ALLOW_SPAWN_COUNT_MULTIPLIER);
     public static final ConfigKey<Boolean> ALLOW_KILLFEED_TIER_TAG =
-            ConfigKey.ofBoolean(PATH_ALLOW_KILLFEED_TIER_TAG, DEFAULT_ALLOW_KILLFEED_TIER_TAG);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_KILLFEED_TIER_TAG, LEGACY_PATH_ALLOW_KILLFEED_TIER_TAG, DEFAULT_ALLOW_KILLFEED_TIER_TAG);
     public static final ConfigKey<Boolean> ALLOW_KILLFEED_TIER_CHAT =
-            ConfigKey.ofBoolean(PATH_ALLOW_KILLFEED_TIER_CHAT, DEFAULT_ALLOW_KILLFEED_TIER_CHAT);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_KILLFEED_TIER_CHAT, LEGACY_PATH_ALLOW_KILLFEED_TIER_CHAT, DEFAULT_ALLOW_KILLFEED_TIER_CHAT);
     public static final ConfigKey<Boolean> ALLOW_CHAT_TIER_TAG =
-            ConfigKey.ofBoolean(PATH_ALLOW_CHAT_TIER_TAG, DEFAULT_ALLOW_CHAT_TIER_TAG);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_CHAT_TIER_TAG, LEGACY_PATH_ALLOW_CHAT_TIER_TAG, DEFAULT_ALLOW_CHAT_TIER_TAG);
     public static final ConfigKey<Boolean> ALLOW_SERVERLIST_TIER_TAG =
-            ConfigKey.ofBoolean(PATH_ALLOW_SERVERLIST_TIER_TAG, DEFAULT_ALLOW_SERVERLIST_TIER_TAG);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_SERVERLIST_TIER_TAG, LEGACY_PATH_ALLOW_SERVERLIST_TIER_TAG, DEFAULT_ALLOW_SERVERLIST_TIER_TAG);
     public static final ConfigKey<String> COMMAND_TIER_SELECT_NAME =
             ConfigKey.ofString(PATH_COMMAND_TIER_SELECT_NAME, DEFAULT_COMMAND_TIER_SELECT_NAME);
     public static final ConfigKey<List<String>> COMMAND_TIER_SELECT_ALIASES =
@@ -536,9 +571,9 @@ public final class DifficultyIO {
     public static final ConfigKey<List<String>> KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED =
             ConfigKey.ofStringList(PATH_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED, DEFAULT_KILLFEED_CHAT_MESSAGES_PHYSICAL_VICTIM_DIED);
     public static final ConfigKey<Boolean> ALLOW_DEBUG_COMMANDS =
-            ConfigKey.ofBoolean(PATH_ALLOW_DEBUG_COMMANDS, DEFAULT_ALLOW_DEBUG_COMMANDS);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_DEBUG_COMMANDS, LEGACY_PATH_ALLOW_DEBUG_COMMANDS, DEFAULT_ALLOW_DEBUG_COMMANDS);
     public static final ConfigKey<Boolean> ALLOW_ELITE_SPAWN_MODIFIER =
-            ConfigKey.ofBoolean(PATH_ALLOW_ELITE_SPAWN_MODIFIER, DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER);
+            ConfigKey.ofBooleanWithFallback(PATH_ALLOW_ELITE_SPAWN_MODIFIER, LEGACY_PATH_ALLOW_ELITE_SPAWN_MODIFIER, DEFAULT_ALLOW_ELITE_SPAWN_MODIFIER);
     public static final ConfigKey<Double> ELITE_SPAWN_QUEUE_INTERVAL_MS =
             ConfigKey.ofDouble(PATH_ELITE_SPAWN_QUEUE_INTERVAL_MS, DEFAULT_ELITE_SPAWN_QUEUE_INTERVAL_MS);
     public static final ConfigKey<Integer> ELITE_SPAWN_QUEUE_MAX_PER_DRAIN =

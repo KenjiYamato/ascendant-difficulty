@@ -1,9 +1,8 @@
 package ascendant.core.combat;
 
-import ascendant.core.util.Logging;
+import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.server.combat.DamageCalculator;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 
 import javax.annotation.Nonnull;
@@ -13,7 +12,8 @@ import java.util.Map;
 
 @Deprecated
 public final class RoleDamageResolver {
-    private RoleDamageResolver() {}
+    private RoleDamageResolver() {
+    }
 
     public static float resolveConfiguredDamageFromInteractionVars(@Nullable Map<String, String> _interactionVars) {
         if (_interactionVars == null || _interactionVars.isEmpty()) {

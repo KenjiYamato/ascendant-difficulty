@@ -17,11 +17,7 @@ import com.hypixel.hytale.component.dependency.SystemGroupDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.modules.entity.AllLegacyLivingEntityTypesQuery;
-import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageModule;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageSystems;
+import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatsModule;
@@ -71,18 +67,6 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         _allowDamageSuffocation = DifficultyManager.getFromConfig(DifficultyIO.ALLOW_DAMAGE_SUFFOCATION);
     }
 
-    @Nonnull
-    @Override
-    public Set<Dependency<EntityStore>> getDependencies() {
-        return _dependencies;
-    }
-
-    @Nonnull
-    @Override
-    public Query<EntityStore> getQuery() {
-        return AllLegacyLivingEntityTypesQuery.INSTANCE;
-    }
-
     public static boolean toggleDebugMaxDamage(@Nonnull UUID playerUuid) {
         Boolean current = DEBUG_MAX_DAMAGE.get(playerUuid);
         boolean next = current == null || !current;
@@ -99,6 +83,18 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
         return enabled != null && enabled;
     }
 
+    @Nonnull
+    @Override
+    public Set<Dependency<EntityStore>> getDependencies() {
+        return _dependencies;
+    }
+
+    @Nonnull
+    @Override
+    public Query<EntityStore> getQuery() {
+        return AllLegacyLivingEntityTypesQuery.INSTANCE;
+    }
+
     //public static class ArmorDamageReduction/ DamageArmor
     @Override
     @SuppressWarnings("removal")
@@ -110,7 +106,7 @@ public final class PlayerDamageReceiveMultiplier extends DamageEventSystem {
             @Nonnull Damage damage
     ) {
 
-        Logging.debug("[DAMAGE RECEIVE] Damage entry: "+damage.getAmount());
+        Logging.debug("[DAMAGE RECEIVE] Damage entry: " + damage.getAmount());
         if (!DamageRef.checkInvalidDamage(damage)) {
             Logging.debug("[DAMAGE RECEIVE] skip: invalid damage amount/cause");
             return;

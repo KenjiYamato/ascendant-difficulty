@@ -10,8 +10,17 @@ import java.util.Set;
 
 public final class RuntimeSettings {
     private static final Object LOCK = new Object();
+    private static final Set<String> DEFAULT_MMO_SKILLTREE_XP_BONUS_WHITELIST = Set.of(
+            "SWORDS",
+            "DAGGERS",
+            "POLEARMS",
+            "STAVES",
+            "AXES",
+            "BLUNT",
+            "ARCHERY",
+            "UNARMED"
+    );
     private static volatile boolean LOADED;
-
     private static double cashVarianceFactor;
     private static boolean allowXPReward;
     private static boolean allowCashReward;
@@ -57,17 +66,6 @@ public final class RuntimeSettings {
     private static double levelingCoreMultiplier;
     private static double mmoSkillTreeMultiplier;
     private static double ecotaleMultiplier;
-
-    private static final Set<String> DEFAULT_MMO_SKILLTREE_XP_BONUS_WHITELIST = Set.of(
-            "SWORDS",
-            "DAGGERS",
-            "POLEARMS",
-            "STAVES",
-            "AXES",
-            "BLUNT",
-            "ARCHERY",
-            "UNARMED"
-    );
 
     private RuntimeSettings() {
     }

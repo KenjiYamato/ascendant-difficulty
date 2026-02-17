@@ -35,17 +35,6 @@ public final class DifficultyMeta {
         return new TierMeta(safeTierId, displayName, description, imagePath, iconPath, killFeedPrefix, chatPrefix);
     }
 
-    public record TierMeta(
-            String tierId,
-            String displayName,
-            String description,
-            String imagePath,
-            String iconPath,
-            String killFeedPrefix,
-            String chatPrefix
-    ) {
-    }
-
     public static String formatTierPrefix(String template, String tierName, String tierId) {
         if (template == null) {
             return null;
@@ -56,5 +45,16 @@ public final class DifficultyMeta {
                 .replace("{tier}", safeTierName == null ? "" : safeTierName)
                 .replace("{tierName}", safeTierName == null ? "" : safeTierName)
                 .replace("{tierId}", safeTierId);
+    }
+
+    public record TierMeta(
+            String tierId,
+            String displayName,
+            String description,
+            String imagePath,
+            String iconPath,
+            String killFeedPrefix,
+            String chatPrefix
+    ) {
     }
 }

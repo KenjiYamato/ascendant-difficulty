@@ -1,34 +1,20 @@
 package ascendant.core;
 
-import ascendant.core.adapter.ChatTierTagHandler;
-import ascendant.core.adapter.KillFeedAdapter;
-import ascendant.core.adapter.KillFeedTierTagHandler;
-import ascendant.core.adapter.NotificationsAdapter;
-import ascendant.core.adapter.ServerPlayerListAdapter;
-import ascendant.core.commands.debug.ClearAllEntityCommand;
-import ascendant.core.commands.debug.ClearDroppedItemsCommand;
+import ascendant.core.adapter.*;
 import ascendant.core.commands.DifficultyBadgeToggleCommand;
 import ascendant.core.commands.ReloadConfigCommand;
-import ascendant.core.commands.debug.SetTierHighestCommand;
-import ascendant.core.commands.debug.SetTierLowestCommand;
-import ascendant.core.commands.debug.SpawnWraithCommand;
 import ascendant.core.commands.TierSelectCommand;
-import ascendant.core.commands.debug.TestAttackToggleCommand;
-import ascendant.core.commands.debug.TestDamageToggleCommand;
-import ascendant.core.config.DifficultyConfig;
-import ascendant.core.config.DifficultyIO;
-import ascendant.core.config.DifficultyManager;
-import ascendant.core.config.DifficultySettings;
-import ascendant.core.config.RuntimeSettings;
+import ascendant.core.commands.debug.*;
+import ascendant.core.config.*;
 import ascendant.core.events.OnDeath;
 import ascendant.core.scaling.*;
 import ascendant.core.ui.DifficultyBadge;
 import ascendant.core.util.CommandRegistrationUtil;
 import ascendant.core.util.NpcRoles;
+import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.event.events.player.PlayerChatEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
-import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
@@ -59,6 +45,9 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new PlayerDamageReceiveMultiplier());
         // health
         this.getEntityStoreRegistry().registerSystem(new NearestPlayerHealthScaleSystem());
+        // spawn count
+        this.getEntityStoreRegistry().registerSystem(new SpawnCountMultiplierSystem());
+        this.getEntityStoreRegistry().registerSystem(new SpawnCountRemovalTickSystem());
         // drop
         this.getEntityStoreRegistry().registerSystem(new EntityDropMultiplier());
         // elite spawn

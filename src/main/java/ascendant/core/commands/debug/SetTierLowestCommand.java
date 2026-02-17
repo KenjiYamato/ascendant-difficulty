@@ -22,6 +22,16 @@ public final class SetTierLowestCommand extends AbstractPlayerCommand {
         super(commandName, commandDescription, commandPermission);
     }
 
+    private static String resolveLowestTierId() {
+        DifficultySettings settings = DifficultyManager.getSettings();
+        for (String id : settings.tiers().keySet()) {
+            if (id != null && !id.isBlank()) {
+                return id;
+            }
+        }
+        return DifficultyIO.DEFAULT_BASE_DIFFICULTY;
+    }
+
     @Override
     protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         String tierId = resolveLowestTierId();
@@ -31,15 +41,5 @@ public final class SetTierLowestCommand extends AbstractPlayerCommand {
 
         DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
         EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, meta.displayName(), "selected difficulty");
-    }
-
-    private static String resolveLowestTierId() {
-        DifficultySettings settings = DifficultyManager.getSettings();
-        for (String id : settings.tiers().keySet()) {
-            if (id != null && !id.isBlank()) {
-                return id;
-            }
-        }
-        return DifficultyIO.DEFAULT_BASE_DIFFICULTY;
     }
 }

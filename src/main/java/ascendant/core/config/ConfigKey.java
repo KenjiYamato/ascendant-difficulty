@@ -30,6 +30,18 @@ public final class ConfigKey<T> {
         return new ConfigKey<>(path, defaultValue, DifficultyConfig::getBoolean);
     }
 
+    public static ConfigKey<Boolean> ofBooleanWithFallback(String path, String fallbackPath, boolean defaultValue) {
+        return new ConfigKey<>(path, defaultValue, (config, primaryPath, fallback) -> {
+            if (config.get(primaryPath).isPresent()) {
+                return config.getBoolean(primaryPath, fallback);
+            }
+            if (fallbackPath == null || fallbackPath.isBlank()) {
+                return fallback;
+            }
+            return config.getBoolean(fallbackPath, fallback);
+        });
+    }
+
     public static ConfigKey<List<String>> ofStringList(String path, List<String> defaultValue) {
         return new ConfigKey<>(path, defaultValue, DifficultyConfig::getStringList);
     }

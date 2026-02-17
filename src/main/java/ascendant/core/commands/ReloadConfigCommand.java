@@ -22,20 +22,6 @@ public final class ReloadConfigCommand extends AbstractAsyncCommand {
         requirePermission(HytalePermissions.fromCommand(commandPermission));
     }
 
-    @Override
-    @Nonnull
-    protected CompletableFuture<Void> executeAsync(@Nonnull CommandContext commandContext) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                DifficultyManager.reloadConfig();
-                refreshServerList();
-                commandContext.sendMessage(Message.raw("Difficulty config reloaded."));
-            } catch (IOException e) {
-                commandContext.sendMessage(Message.raw("Failed to reload difficulty config: " + e.getMessage()));
-            }
-        });
-    }
-
     private static void refreshServerList() {
         Universe universe = Universe.get();
         if (universe == null) {
@@ -48,5 +34,19 @@ public final class ReloadConfigCommand extends AbstractAsyncCommand {
         for (PlayerRef playerRef : players) {
             PlayerWorldExecutor.execute(playerRef, () -> ServerPlayerListAdapter.refreshPlayerEntry(playerRef));
         }
+    }
+
+    @Override
+    @Nonnull
+    protected CompletableFuture<Void> executeAsync(@Nonnull CommandContext commandContext) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                DifficultyManager.reloadConfig();
+                refreshServerList();
+                commandContext.sendMessage(Message.raw("Difficulty config reloaded."));
+            } catch (IOException e) {
+                commandContext.sendMessage(Message.raw("Failed to reload difficulty config: " + e.getMessage()));
+            }
+        });
     }
 }

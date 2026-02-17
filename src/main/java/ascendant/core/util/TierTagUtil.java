@@ -10,11 +10,6 @@ public final class TierTagUtil {
     private TierTagUtil() {
     }
 
-    public enum PrefixKind {
-        KILLFEED,
-        CHAT
-    }
-
     @Nullable
     public static String resolveTierPrefix(@Nullable UUID playerUuid, @Nullable PrefixKind kind) {
         if (playerUuid == null || kind == null) {
@@ -54,5 +49,10 @@ public final class TierTagUtil {
             return tagged;
         }
         return playerName == null ? "" : playerName;
+    }
+
+    public enum PrefixKind {
+        KILLFEED,
+        CHAT
     }
 }

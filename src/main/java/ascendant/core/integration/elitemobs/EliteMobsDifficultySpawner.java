@@ -12,24 +12,18 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public final class EliteMobsDifficultySpawner {
 
     private static final String CLS_SPAWN_SYSTEM = "com.github.cedeli.core.system.EntitySpawnSystem";
     private static final ClassLoader CLASS_LOADER = EliteMobsDifficultySpawner.class.getClassLoader();
+    private static final Map<Object, Object> SPAWN_SYSTEM_CACHE =
+            Collections.synchronizedMap(new WeakHashMap<>());
     private static volatile Field _fieldConfig;
     private static volatile Field _fieldSpawning;
     private static volatile Method _methodConfigGet;
     private static volatile Method _methodTryRollElite;
-    private static final Map<Object, Object> SPAWN_SYSTEM_CACHE =
-            Collections.synchronizedMap(new WeakHashMap<>());
 
     private EliteMobsDifficultySpawner() {
     }

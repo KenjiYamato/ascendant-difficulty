@@ -4,11 +4,7 @@ import ascendant.core.config.ConfigKey;
 import ascendant.core.config.DifficultyManager;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 

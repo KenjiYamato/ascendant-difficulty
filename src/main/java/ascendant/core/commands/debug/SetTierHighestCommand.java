@@ -23,17 +23,6 @@ public final class SetTierHighestCommand extends AbstractPlayerCommand {
         super(commandName, commandDescription, commandPermission);
     }
 
-    @Override
-    protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
-        String tierId = resolveHighestTierId();
-        DifficultyManager.setPlayerDifficultyOverride(playerUuid, tierId);
-        ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
-        DifficultyBadge.updateForPlayer(playerRef);
-
-        DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
-        EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, meta.displayName(), "selected difficulty");
-    }
-
     private static String resolveHighestTierId() {
         DifficultySettings settings = DifficultyManager.getSettings();
         String resolved = null;
@@ -44,5 +33,16 @@ public final class SetTierHighestCommand extends AbstractPlayerCommand {
             return DifficultyIO.DEFAULT_BASE_DIFFICULTY;
         }
         return resolved;
+    }
+
+    @Override
+    protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
+        String tierId = resolveHighestTierId();
+        DifficultyManager.setPlayerDifficultyOverride(playerUuid, tierId);
+        ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
+        DifficultyBadge.updateForPlayer(playerRef);
+
+        DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
+        EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, meta.displayName(), "selected difficulty");
     }
 }

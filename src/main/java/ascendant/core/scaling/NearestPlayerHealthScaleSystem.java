@@ -9,12 +9,7 @@ import ascendant.core.util.ReflectionHelper;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.simple.StringCodec;
-import com.hypixel.hytale.component.AddReason;
-import com.hypixel.hytale.component.Component;
-import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.component.Holder;
-import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.dependency.Dependency;
 import com.hypixel.hytale.component.dependency.Order;
 import com.hypixel.hytale.component.dependency.SystemDependency;
@@ -78,6 +73,34 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         _minFactor = (float) minHealthScalingFactor;
         _maxFactor = (float) maxHealthScalingFactor;
         _healthScalingTolerance = (float) healthScalingTolerance;
+    }
+
+    @Nullable
+    public static String getSpawnTier(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref) {
+        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
+        if (type == null) {
+            return null;
+        }
+        SpawnTierComponent component = store.getComponent(ref, type);
+        if (component == null) {
+            return null;
+        }
+        String tierId = component.getTierId();
+        return (tierId == null || tierId.isBlank()) ? null : tierId;
+    }
+
+    @Nullable
+    private static String getSpawnTierFromHolder(@Nonnull Holder<EntityStore> holder) {
+        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
+        if (type == null) {
+            return null;
+        }
+        SpawnTierComponent component = holder.getComponent(type);
+        if (component == null) {
+            return null;
+        }
+        String tierId = component.getTierId();
+        return (tierId == null || tierId.isBlank()) ? null : tierId;
     }
 
     @Nonnull
@@ -169,7 +192,6 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         }
     }
 
-
     @Override
     public void onEntityRemoved(@Nonnull Holder<EntityStore> holder, @Nonnull com.hypixel.hytale.component.RemoveReason reason, @Nonnull Store<EntityStore> store) {
         // (entity is going away anyway).
@@ -180,20 +202,6 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         if (f < _minFactor) return _minFactor;
         if (f > _maxFactor) return _maxFactor;
         return f;
-    }
-
-    @Nullable
-    public static String getSpawnTier(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref) {
-        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
-        if (type == null) {
-            return null;
-        }
-        SpawnTierComponent component = store.getComponent(ref, type);
-        if (component == null) {
-            return null;
-        }
-        String tierId = component.getTierId();
-        return (tierId == null || tierId.isBlank()) ? null : tierId;
     }
 
     private void setSpawnTier(@Nonnull Holder<EntityStore> holder, @Nonnull String tierId) {
@@ -236,20 +244,6 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
         } else if (!current.contains(displayName) && !current.contains(tierId)) {
             nameplate.setText(current + " [" + label + "]");
         }
-    }
-
-    @Nullable
-    private static String getSpawnTierFromHolder(@Nonnull Holder<EntityStore> holder) {
-        ComponentType<EntityStore, SpawnTierComponent> type = SPAWN_TIER_COMPONENT_TYPE;
-        if (type == null) {
-            return null;
-        }
-        SpawnTierComponent component = holder.getComponent(type);
-        if (component == null) {
-            return null;
-        }
-        String tierId = component.getTierId();
-        return (tierId == null || tierId.isBlank()) ? null : tierId;
     }
 
     private void ensureSpawnTierComponentType() {

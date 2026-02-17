@@ -44,6 +44,7 @@ public final class DifficultySettings {
             DifficultyIO.SETTING_REGENERATION,
             DifficultyIO.SETTING_DROP_RATE_MULTIPLIER,
             DifficultyIO.SETTING_DROP_QUANTITY_MULTIPLIER,
+            DifficultyIO.SETTING_SPAWN_COUNT_MULTIPLIER,
             DifficultyIO.SETTING_DROP_QUALITY_MULTIPLIER,
             DifficultyIO.SETTING_XP_MULTIPLIER,
             DifficultyIO.SETTING_CASH_MULTIPLIER,
