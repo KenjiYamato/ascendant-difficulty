@@ -6,7 +6,9 @@
         "description": "HP x12.761, Eingehender DMG x4.5, Gegner-Rüstung: 64% Spieler-DMG, XP x1.2, Cash x1.2, Loot: Rate x1.25, Menge x1.22. Ascendant = Mayhem 1 (Borderlands-Style).",
         "color": "#8000FF",
         "imagePath": "Images/Difficulty_ASC/ascendant.png",
-        "iconPath": "Images/Difficulty_ASC/ascendant@icon.png"
+        "iconPath": "Images/Difficulty_ASC/ascendant@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

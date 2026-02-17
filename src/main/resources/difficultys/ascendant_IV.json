@@ -6,7 +6,9 @@
         "description": "HP x52.945, Eingehender DMG x5.611, Gegner-Rüstung: 50% Spieler-DMG, XP x2, Cash x2, Loot: Rate x1.7, Menge x2.3. Ascendant = Mayhem 5.",
         "color": "#36D3C5",
         "imagePath": "Images/Difficulty_ASC/ascendant_4.png",
-        "iconPath": "Images/Difficulty_ASC/ascendant_4@icon.png"
+        "iconPath": "Images/Difficulty_ASC/ascendant_4@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

@@ -6,7 +6,9 @@
         "description": "HP x6.473, Eingehender DMG x3.1, Gegner-Rüstung: 72% Spieler-DMG, XP x1.55, Cash x1.55, Loot: Rate x1.45, Menge x1.8.",
         "color": "#8000FF",
         "imagePath": "Images/Difficulty/master.png",
-        "iconPath": "Images/Difficulty/master@icon.png"
+        "iconPath": "Images/Difficulty/master@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

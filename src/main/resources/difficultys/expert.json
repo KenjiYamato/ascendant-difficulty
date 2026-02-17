@@ -6,7 +6,9 @@
         "description": "HP x3.928, Eingehender DMG x2.35, Gegner-Rüstung: 79% Spieler-DMG, XP x1.35, Cash x1.35, Loot: Rate x1.25, Menge x1.4. Mini-Wall: ab hier brauchst du saubere Builds/Resistenzen.",
         "color": "#0080FF",
         "imagePath": "Images/Difficulty/expert.png",
-        "iconPath": "Images/Difficulty/expert@icon.png"
+        "iconPath": "Images/Difficulty/expert@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

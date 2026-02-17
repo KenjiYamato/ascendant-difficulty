@@ -1,5 +1,6 @@
 package ascendant.core.commands.debug;
 
+import ascendant.core.adapter.ServerPlayerListAdapter;
 import ascendant.core.commands.AbstractPlayerCommand;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
@@ -26,6 +27,7 @@ public final class SetTierHighestCommand extends AbstractPlayerCommand {
     protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         String tierId = resolveHighestTierId();
         DifficultyManager.setPlayerDifficultyOverride(playerUuid, tierId);
+        ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
         DifficultyBadge.updateForPlayer(playerRef);
 
         DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);

@@ -6,7 +6,9 @@
         "description": "HP x280.555, Eingehender DMG x7.273, Gegner-Rüstung: 37% Spieler-DMG, XP x3.045, Cash x3.045, Loot: Rate x2.5, Menge x4.182. Ascendant+: echtes Endgame (für stark geskillte Builds/Mods).",
         "color": "#47AFFF",
         "imagePath": "Images/Difficulty_ASC/ascendant_10.png",
-        "iconPath": "Images/Difficulty_ASC/ascendant_10@icon.png"
+        "iconPath": "Images/Difficulty_ASC/ascendant_10@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

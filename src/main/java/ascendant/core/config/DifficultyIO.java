@@ -85,6 +85,8 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_SPAWN_TIER_NAMEPLATE = "base.allow.spawnTierNameplate";
     public static final String PATH_ALLOW_KILLFEED_TIER_TAG = "base.allow.killFeedTierTag";
     public static final String PATH_ALLOW_KILLFEED_TIER_CHAT = "base.allow.killFeedTierChat";
+    public static final String PATH_ALLOW_CHAT_TIER_TAG = "base.allow.chatTierTag";
+    public static final String PATH_ALLOW_SERVERLIST_TIER_TAG = "base.allow.serverListTierTag";
     public static final String PATH_KILLFEED_CHAT_COLOR_PLAYER = "base.killFeedTierChatColors.playerName";
     public static final String PATH_KILLFEED_CHAT_COLOR_MIDDLE = "base.killFeedTierChatColors.middle";
     public static final String PATH_KILLFEED_CHAT_COLOR_CAUSE = "base.killFeedTierChatColors.deathCause";
@@ -210,6 +212,8 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_SPAWN_TIER_NAMEPLATE = false;
     public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_TAG = false;
     public static final boolean DEFAULT_ALLOW_KILLFEED_TIER_CHAT = false;
+    public static final boolean DEFAULT_ALLOW_CHAT_TIER_TAG = false;
+    public static final boolean DEFAULT_ALLOW_SERVERLIST_TIER_TAG = true;
     public static final String DEFAULT_KILLFEED_CHAT_COLOR_PLAYER = "#FFF2A0";
     public static final String DEFAULT_KILLFEED_CHAT_COLOR_MIDDLE = "#FFFFFF";
     public static final String DEFAULT_KILLFEED_CHAT_COLOR_CAUSE = "#FF2A2A";
@@ -379,6 +383,10 @@ public final class DifficultyIO {
             ConfigKey.ofBoolean(PATH_ALLOW_KILLFEED_TIER_TAG, DEFAULT_ALLOW_KILLFEED_TIER_TAG);
     public static final ConfigKey<Boolean> ALLOW_KILLFEED_TIER_CHAT =
             ConfigKey.ofBoolean(PATH_ALLOW_KILLFEED_TIER_CHAT, DEFAULT_ALLOW_KILLFEED_TIER_CHAT);
+    public static final ConfigKey<Boolean> ALLOW_CHAT_TIER_TAG =
+            ConfigKey.ofBoolean(PATH_ALLOW_CHAT_TIER_TAG, DEFAULT_ALLOW_CHAT_TIER_TAG);
+    public static final ConfigKey<Boolean> ALLOW_SERVERLIST_TIER_TAG =
+            ConfigKey.ofBoolean(PATH_ALLOW_SERVERLIST_TIER_TAG, DEFAULT_ALLOW_SERVERLIST_TIER_TAG);
     public static final ConfigKey<String> KILLFEED_CHAT_COLOR_PLAYER =
             ConfigKey.ofString(PATH_KILLFEED_CHAT_COLOR_PLAYER, DEFAULT_KILLFEED_CHAT_COLOR_PLAYER);
     public static final ConfigKey<String> KILLFEED_CHAT_COLOR_MIDDLE =

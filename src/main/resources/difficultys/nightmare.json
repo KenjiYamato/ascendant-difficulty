@@ -6,7 +6,9 @@
         "description": "HP x9.993, Eingehender DMG x3.9, Gegner-Rüstung: 67% Spieler-DMG, XP x1.8, Cash x1.8, Loot: Rate x1.65, Menge x2.2. Sehr schwer: Fehler werden sofort bestraft.",
         "color": "#FF2A2A",
         "imagePath": "Images/Difficulty/nightmare.png",
-        "iconPath": "Images/Difficulty/nightmare@icon.png"
+        "iconPath": "Images/Difficulty/nightmare@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

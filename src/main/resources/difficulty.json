@@ -39,6 +39,8 @@
             "spawnTierNameplate": false,
             "killFeedTierTag": true,
             "killFeedTierChat": false,
+            "chatTierTag": false,
+            "serverListTierTag": false,
             "debugCommands": true,
             "eliteSpawn": true
         },

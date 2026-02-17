@@ -1,8 +1,10 @@
 package ascendant.core;
 
+import ascendant.core.adapter.ChatTierTagHandler;
 import ascendant.core.adapter.KillFeedAdapter;
 import ascendant.core.adapter.KillFeedTierTagHandler;
 import ascendant.core.adapter.NotificationsAdapter;
+import ascendant.core.adapter.ServerPlayerListAdapter;
 import ascendant.core.commands.debug.ClearAllEntityCommand;
 import ascendant.core.commands.debug.ClearDroppedItemsCommand;
 import ascendant.core.commands.DifficultyBadgeToggleCommand;
@@ -20,6 +22,7 @@ import ascendant.core.events.OnDeath;
 import ascendant.core.scaling.*;
 import ascendant.core.ui.DifficultyBadge;
 import ascendant.core.util.NpcRoles;
+import com.hypixel.hytale.server.core.event.events.player.PlayerChatEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -89,10 +92,13 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
         this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, (playerDisconnectEvent) -> {
             DifficultyBadge.onPlayerDisconnect(playerDisconnectEvent);
         });
+        this.getEventRegistry().registerGlobal(PlayerChatEvent.class, ChatTierTagHandler::handle);
         // Notifications adapter PACKET_ID = 212
         NotificationsAdapter.register();
         // KillFeed adapter PACKET_ID = 213;
         KillFeedAdapter.register();
+        // Server player list adapter
+        ServerPlayerListAdapter.register();
         this.getEntityStoreRegistry().registerSystem(new KillFeedTierTagHandler.KillerSystem());
         this.getEntityStoreRegistry().registerSystem(new KillFeedTierTagHandler.DecedentSystem());
         this.getEntityStoreRegistry().registerSystem(new KillFeedTierTagHandler.DisplaySystem());

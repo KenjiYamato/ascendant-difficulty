@@ -3,9 +3,9 @@ package ascendant.core.adapter;
 import ascendant.core.config.ConfigKey;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
-import ascendant.core.config.DifficultyMeta;
 import ascendant.core.util.DamageRef;
 import ascendant.core.util.Logging;
+import ascendant.core.util.TierTagUtil;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -462,28 +462,8 @@ public final class KillFeedTierTagHandler {
 
     @SuppressWarnings("removal")
     private static String buildTaggedName(@Nonnull Player player) {
-        UUID playerUuid = player.getUuid();
-        if (playerUuid == null) {
-            return null;
-        }
-
-        String tierId = DifficultyManager.getDifficulty(playerUuid);
-        if (tierId == null || tierId.isBlank()) {
-            return null;
-        }
-
-        DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
-        String tierName = meta.displayName();
-        if (tierName == null || tierName.isBlank()) {
-            tierName = tierId;
-        }
-
         String playerName = player.getDisplayName();
-        if (playerName == null || playerName.isBlank()) {
-            return null;
-        }
-
-        return "[" + tierName + "] " + playerName;
+        return TierTagUtil.buildTaggedName(player.getUuid(), playerName, TierTagUtil.PrefixKind.KILLFEED);
     }
 
     private static boolean sendToUniverse(Message chat) {

@@ -6,7 +6,9 @@
         "description": "HP x1, Eingehender DMG x1, Gegner-Rüstung: aus, XP x1, Cash x1, Loot: Rate x1, Menge x1.",
         "color": "#FFFFFF",
         "imagePath": "Images/Difficulty/normal.png",
-        "iconPath": "Images/Difficulty/normal@icon.png"
+        "iconPath": "Images/Difficulty/normal@icon.png",
+        "killFeedPrefix": "[{tier}] ",
+        "chatPrefix": "[{tier}] "
     },
     "is_allowed": true,
     "is_hidden": false,

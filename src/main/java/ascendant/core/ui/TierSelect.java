@@ -1,5 +1,6 @@
 package ascendant.core.ui;
 
+import ascendant.core.adapter.ServerPlayerListAdapter;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.DifficultyMeta;
@@ -147,6 +148,7 @@ public class TierSelect {
 
                 DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
                 markDifficultyChange(playerUuid);
+                ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
                 DifficultyBadge.updateForPlayer(playerRef);
                 EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, tier.displayName(), "selected difficulty");
 
