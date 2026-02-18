@@ -19,6 +19,7 @@ public final class DifficultyIO {
     public static final Path DEFAULT_CONFIG_PATH = DifficultyConfig.DEFAULT_PATH;
     public static final Path DIFFICULTY_DROPINS_PATH = Path.of("config", "ascendant", "difficultys");
     public static final Path PLAYER_SETTINGS_PATH = Path.of("config", "ascendant", "players-settings.json");
+    public static final Path WORLD_TIER_SETTINGS_PATH = Path.of("config", "ascendant", "world-tier-settings.json");
     public static final Path LEGACY_PLAYER_OVERRIDES_PATH = Path.of("config", "ascendant", "difficulty-players.json");
     public static final Path NPC_ROLES_PATH = Path.of("config", "ascendant", "npc_roles.json");
 
@@ -90,6 +91,11 @@ public final class DifficultyIO {
     public static final String PATH_ALLOW_SERVERLIST_TIER_TAG = "base.allow.tags.serverListTierTag";
     public static final String PATH_ALLOW_DEBUG_COMMANDS = "base.allow.debug.commands";
     public static final String PATH_ALLOW_ELITE_SPAWN_MODIFIER = "base.allow.spawn.elite";
+    public static final String PATH_WORLD_TIER_ENABLED = "base.worldTier.enabled";
+    public static final String PATH_WORLD_TIER_MODE = "base.worldTier.mode";
+    public static final String PATH_WORLD_TIER_FIXED_TIER = "base.worldTier.fixedTier";
+    public static final String PATH_WORLD_TIER_SCALED_FACTOR = "base.worldTier.scaledFactor";
+    public static final String PATH_WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS = "base.worldTier.scaledUseAllOnlinePlayers";
 
     public static final String LEGACY_PATH_ALLOW_DIFFICULTY_CHANGE = "base.allow.difficultyChange";
     public static final String LEGACY_PATH_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = "base.allow.difficultyChangeInCombat";
@@ -129,6 +135,9 @@ public final class DifficultyIO {
     public static final String PATH_COMMAND_RELOAD_NAME = "base.commands.reload.name";
     public static final String PATH_COMMAND_RELOAD_ALIASES = "base.commands.reload.aliases";
     public static final String PATH_COMMAND_RELOAD_PERMISSION = "base.commands.reload.permission";
+    public static final String PATH_COMMAND_WORLD_TIER_NAME = "base.commands.worldTier.name";
+    public static final String PATH_COMMAND_WORLD_TIER_ALIASES = "base.commands.worldTier.aliases";
+    public static final String PATH_COMMAND_WORLD_TIER_PERMISSION = "base.commands.worldTier.permission";
     public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_NAME = "base.commands.debugClearEntities.name";
     public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES = "base.commands.debugClearEntities.aliases";
     public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION = "base.commands.debugClearEntities.permission";
@@ -216,6 +225,11 @@ public final class DifficultyIO {
     public static final boolean DEFAULT_ALLOW_DIFFICULTY_CHANGE_IN_COMBAT = false;
     public static final double DEFAULT_UI_BADGE_START_DELAY_MS = 0.0;
     public static final boolean DEFAULT_UI_TIER_VALUES_AS_PERCENT = true;
+    public static final boolean DEFAULT_WORLD_TIER_ENABLED = false;
+    public static final String DEFAULT_WORLD_TIER_MODE = "fixed";
+    public static final String DEFAULT_WORLD_TIER_FIXED_TIER = DEFAULT_BASE_DIFFICULTY;
+    public static final double DEFAULT_WORLD_TIER_SCALED_FACTOR = 0.5;
+    public static final boolean DEFAULT_WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS = true;
     public static final double DEFAULT_DIFFICULTY_CHANGE_COOLDOWN_MS = 0.0;
     public static final double DEFAULT_DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS = 10000.0;
     public static final double DEFAULT_MIN_DAMAGE_FACTOR = 0.001;
@@ -286,6 +300,9 @@ public final class DifficultyIO {
     public static final String DEFAULT_COMMAND_RELOAD_NAME = "ascendant-difficulty-reload";
     public static final List<String> DEFAULT_COMMAND_RELOAD_ALIASES = List.of();
     public static final String DEFAULT_COMMAND_RELOAD_PERMISSION = "ascendant.difficulty.reload";
+    public static final String DEFAULT_COMMAND_WORLD_TIER_NAME = "ascendant-world-tier";
+    public static final List<String> DEFAULT_COMMAND_WORLD_TIER_ALIASES = List.of("awt");
+    public static final String DEFAULT_COMMAND_WORLD_TIER_PERMISSION = "ascendant.difficulty.world_tier";
     public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_NAME = "ce";
     public static final List<String> DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES = List.of();
     public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION = "ascendant.debug.clear_entities";
@@ -362,6 +379,16 @@ public final class DifficultyIO {
             ConfigKey.ofDouble(PATH_UI_BADGE_START_DELAY_MS, DEFAULT_UI_BADGE_START_DELAY_MS);
     public static final ConfigKey<Boolean> UI_TIER_VALUES_AS_PERCENT =
             ConfigKey.ofBoolean(PATH_UI_TIER_VALUES_AS_PERCENT, DEFAULT_UI_TIER_VALUES_AS_PERCENT);
+    public static final ConfigKey<Boolean> WORLD_TIER_ENABLED =
+            ConfigKey.ofBoolean(PATH_WORLD_TIER_ENABLED, DEFAULT_WORLD_TIER_ENABLED);
+    public static final ConfigKey<String> WORLD_TIER_MODE =
+            ConfigKey.ofString(PATH_WORLD_TIER_MODE, DEFAULT_WORLD_TIER_MODE);
+    public static final ConfigKey<String> WORLD_TIER_FIXED_TIER =
+            ConfigKey.ofString(PATH_WORLD_TIER_FIXED_TIER, DEFAULT_WORLD_TIER_FIXED_TIER);
+    public static final ConfigKey<Double> WORLD_TIER_SCALED_FACTOR =
+            ConfigKey.ofDouble(PATH_WORLD_TIER_SCALED_FACTOR, DEFAULT_WORLD_TIER_SCALED_FACTOR);
+    public static final ConfigKey<Boolean> WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS =
+            ConfigKey.ofBoolean(PATH_WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS, DEFAULT_WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS);
     public static final ConfigKey<Double> DIFFICULTY_CHANGE_COOLDOWN_MS =
             ConfigKey.ofDouble(PATH_DIFFICULTY_CHANGE_COOLDOWN_MS, DEFAULT_DIFFICULTY_CHANGE_COOLDOWN_MS);
     public static final ConfigKey<Double> DIFFICULTY_CHANGE_COMBAT_TIMEOUT_MS =
@@ -500,6 +527,12 @@ public final class DifficultyIO {
             ConfigKey.ofStringList(PATH_COMMAND_RELOAD_ALIASES, DEFAULT_COMMAND_RELOAD_ALIASES);
     public static final ConfigKey<String> COMMAND_RELOAD_PERMISSION =
             ConfigKey.ofString(PATH_COMMAND_RELOAD_PERMISSION, DEFAULT_COMMAND_RELOAD_PERMISSION);
+    public static final ConfigKey<String> COMMAND_WORLD_TIER_NAME =
+            ConfigKey.ofString(PATH_COMMAND_WORLD_TIER_NAME, DEFAULT_COMMAND_WORLD_TIER_NAME);
+    public static final ConfigKey<List<String>> COMMAND_WORLD_TIER_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_WORLD_TIER_ALIASES, DEFAULT_COMMAND_WORLD_TIER_ALIASES);
+    public static final ConfigKey<String> COMMAND_WORLD_TIER_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_WORLD_TIER_PERMISSION, DEFAULT_COMMAND_WORLD_TIER_PERMISSION);
     public static final ConfigKey<String> COMMAND_DEBUG_CLEAR_ENTITIES_NAME =
             ConfigKey.ofString(PATH_COMMAND_DEBUG_CLEAR_ENTITIES_NAME, DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_NAME);
     public static final ConfigKey<List<String>> COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES =

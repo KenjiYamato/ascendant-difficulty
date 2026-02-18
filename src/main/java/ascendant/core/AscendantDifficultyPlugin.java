@@ -4,6 +4,7 @@ import ascendant.core.adapter.*;
 import ascendant.core.commands.DifficultyBadgeToggleCommand;
 import ascendant.core.commands.ReloadConfigCommand;
 import ascendant.core.commands.TierSelectCommand;
+import ascendant.core.commands.WorldTierCommand;
 import ascendant.core.commands.debug.*;
 import ascendant.core.config.*;
 import ascendant.core.events.OnDeath;
@@ -114,6 +115,14 @@ public class AscendantDifficultyPlugin extends JavaPlugin {
                 DifficultyIO.COMMAND_RELOAD_PERMISSION,
                 DifficultyIO.DEFAULT_COMMAND_RELOAD_PERMISSION,
                 (name, perm) -> new ReloadConfigCommand(name, "Reload ascendant difficulty config", perm));
+        CommandRegistrationUtil.registerCommandWithAliases(
+                registrar,
+                DifficultyIO.COMMAND_WORLD_TIER_NAME,
+                DifficultyIO.DEFAULT_COMMAND_WORLD_TIER_NAME,
+                DifficultyIO.COMMAND_WORLD_TIER_ALIASES,
+                DifficultyIO.COMMAND_WORLD_TIER_PERMISSION,
+                DifficultyIO.DEFAULT_COMMAND_WORLD_TIER_PERMISSION,
+                (name, perm) -> new WorldTierCommand(name, "Manage world tier mode and override", perm));
         if (RuntimeSettings.allowDebugCommands()) {
             registerDebugCommands(registrar);
         }

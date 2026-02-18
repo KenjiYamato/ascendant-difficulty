@@ -3,6 +3,13 @@
 		"defaultDifficulty": "normal",
 		"uiBadgeStartDelayMs": 680.0,
 		"uiTierValuesAsPercent": true,
+		"worldTier": {
+			"enabled": false,
+			"mode": "scaled",
+			"fixedTier": "normal",
+			"scaledFactor": 0.5,
+			"scaledUseAllOnlinePlayers": true
+		},
 		"difficultyChangeCooldownMs": 0.0,
 		"difficultyChangeCombatTimeoutMs": 10000.0,
 		"minDamageFactor": 0.001,
@@ -84,6 +91,13 @@
 					"adr"
 				],
 				"permission": "ascendant.difficulty.reload"
+			},
+			"worldTier": {
+				"name": "ascendant-world-tier",
+				"aliases": [
+					"awt"
+				],
+				"permission": "ascendant.difficulty.world_tier"
 			},
 			"debugClearEntities": {
 				"name": "clear_entities",

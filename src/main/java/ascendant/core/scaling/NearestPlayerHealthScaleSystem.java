@@ -126,14 +126,17 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
 
         String tier = getSpawnTierFromHolder(holder);
         if (tier == null) {
-            World world = store.getExternalData().getWorld();
-            Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, holder, _fallbackRadiusSq);
-            if (nearest == null) {
-                return;
+            if (DifficultyManager.isWorldTierActive()) {
+                tier = DifficultyManager.getWorldTier();
+            } else {
+                World world = store.getExternalData().getWorld();
+                Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, holder, _fallbackRadiusSq);
+                if (nearest == null) {
+                    return;
+                }
+                UUID playerUuid = nearest.getUuid();
+                tier = DifficultyManager.getDifficulty(playerUuid);
             }
-
-            UUID playerUuid = nearest.getUuid();
-            tier = DifficultyManager.getDifficulty(playerUuid);
             if (tier == null || tier.isBlank()) {
                 tier = DifficultyIO.DEFAULT_BASE_DIFFICULTY;
             }
@@ -239,7 +242,7 @@ public final class NearestPlayerHealthScaleSystem extends com.hypixel.hytale.com
             return;
         }
         String current = nameplate.getText();
-        if (current == null || current.isBlank()) {
+        if (current.isBlank()) {
             nameplate.setText(label);
         } else if (!current.contains(displayName) && !current.contains(tierId)) {
             nameplate.setText(current + " [" + label + "]");

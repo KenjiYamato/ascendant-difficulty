@@ -596,6 +596,10 @@ public final class SpawnCountMultiplierSystem extends RefSystem<EntityStore> {
     }
 
     private TierResolution resolveTier(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref) {
+        if (DifficultyManager.isWorldTierActive()) {
+            return new TierResolution(DifficultyManager.getWorldTier(), "world");
+        }
+
         String tierId = NearestPlayerHealthScaleSystem.getSpawnTier(store, ref);
         if (tierId != null && !tierId.isBlank()) {
             return new TierResolution(tierId, "component");

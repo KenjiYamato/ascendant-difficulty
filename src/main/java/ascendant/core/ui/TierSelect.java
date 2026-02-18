@@ -3,6 +3,7 @@ package ascendant.core.ui;
 import ascendant.core.adapter.ServerPlayerListAdapter;
 import ascendant.core.config.*;
 import ascendant.core.util.EventNotificationWrapper;
+import ascendant.core.util.WorldTierUiSync;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
@@ -144,8 +145,12 @@ public class TierSelect {
 
                 DifficultyManager.setPlayerDifficultyOverride(playerUuid, tier.tierId());
                 markDifficultyChange(playerUuid);
-                ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
-                DifficultyBadge.updateForPlayer(playerRef);
+                if (DifficultyManager.isWorldTierActive()) {
+                    WorldTierUiSync.refreshAllPlayers();
+                } else {
+                    ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
+                    DifficultyBadge.updateForPlayer(playerRef);
+                }
                 EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, tier.displayName(), "selected difficulty");
 
                 openOrUpdateUi(playerRef, store, playerUuid, commandContext);

@@ -1,6 +1,8 @@
 package ascendant.core.config;
 
 import com.google.gson.*;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.Universe;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -18,10 +20,12 @@ public final class DifficultyManager {
     private static final String PLAYER_SETTING_DIFFICULTY = "difficulty";
     private static final String PLAYER_SETTING_SHOW_BADGE = "showBadge";
     private static final String PLAYER_SETTING_SHOW_TIER_VALUES_AS_PERCENT = "showTierValuesAsPercent";
+    private static final String WORLD_TIER_SETTING_FIXED_OVERRIDE = "fixedTierOverride";
     private static final boolean DEFAULT_SHOW_BADGE = true;
     private static volatile boolean initialized = false;
     private static DifficultyConfig config;
     private static DifficultySettings settings;
+    private static volatile String worldTierAdminOverride;
 
     private DifficultyManager() {
     }
@@ -32,6 +36,7 @@ public final class DifficultyManager {
             DifficultyManager.config = config;
             DifficultyManager.settings = (settings != null) ? settings : DifficultySettings.fromConfig(config);
             loadPlayerSettings();
+            loadWorldTierSettings();
             initialized = true;
         }
     }
@@ -59,13 +64,23 @@ public final class DifficultyManager {
         return getFromConfig(DifficultyIO.ALLOW_DIFFICULTY_CHANGE);
     }
 
-    // Resolved difficulty = player override -> default -> first available tier.
+    // Effective difficulty = world tier (if enabled) otherwise player tier.
     public static String getDifficulty(UUID playerUuid) {
         Objects.requireNonNull(playerUuid, "playerUuid");
         ensureInitialized();
+        if (isWorldTierActive()) {
+            return resolveWorldTierOrDefault();
+        }
+        return getPlayerDifficulty(playerUuid);
+    }
 
-        PlayerSettings settings = playerSettings.get(playerUuid);
-        String override = settings != null ? settings.difficultyOverride() : null;
+    // Player tier only (ignores world tier mode).
+    public static String getPlayerDifficulty(UUID playerUuid) {
+        Objects.requireNonNull(playerUuid, "playerUuid");
+        ensureInitialized();
+
+        PlayerSettings playerSetting = playerSettings.get(playerUuid);
+        String override = playerSetting != null ? playerSetting.difficultyOverride() : null;
         if (isValidTier(override)) {
             return override;
         }
@@ -76,6 +91,68 @@ public final class DifficultyManager {
         }
 
         return pickAnyTierOrDefault();
+    }
+
+    public static boolean isWorldTierActive() {
+        ensureInitialized();
+        return getFromConfig(DifficultyIO.WORLD_TIER_ENABLED);
+    }
+
+    public static String getWorldTier() {
+        ensureInitialized();
+        return resolveWorldTierOrDefault();
+    }
+
+    public static String getWorldTierAdminOverride() {
+        ensureInitialized();
+        String value = worldTierAdminOverride;
+        return isValidTier(value) ? value : null;
+    }
+
+    public static boolean setWorldTierAdminOverride(String tierId) {
+        ensureInitialized();
+        synchronized (INIT_LOCK) {
+            String normalized = normalizeTierId(tierId);
+            if (normalized == null) {
+                clearWorldTierAdminOverride();
+                return true;
+            }
+            String canonicalTierId = resolveCanonicalTierId(normalized);
+            if (canonicalTierId == null) {
+                return false;
+            }
+            worldTierAdminOverride = canonicalTierId;
+            saveWorldTierSettings();
+            return true;
+        }
+    }
+
+    public static void clearWorldTierAdminOverride() {
+        ensureInitialized();
+        synchronized (INIT_LOCK) {
+            worldTierAdminOverride = null;
+            saveWorldTierSettings();
+        }
+    }
+
+    public static WorldTierSnapshot getWorldTierSnapshot() {
+        ensureInitialized();
+        boolean active = isWorldTierActive();
+        WorldTierMode mode = resolveWorldTierMode();
+        String resolved = resolveWorldTierOrDefault();
+        String fixedTier = resolveFixedWorldTier();
+        String adminOverride = getWorldTierAdminOverride();
+        double scaledFactor = clamp01(getFromConfig(DifficultyIO.WORLD_TIER_SCALED_FACTOR));
+        boolean scaledUseAllOnlinePlayers = getFromConfig(DifficultyIO.WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS);
+        return new WorldTierSnapshot(
+                active,
+                mode.configValue,
+                resolved,
+                fixedTier,
+                adminOverride,
+                scaledFactor,
+                scaledUseAllOnlinePlayers
+        );
     }
 
     // Persist player override only if selection is enabled and tier exists.
@@ -89,11 +166,12 @@ public final class DifficultyManager {
             clearPlayerDifficultyOverride(playerUuid);
             return;
         }
-        if (!isValidTier(tierId)) {
+        String canonicalTierId = resolveCanonicalTierId(tierId);
+        if (canonicalTierId == null) {
             return;
         }
         PlayerSettings current = getPlayerSettings(playerUuid);
-        PlayerSettings updated = new PlayerSettings(tierId, current.showBadge(), current.showTierValuesAsPercent());
+        PlayerSettings updated = new PlayerSettings(canonicalTierId, current.showBadge(), current.showTierValuesAsPercent());
         savePlayerSettings(playerUuid, updated);
     }
 
@@ -156,6 +234,7 @@ public final class DifficultyManager {
         synchronized (INIT_LOCK) {
             config.reload();
             settings = config.toSettings();
+            loadWorldTierSettings();
             RuntimeSettings.reload();
         }
     }
@@ -175,16 +254,29 @@ public final class DifficultyManager {
                 throw new IllegalStateException("Failed to load difficulty config.", e);
             }
             loadPlayerSettings();
+            loadWorldTierSettings();
             initialized = true;
         }
     }
 
     private static boolean isValidTier(String tierId) {
+        return resolveCanonicalTierId(tierId) != null;
+    }
+
+    private static String resolveCanonicalTierId(String tierId) {
         if (tierId == null || tierId.isBlank()) {
-            return false;
+            return null;
         }
         Map<String, Map<String, Double>> tiers = settings.tiers();
-        return tiers.containsKey(tierId);
+        if (tiers.containsKey(tierId)) {
+            return tierId;
+        }
+        for (String existing : tiers.keySet()) {
+            if (existing.equalsIgnoreCase(tierId)) {
+                return existing;
+            }
+        }
+        return null;
     }
 
     private static String pickAnyTierOrDefault() {
@@ -203,6 +295,145 @@ public final class DifficultyManager {
         return DifficultyIO.UI_TIER_VALUES_AS_PERCENT.read(currentConfig);
     }
 
+    private static String resolveWorldTierOrDefault() {
+        String adminOverride = getWorldTierAdminOverride();
+        if (adminOverride != null) {
+            return adminOverride;
+        }
+
+        WorldTierMode mode = resolveWorldTierMode();
+        return switch (mode) {
+            case HIGHEST, LOWEST, SCALED -> resolveOnlineTierByMode(mode);
+            case FIXED -> resolveFixedWorldTier();
+        };
+    }
+
+    private static String resolveFixedWorldTier() {
+        String fixed = getFromConfig(DifficultyIO.WORLD_TIER_FIXED_TIER);
+        if (isValidTier(fixed)) {
+            return fixed;
+        }
+        String defaultTier = getFromConfig(DifficultyIO.DEFAULT_DIFFICULTY);
+        if (isValidTier(defaultTier)) {
+            return defaultTier;
+        }
+        return pickAnyTierOrDefault();
+    }
+
+    private static String resolveOnlineTierByMode(WorldTierMode mode) {
+        List<String> orderedTierIds = new ArrayList<>(settings.tiers().keySet());
+        if (orderedTierIds.isEmpty()) {
+            return DifficultyIO.DEFAULT_BASE_DIFFICULTY;
+        }
+
+        Universe universe = Universe.get();
+        if (universe == null) {
+            return resolveFixedWorldTier();
+        }
+        List<PlayerRef> onlinePlayers = universe.getPlayers();
+        if (onlinePlayers.isEmpty()) {
+            return resolveFixedWorldTier();
+        }
+
+        Map<String, Integer> tierIndexById = new HashMap<>();
+        for (int i = 0; i < orderedTierIds.size(); i++) {
+            tierIndexById.put(orderedTierIds.get(i), i);
+        }
+
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        List<Integer> onlineTierIndices = new ArrayList<>();
+        for (PlayerRef playerRef : onlinePlayers) {
+            if (playerRef == null || !playerRef.isValid()) {
+                continue;
+            }
+            UUID uuid = playerRef.getUuid();
+            String playerTier = getPlayerDifficulty(uuid);
+            Integer idx = tierIndexById.get(playerTier);
+            if (idx == null) {
+                continue;
+            }
+            onlineTierIndices.add(idx);
+            if (idx < min) {
+                min = idx;
+            }
+            if (idx > max) {
+                max = idx;
+            }
+        }
+
+        if (onlineTierIndices.isEmpty() || min == Integer.MAX_VALUE || max == Integer.MIN_VALUE) {
+            return resolveFixedWorldTier();
+        }
+
+        int resolvedIndex = switch (mode) {
+            case HIGHEST -> max;
+            case LOWEST -> min;
+            case SCALED -> resolveScaledTierIndex(min, max, onlineTierIndices);
+            case FIXED -> min;
+        };
+
+        if (resolvedIndex < 0) {
+            resolvedIndex = 0;
+        } else if (resolvedIndex >= orderedTierIds.size()) {
+            resolvedIndex = orderedTierIds.size() - 1;
+        }
+        return orderedTierIds.get(resolvedIndex);
+    }
+
+    private static int resolveScaledTierIndex(int min, int max, List<Integer> onlineTierIndices) {
+        double factor = clamp01(getFromConfig(DifficultyIO.WORLD_TIER_SCALED_FACTOR));
+        boolean useAllOnlinePlayers = getFromConfig(DifficultyIO.WORLD_TIER_SCALED_USE_ALL_ONLINE_PLAYERS);
+
+        if (!useAllOnlinePlayers || onlineTierIndices.size() <= 1) {
+            double scaled = min + ((max - min) * factor);
+            return (int) Math.round(scaled);
+        }
+
+        List<Integer> sorted = new ArrayList<>(onlineTierIndices);
+        sorted.sort(Integer::compareTo);
+
+        int size = sorted.size();
+        if (size == 1) {
+            return sorted.getFirst();
+        }
+
+        double position = factor * (size - 1);
+        int lowerIndex = (int) Math.floor(position);
+        int upperIndex = (int) Math.ceil(position);
+        double lowerValue = sorted.get(lowerIndex);
+        double upperValue = sorted.get(upperIndex);
+        double localT = position - lowerIndex;
+        double interpolated = lowerValue + ((upperValue - lowerValue) * localT);
+        return (int) Math.round(interpolated);
+    }
+
+    private static WorldTierMode resolveWorldTierMode() {
+        String raw = getFromConfig(DifficultyIO.WORLD_TIER_MODE);
+        return WorldTierMode.fromConfig(raw);
+    }
+
+    private static double clamp01(double value) {
+        if (!Double.isFinite(value)) {
+            return 0.0;
+        }
+        if (value <= 0.0) {
+            return 0.0;
+        }
+        if (value >= 1.0) {
+            return 1.0;
+        }
+        return value;
+    }
+
+    private static String normalizeTierId(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
     private static void loadPlayerSettings() {
         playerSettings.clear();
         boolean loaded = loadPlayerSettingsFromPath(DifficultyIO.PLAYER_SETTINGS_PATH);
@@ -211,6 +442,32 @@ public final class DifficultyManager {
         }
         if (loadPlayerSettingsFromPath(DifficultyIO.LEGACY_PLAYER_OVERRIDES_PATH)) {
             savePlayerSettings();
+        }
+    }
+
+    private static void loadWorldTierSettings() {
+        worldTierAdminOverride = null;
+        Path path = DifficultyIO.WORLD_TIER_SETTINGS_PATH;
+        if (Files.notExists(path)) {
+            return;
+        }
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            JsonElement parsed = JsonParser.parseReader(reader);
+            if (parsed == null || !parsed.isJsonObject()) {
+                return;
+            }
+            JsonObject obj = parsed.getAsJsonObject();
+            JsonElement fixedTierOverrideElement = obj.get(WORLD_TIER_SETTING_FIXED_OVERRIDE);
+            if (fixedTierOverrideElement == null || !fixedTierOverrideElement.isJsonPrimitive()) {
+                return;
+            }
+            String candidate = normalizeTierId(fixedTierOverrideElement.getAsString());
+            String canonicalTierId = resolveCanonicalTierId(candidate);
+            if (canonicalTierId != null) {
+                worldTierAdminOverride = canonicalTierId;
+            }
+        } catch (IOException e) {
+            System.err.println("[ascendant] Failed to read " + path + ": " + e.getMessage());
         }
     }
 
@@ -268,10 +525,11 @@ public final class DifficultyManager {
         }
         if (value.isJsonPrimitive()) {
             String tier = value.getAsString();
-            if (!isValidTier(tier)) {
+            String canonicalTierId = resolveCanonicalTierId(tier);
+            if (canonicalTierId == null) {
                 return null;
             }
-            return new PlayerSettings(tier, DEFAULT_SHOW_BADGE, defaultShowTierValuesAsPercent());
+            return new PlayerSettings(canonicalTierId, DEFAULT_SHOW_BADGE, defaultShowTierValuesAsPercent());
         }
         if (!value.isJsonObject()) {
             return null;
@@ -281,8 +539,9 @@ public final class DifficultyManager {
         JsonElement difficultyElement = obj.get(PLAYER_SETTING_DIFFICULTY);
         if (difficultyElement != null && difficultyElement.isJsonPrimitive()) {
             String candidate = difficultyElement.getAsString();
-            if (isValidTier(candidate)) {
-                difficulty = candidate;
+            String canonicalTierId = resolveCanonicalTierId(candidate);
+            if (canonicalTierId != null) {
+                difficulty = canonicalTierId;
             }
         }
         boolean showBadge = DEFAULT_SHOW_BADGE;
@@ -347,6 +606,55 @@ public final class DifficultyManager {
             Files.writeString(DifficultyIO.PLAYER_SETTINGS_PATH, GSON.toJson(root), StandardCharsets.UTF_8);
         } catch (IOException e) {
             System.err.println("[ascendant] Failed to write " + DifficultyIO.PLAYER_SETTINGS_PATH + ": " + e.getMessage());
+        }
+    }
+
+    private static void saveWorldTierSettings() {
+        try {
+            Files.createDirectories(DifficultyIO.WORLD_TIER_SETTINGS_PATH.getParent());
+            JsonObject root = new JsonObject();
+            if (worldTierAdminOverride != null && !worldTierAdminOverride.isBlank()) {
+                root.addProperty(WORLD_TIER_SETTING_FIXED_OVERRIDE, worldTierAdminOverride);
+            }
+            Files.writeString(DifficultyIO.WORLD_TIER_SETTINGS_PATH, GSON.toJson(root), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            System.err.println("[ascendant] Failed to write " + DifficultyIO.WORLD_TIER_SETTINGS_PATH + ": " + e.getMessage());
+        }
+    }
+
+    public record WorldTierSnapshot(
+            boolean active,
+            String mode,
+            String resolvedTier,
+            String fixedTier,
+            String adminOverrideTier,
+            double scaledFactor,
+            boolean scaledUseAllOnlinePlayers
+    ) {
+    }
+
+    private enum WorldTierMode {
+        FIXED("fixed"),
+        HIGHEST("highest"),
+        LOWEST("lowest"),
+        SCALED("scaled");
+
+        private final String configValue;
+
+        WorldTierMode(String configValue) {
+            this.configValue = configValue;
+        }
+
+        private static WorldTierMode fromConfig(String value) {
+            if (value == null || value.isBlank()) {
+                return FIXED;
+            }
+            return switch (value.trim().toLowerCase(Locale.ROOT)) {
+                case "highest", "max" -> HIGHEST;
+                case "lowest", "min" -> LOWEST;
+                case "scaled", "scale" -> SCALED;
+                default -> FIXED;
+            };
         }
     }
 

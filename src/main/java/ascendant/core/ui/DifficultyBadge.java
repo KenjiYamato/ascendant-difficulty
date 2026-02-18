@@ -3,6 +3,7 @@ package ascendant.core.ui;
 import ascendant.core.config.DifficultyIO;
 import ascendant.core.config.DifficultyManager;
 import ascendant.core.config.DifficultyMeta;
+import ascendant.core.util.WorldTierUiSync;
 import au.ellie.hyui.builders.HudBuilder;
 import au.ellie.hyui.builders.HyUIHud;
 import au.ellie.hyui.html.TemplateProcessor;
@@ -44,6 +45,9 @@ public final class DifficultyBadge {
         long delayMs = Math.max(0L, Math.round(delayMsCfg));
         if (delayMs == 0L) {
             _showForPlayer(player);
+            if (DifficultyManager.isWorldTierActive()) {
+                WorldTierUiSync.refreshAllPlayers();
+            }
             return;
         }
         PlayerRef playerRef = player.getPlayerRef();
@@ -55,6 +59,9 @@ public final class DifficultyBadge {
                 return;
             }
             _showForPlayer(playerRef);
+            if (DifficultyManager.isWorldTierActive()) {
+                WorldTierUiSync.refreshAllPlayers();
+            }
         }, delayMs, TimeUnit.MILLISECONDS);
     }
 
@@ -74,6 +81,9 @@ public final class DifficultyBadge {
         PlayerRef playerRef = _event.getPlayerRef();
         UUID uuid = playerRef.getUuid();
         removeUIForPlayerUUID(uuid);
+        if (DifficultyManager.isWorldTierActive()) {
+            WorldTierUiSync.refreshAllPlayers();
+        }
     }
 
     public static void removeUIForPlayerUUID(UUID uuid) {
@@ -100,9 +110,6 @@ public final class DifficultyBadge {
     @SuppressWarnings("removal")
     private static void _showForPlayer(PlayerRef playerRef) {
         UUID playerUuid = playerRef.getUuid();
-        if (playerUuid == null) {
-            return;
-        }
         if (!allowBadge(playerUuid)) {
             return;
         }
@@ -112,6 +119,9 @@ public final class DifficultyBadge {
 
         TemplateProcessor template = new TemplateProcessor();
         template.setVariable("badgeImagePath", meta.iconPath());
+        template.setVariable("tierScopeLabel", DifficultyManager.isWorldTierActive() ? "Images/LabelBadges/world_tier.png" : "Images/LabelBadges/player_tier.png");
+        template.setVariable("tierScopeLabelRightCorrection", DifficultyManager.isWorldTierActive() ? 7 : 8);
+
 
         HudBuilder hud = _hudByPlayer.computeIfAbsent(playerUuid, _uuid -> HudBuilder.detachedHud());
 

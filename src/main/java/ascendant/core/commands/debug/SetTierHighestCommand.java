@@ -8,6 +8,7 @@ import ascendant.core.config.DifficultyMeta;
 import ascendant.core.config.DifficultySettings;
 import ascendant.core.ui.DifficultyBadge;
 import ascendant.core.util.EventNotificationWrapper;
+import ascendant.core.util.WorldTierUiSync;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -38,9 +39,17 @@ public final class SetTierHighestCommand extends AbstractPlayerCommand {
     @Override
     protected void executeOnWorldThread(@NonNullDecl PlayerRef playerRef, @NonNullDecl Store<EntityStore> store, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext) {
         String tierId = resolveHighestTierId();
+        setTierValue(playerRef, playerUuid, commandContext, tierId);
+    }
+
+    static void setTierValue(@NonNullDecl PlayerRef playerRef, @NonNullDecl UUID playerUuid, @NonNullDecl CommandContext commandContext, String tierId) {
         DifficultyManager.setPlayerDifficultyOverride(playerUuid, tierId);
-        ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
-        DifficultyBadge.updateForPlayer(playerRef);
+        if (DifficultyManager.isWorldTierActive()) {
+            WorldTierUiSync.refreshAllPlayers();
+        } else {
+            ServerPlayerListAdapter.refreshPlayerEntry(playerRef);
+            DifficultyBadge.updateForPlayer(playerRef);
+        }
 
         DifficultyMeta.TierMeta meta = DifficultyMeta.resolve(DifficultyManager.getConfig(), tierId);
         EventNotificationWrapper.sendMajorEventNotification(playerRef, commandContext, meta.displayName(), "selected difficulty");

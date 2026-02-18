@@ -77,11 +77,12 @@ public final class EntityEliteSpawn extends RefSystem<EntityStore> {
             return;
         }
         World world = store.getExternalData().getWorld();
-        if (world == null) {
+
+        ComponentType<EntityStore, NPCEntity> npcEntityComponentType = NPCEntity.getComponentType();
+        if(npcEntityComponentType == null) {
             return;
         }
-
-        NPCEntity npc = commandBuffer.getComponent(ref, NPCEntity.getComponentType());
+        NPCEntity npc = commandBuffer.getComponent(ref, npcEntityComponentType);
         if (npc == null) {
             npc = store.getComponent(ref, NPCEntity.getComponentType());
         }
@@ -97,19 +98,24 @@ public final class EntityEliteSpawn extends RefSystem<EntityStore> {
             return;
         }
 
-        double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
-        float fallbackRadiusSq;
-        if (radius <= 0.0) {
-            fallbackRadiusSq = Float.MAX_VALUE;
+        String tierId;
+        if (DifficultyManager.isWorldTierActive()) {
+            tierId = DifficultyManager.getWorldTier();
         } else {
-            float r = (float) radius;
-            fallbackRadiusSq = r * r;
-        }
+            double radius = DifficultyManager.getFromConfig(DifficultyIO.PLAYER_DISTANCE_RADIUS_TO_CHECK);
+            float fallbackRadiusSq;
+            if (radius <= 0.0) {
+                fallbackRadiusSq = Float.MAX_VALUE;
+            } else {
+                float r = (float) radius;
+                fallbackRadiusSq = r * r;
+            }
 
-        Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, transform.getPosition(), fallbackRadiusSq);
-        String tierId = nearest != null
-                ? DifficultyManager.getDifficulty(nearest.getUuid())
-                : DifficultyManager.getFromConfig(DifficultyIO.DEFAULT_DIFFICULTY);
+            Player nearest = NearestPlayerFinder.findNearestPlayer(world, store, transform.getPosition(), fallbackRadiusSq);
+            tierId = nearest != null
+                    ? DifficultyManager.getDifficulty(nearest.getUuid())
+                    : DifficultyManager.getFromConfig(DifficultyIO.DEFAULT_DIFFICULTY);
+        }
 
         DifficultySettings settings = DifficultyManager.getSettings();
         double mult = settings.get(tierId, DifficultyIO.SETTING_ELITE_MOBS_CHANCE_MULTIPLIER);

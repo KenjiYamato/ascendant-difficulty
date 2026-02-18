@@ -4,7 +4,7 @@
 
 # Ascendant Difficulty
 
-Mod for the Hytale Server that manages per-player difficulty tiers and dynamically scales enemies and rewards.
+Mod for the Hytale Server that manages per-player difficulty tiers (or a global world tier) and dynamically scales enemies and rewards.
 
 <br/>
 
@@ -36,10 +36,16 @@ Mod for the Hytale Server that manages per-player difficulty tiers and dynamical
 ## Features
 
 - Per-player difficulty tiers with a configurable list (defaults include Ascendant I-XX).
+- Optional global world tier that can replace individual player tiers for effective scaling.
+- World tier modes: `fixed`, `highest`, `lowest`, `scaled`.
+- Optional persistent admin world-tier override via command.
+- In `scaled` mode, calculation can use all online players or only `min/max` (configurable).
 - Tier selection UI (`/ascendant-difficulty`) with paging; respects `is_hidden` and `is_allowed`.
-- HUD badge for the current tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.ui.badge` is enabled.
+- HUD badge for the current effective tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.ui.badge` is enabled.
+- When world tier is active, the badge shows `World Tier` and the resolved world tier (not the individual player tier).
 - Enemy HP scales to the nearest player in range.
 - Spawn tier is stored on mobs and used for reward scaling (configurable).
+- When world tier is active, spawn systems bypass player-in-range tier checks and use the resolved world tier.
 - Optional debug nameplate shows the spawn tier on mobs.
 - Incoming damage to players scales by tier; enemy armor reduces player damage dealt.
 - Loot scaling: drop rate, drop quantity, and drop quality per tier, with optional spawn-tier mismatch scaling.
@@ -62,7 +68,13 @@ Per-tier drop-ins live in `config/ascendant/difficultys/*.json`.
 
 Base file (`difficulty.json`) sections:
 
-- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`, `difficultyChangeCooldownMs`, `difficultyChangeCombatTimeoutMs`, `spawnTierRewardOverFactor`, `spawnTierRewardUnderFactor`, `eliteSpawnQueue`.
+- `base`: global switches/limits: `defaultDifficulty`, `cashVarianceFactor`, `playerDistanceRadiusToCheck`, `minDamageFactor`, `minHealthScalingFactor`, `maxHealthScalingFactor`, `healthScalingTolerance`, `roundingDigits`, `difficultyChangeCooldownMs`, `difficultyChangeCombatTimeoutMs`, `spawnTierRewardOverFactor`, `spawnTierRewardUnderFactor`, `eliteSpawnQueue`, `worldTier`.
+- `base.worldTier`: global tier resolution settings:
+  - `enabled`: enable global world tier instead of individual player tiers.
+  - `mode`: `fixed`, `highest`, `lowest`, `scaled`.
+  - `fixedTier`: tier id used when `mode` is `fixed`.
+  - `scaledFactor`: clamped `0.0..1.0`; `0.0 => lowest`, `1.0 => highest`.
+  - `scaledUseAllOnlinePlayers`: when `true`, `scaled` uses all online players; when `false`, `scaled` interpolates between min/max only.
 - `base.allow`: feature toggles grouped by function:
   - `difficulty`: `change`, `changeInCombat`
   - `ui`: `badge`
@@ -74,7 +86,7 @@ Base file (`difficulty.json`) sections:
   - `tags`: `killFeedTierTag`, `killFeedTierChat`, `chatTierTag`, `serverListTierTag`
   - `debug`: `commands`, `logging`
 - Legacy flat keys (e.g. `base.allow.debugCommands`) are still accepted for backward compatibility.
-- `base.commands`: command `name`, `aliases`, and `permission` for tier select, badge toggle, reload, and debug commands.
+- `base.commands`: command `name`, `aliases`, and `permission` for tier select, badge toggle, reload, world tier, and debug commands.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
 - `base.mmoSkillTree`: MMO SkillTree config: `xpBonusWhitelist`.
 - Default `base.mmoSkillTree.xpBonusWhitelist`: `Swords`, `Daggers`, `Polearms`, `Staves`, `Axes`, `Blunt`, `Archery`, `Unarmed`.
@@ -95,7 +107,8 @@ Ordering:
 
 Default drop-ins are shipped in `src/main/resources/difficultys` and copied to `config/ascendant/difficultys` on first run.
 
-Player settings are stored in `config/ascendant/players-settings.json` (keys: `difficulty`, `showBadge`).
+Player settings are stored in `config/ascendant/players-settings.json` (keys: `difficulty`, `showBadge`, `showTierValuesAsPercent`).
+Persistent world-tier admin override is stored in `config/ascendant/world-tier-settings.json` (`fixedTierOverride`).
 Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if found.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -119,8 +132,10 @@ Defaults:
 - Command: `/ascendant-difficulty` (open tier selection UI)
 - Command: `/ascendant-difficulty-badge-toggle` (toggle badge visibility)
 - Command: `/ascendant-difficulty-reload` (reload config)
+- Command: `/ascendant-world-tier status|set <tierId>|clear` (view world-tier state / set or clear persistent admin override)
 - Permission: `ascendant.difficulty` (tier select + badge toggle)
 - Permission: `ascendant.difficulty.reload` (reload)
+- Permission: `ascendant.difficulty.world_tier` (world tier command)
 
 Debug commands (only registered when `base.allow.debug.commands` is `true`):
 Names/aliases/permissions are configurable via `base.commands.*`.
