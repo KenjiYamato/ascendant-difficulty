@@ -1,0 +1,159 @@
+<style>
+    @SectionCard {
+        border: 2px solid #3f4f67;
+        background-color: #111a27aa;
+    }
+    @PrimaryCard {
+        border: 2px solid #5f7ea5;
+        background-color: #162338dd;
+    }
+    @AccentCard {
+        border: 2px solid #5a7ca3;
+        background-color: #223550cc;
+    }
+    @ActionButton {
+        border: 1px solid #5f7ea5;
+        background-color: #2c4161;
+    }
+    @ActionButtonHover {
+        background-color: #3e5b87;
+    }
+    @ActionButtonPress {
+        background-color: #2a3d59;
+    }
+</style>
+
+<div class="page-overlay">
+    <div class="decorated-container" data-hyui-title="{{$title}}" id="admin-container"
+         style="anchor-width: 1280; anchor-height: 760;">
+        <div style="anchor-height: 700; padding: 18; flex-direction: column;">
+
+            <div style="@PrimaryCard; padding: 10; flex-direction: row; align-items: center;">
+                <button class="small-secondary-button" id="sectionPrev" style="anchor-width: 40; anchor-height: 34;">&lt;</button>
+                <p style="color:#ffffff; font-size: 24; anchor-left: 12;">Ascendant Admin UI</p>
+                <button class="small-secondary-button" id="sectionNext" style="anchor-left: 12; anchor-width: 40; anchor-height: 34;">&gt;</button>
+                <p style="color:#ffffff; font-size: 24; anchor-left: 12;">{{$sectionLabel}}</p>
+
+                <button class="small-secondary-button" id="refreshAdminUi" style="anchor-left: 14; anchor-width: 96; anchor-height: 30;">Refresh</button>
+                <button class="small-secondary-button" id="reloadConfigNow" style="anchor-left: 8; anchor-width: 128; anchor-height: 30;">Reload Config</button>
+
+                <div style="anchor-left: 20; flex-direction: row; align-items: center; {{#if !sectionTiers}}visibility:hidden;{{/if}}{{#if sectionTiers}}visibility:shown;{{/if}}">
+                    <button class="small-secondary-button" id="selectedTierPrev" style="anchor-width: 34; anchor-height: 30;">&lt;</button>
+                    <p style="anchor-left: 8; color:#bcd4ff; font-size: 16;">Tier: {{$selectedTierName}} ({{$selectedTierId}})</p>
+                    <button class="small-secondary-button" id="selectedTierNext" style="anchor-left: 8; anchor-width: 34; anchor-height: 30;">&gt;</button>
+                </div>
+            </div>
+
+            <div style="anchor-top: 12; flex-direction: column; flex-weight: 1; @SectionCard; padding: 12;">
+
+                {{#if sectionWorld}}
+                <div style="flex-direction: column; anchor: 0;">
+                    <div style="@AccentCard; padding: 10; flex-direction: column;">
+                        <p style="color:#ffffff;">World tier active: {{#if worldActive}}ON{{/if}}{{#if !worldActive}}OFF{{/if}}</p>
+                        <p style="color:#ffffff;">Mode: {{$worldMode}} | Resolved: {{$worldResolvedTier}} | Fixed: {{$worldFixedTier}}</p>
+                        <p style="color:#ffffff;">Admin override: {{$worldAdminOverride}} | Scaled factor: {{$worldScaledFactor}}</p>
+                        <p style="color:#ffffff;">Scaled uses all online players: {{#if worldScaledUseAllOnlinePlayers}}ON{{/if}}{{#if !worldScaledUseAllOnlinePlayers}}OFF{{/if}}</p>
+                    </div>
+
+                    <div style="anchor-top: 10; flex-direction: row;">
+                        <button class="small-secondary-button" id="worldToggleEnabled" style="anchor-width: 180; anchor-height: 32;">Toggle Active</button>
+                        <button class="small-secondary-button" id="worldModePrev" style="anchor-left: 8; anchor-width: 120; anchor-height: 32;">Mode &lt;</button>
+                        <button class="small-secondary-button" id="worldModeNext" style="anchor-left: 8; anchor-width: 120; anchor-height: 32;">Mode &gt;</button>
+                        <button class="small-secondary-button" id="worldFixedPrev" style="anchor-left: 8; anchor-width: 120; anchor-height: 32;">Fixed &lt;</button>
+                        <button class="small-secondary-button" id="worldFixedNext" style="anchor-left: 8; anchor-width: 120; anchor-height: 32;">Fixed &gt;</button>
+                    </div>
+
+                    <div style="anchor-top: 8; flex-direction: row;">
+                        <button class="small-secondary-button" id="worldScaledDown" style="anchor-width: 180; anchor-height: 32;">Scaled -0.05</button>
+                        <button class="small-secondary-button" id="worldScaledUp" style="anchor-left: 8; anchor-width: 180; anchor-height: 32;">Scaled +0.05</button>
+                        <button class="small-secondary-button" id="worldToggleScaledUseAll" style="anchor-left: 8; anchor-width: 220; anchor-height: 32;">Toggle All Players</button>
+                    </div>
+
+                    <div style="anchor-top: 8; flex-direction: row;">
+                        <button class="small-secondary-button" id="worldOverrideSetSelected" style="anchor-width: 260; anchor-height: 32;">Set Override = Selected Tier</button>
+                        <button class="small-secondary-button" id="worldOverrideClear" style="anchor-left: 8; anchor-width: 180; anchor-height: 32;">Clear Override</button>
+                    </div>
+                </div>
+                {{/if}}
+
+                {{#if sectionToggles}}
+                <div style="flex-direction: column; anchor: 0;">
+                    {{#each toggleRows}}
+                    <div style="@AccentCard; padding: 8; flex-direction: row; align-items: center; anchor-top: 4;">
+                        <p style="flex-weight: 1; color: #e8efff;">{{$label}}</p>
+                        <p style="anchor-left: 8; color: #d7e9ff;">{{#if enabled}}ON{{/if}}{{#if !enabled}}OFF{{/if}}</p>
+                        <button class="small-secondary-button" id="{{$eventId}}" style="anchor-left: 8; anchor-width: 120; anchor-height: 30;">Toggle</button>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if sectionNumbers}}
+                <div style="flex-direction: column; anchor: 0;">
+                    {{#each numberRows}}
+                    <div style="@AccentCard; padding: 8; flex-direction: row; align-items: center; anchor-top: 4;">
+                        <p style="flex-weight: 1; color: #e8efff;">{{$label}}</p>
+                        <p style="anchor-right: 8; color: #90adc9;">step {{$stepText}}</p>
+                        <button class="small-secondary-button" id="{{$decreaseEventId}}" style="anchor-width: 34; anchor-height: 30;">-</button>
+                        <p style="anchor-left: 8; color: #d7e9ff; anchor-width: 90; align-items: center; justify-content: center;">{{$valueText}}</p>
+                        <button class="small-secondary-button" id="{{$increaseEventId}}" style="anchor-left: 8; anchor-width: 34; anchor-height: 30;">+</button>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if sectionTiers}}
+                <div style="flex-direction: column; anchor: 0;">
+                    <div style="@AccentCard; padding: 10; flex-direction: column;">
+                        <p style="color:#ffffff;">{{$selectedTierName}} ({{$selectedTierId}})</p>
+                        <p style="color:#d7e9ff;">{{$selectedTierDescription}}</p>
+                        <p style="color:#d7e9ff;">Allowed: {{#if selectedTierAllowed}}ON{{/if}}{{#if !selectedTierAllowed}}OFF{{/if}}
+                            | Hidden: {{#if selectedTierHidden}}ON{{/if}}{{#if !selectedTierHidden}}OFF{{/if}}</p>
+                    </div>
+
+                    <div style="anchor-top: 8; flex-direction: row;">
+                        <button class="small-secondary-button" id="tierToggleAllowed" style="anchor-width: 140; anchor-height: 32;">Toggle Allowed</button>
+                        <button class="small-secondary-button" id="tierToggleHidden" style="anchor-left: 8; anchor-width: 140; anchor-height: 32;">Toggle Hidden</button>
+                        <button class="small-secondary-button" id="tierSetAsWorldFixed" style="anchor-left: 8; anchor-width: 190; anchor-height: 32;">Set As World Fixed</button>
+                        <button class="small-secondary-button" id="tierSetAsWorldOverride" style="anchor-left: 8; anchor-width: 210; anchor-height: 32;">Set As World Override</button>
+                    </div>
+
+                    <div style="anchor-top: 8; flex-direction: column;">
+                        {{#each tierRows}}
+                        <div style="@AccentCard; padding: 8; flex-direction: row; align-items: center; anchor-top: 4;">
+                            <p style="flex-weight: 1; color: #e8efff;">{{$label}}</p>
+                            <p style="anchor-right: 8; color: #90adc9;">step {{$stepText}}</p>
+                            <button class="small-secondary-button" id="{{$decreaseEventId}}" style="anchor-width: 34; anchor-height: 30;">-</button>
+                            <p style="anchor-left: 8; color: #d7e9ff; anchor-width: 90; align-items: center; justify-content: center;">{{$valueText}}</p>
+                            <button class="small-secondary-button" id="{{$increaseEventId}}" style="anchor-left: 8; anchor-width: 34; anchor-height: 30;">+</button>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+
+            <div style="anchor-top: 10; @PrimaryCard; padding: 8; flex-direction: row; align-items: center; justify-content: center;">
+                {{#if pageEnabled}}
+                <button class="small-secondary-button" id="listPrev"
+                        style="anchor-bottom: 4; anchor-width: 60; anchor-height: 30; {{#if pageIndex==0}}visibility:hidden;{{/if}}{{#if pageIndex>0}}visibility:shown;{{/if}}">
+                    &lt;
+                </button>
+                {{#if pageIndex==0 && pageTotal <= 1}}
+                <div style="anchor-bottom: 4; anchor-width: 60; anchor-height: 30;"></div>
+                {{/if}}
+                {{#if pageTotal > 1}}
+                <p style="anchor-top: 4; anchor-left: 12; color:#ffffff;">Page {{$pageCurrent}} / {{$pageTotal}}</p>
+                {{/if}}
+                <button class="small-secondary-button" id="listNext"
+                        style="anchor-bottom: 4; anchor-left: 12; anchor-width: 60; anchor-height: 30; {{#if pageIndex>=pageIndexMax}}visibility:hidden;{{/if}}{{#if pageIndex<pageIndexMax}}visibility:shown;{{/if}}">
+                    &gt;
+                </button>
+                {{/if}}
+                {{#if !pageEnabled || pageTotal <= 1}}
+                <p style="anchor-bottom: 6; color:#ffffff;">Section has no paging.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

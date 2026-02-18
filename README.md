@@ -41,6 +41,7 @@ Mod for the Hytale Server that manages per-player difficulty tiers (or a global 
 - Optional persistent admin world-tier override via command.
 - In `scaled` mode, calculation can use all online players or only `min/max` (configurable).
 - Tier selection UI (`/ascendant-difficulty`) with paging; respects `is_hidden` and `is_allowed`.
+- Admin UI (`/ascendant-difficulty-admin`) with tabs for world-tier control, feature toggles, base values, and per-tier multipliers directly in-game.
 - HUD badge for the current effective tier with a per-player toggle (`/ascendant-difficulty-badge-toggle`) when `base.allow.ui.badge` is enabled.
 - When world tier is active, the badge shows `World Tier` and the resolved world tier (not the individual player tier).
 - Enemy HP scales to the nearest player in range.
@@ -86,7 +87,7 @@ Base file (`difficulty.json`) sections:
   - `tags`: `killFeedTierTag`, `killFeedTierChat`, `chatTierTag`, `serverListTierTag`
   - `debug`: `commands`, `logging`
 - Legacy flat keys (e.g. `base.allow.debugCommands`) are still accepted for backward compatibility.
-- `base.commands`: command `name`, `aliases`, and `permission` for tier select, badge toggle, reload, world tier, and debug commands.
+- `base.commands`: command `name`, `aliases`, and `permission` for tier select, badge toggle, reload, world tier, admin UI, and debug commands.
 - `base.integrations`: integration toggles: `eliteMobs`, `ecotale`, `levelingCore`, `mmoSkillTree`.
 - `base.mmoSkillTree`: MMO SkillTree config: `xpBonusWhitelist`.
 - Default `base.mmoSkillTree.xpBonusWhitelist`: `Swords`, `Daggers`, `Polearms`, `Staves`, `Axes`, `Blunt`, `Archery`, `Unarmed`.
@@ -111,6 +112,12 @@ Player settings are stored in `config/ascendant/players-settings.json` (keys: `d
 Persistent world-tier admin override is stored in `config/ascendant/world-tier-settings.json` (`fixedTierOverride`).
 Legacy overrides from `config/ascendant/difficulty-players.json` are migrated if found.
 
+Admin UI persistence:
+
+- Changes to base/world settings are written to `config/ascendant/difficulty.json`.
+- Tier edits are written to the matching drop-in in `config/ascendant/difficultys/*.json` (matched by `id`).
+- After each admin change, config is reloaded and UI-dependent systems are refreshed (badge/player list/world-tier sync).
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
@@ -133,7 +140,9 @@ Defaults:
 - Command: `/ascendant-difficulty-badge-toggle` (toggle badge visibility)
 - Command: `/ascendant-difficulty-reload` (reload config)
 - Command: `/ascendant-world-tier status|set <tierId>|clear` (view world-tier state / set or clear persistent admin override)
+- Command: `/ascendant-difficulty-admin` (open in-game admin UI for config and tier editing)
 - Permission: `ascendant.difficulty` (tier select + badge toggle)
+- Permission: `ascendant.difficulty.admin` (admin UI)
 - Permission: `ascendant.difficulty.reload` (reload)
 - Permission: `ascendant.difficulty.world_tier` (world tier command)
 

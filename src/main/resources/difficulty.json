@@ -99,6 +99,13 @@
 				],
 				"permission": "ascendant.difficulty.world_tier"
 			},
+			"adminUi": {
+				"name": "ascendant-difficulty-admin",
+				"aliases": [
+					"ada"
+				],
+				"permission": "ascendant.difficulty.admin"
+			},
 			"debugClearEntities": {
 				"name": "clear_entities",
 				"aliases": [

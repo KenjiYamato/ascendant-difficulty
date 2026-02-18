@@ -138,6 +138,9 @@ public final class DifficultyIO {
     public static final String PATH_COMMAND_WORLD_TIER_NAME = "base.commands.worldTier.name";
     public static final String PATH_COMMAND_WORLD_TIER_ALIASES = "base.commands.worldTier.aliases";
     public static final String PATH_COMMAND_WORLD_TIER_PERMISSION = "base.commands.worldTier.permission";
+    public static final String PATH_COMMAND_ADMIN_UI_NAME = "base.commands.adminUi.name";
+    public static final String PATH_COMMAND_ADMIN_UI_ALIASES = "base.commands.adminUi.aliases";
+    public static final String PATH_COMMAND_ADMIN_UI_PERMISSION = "base.commands.adminUi.permission";
     public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_NAME = "base.commands.debugClearEntities.name";
     public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES = "base.commands.debugClearEntities.aliases";
     public static final String PATH_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION = "base.commands.debugClearEntities.permission";
@@ -303,6 +306,9 @@ public final class DifficultyIO {
     public static final String DEFAULT_COMMAND_WORLD_TIER_NAME = "ascendant-world-tier";
     public static final List<String> DEFAULT_COMMAND_WORLD_TIER_ALIASES = List.of("awt");
     public static final String DEFAULT_COMMAND_WORLD_TIER_PERMISSION = "ascendant.difficulty.world_tier";
+    public static final String DEFAULT_COMMAND_ADMIN_UI_NAME = "ascendant-difficulty-admin";
+    public static final List<String> DEFAULT_COMMAND_ADMIN_UI_ALIASES = List.of("ada");
+    public static final String DEFAULT_COMMAND_ADMIN_UI_PERMISSION = "ascendant.difficulty.admin";
     public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_NAME = "ce";
     public static final List<String> DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES = List.of();
     public static final String DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_PERMISSION = "ascendant.debug.clear_entities";
@@ -533,6 +539,12 @@ public final class DifficultyIO {
             ConfigKey.ofStringList(PATH_COMMAND_WORLD_TIER_ALIASES, DEFAULT_COMMAND_WORLD_TIER_ALIASES);
     public static final ConfigKey<String> COMMAND_WORLD_TIER_PERMISSION =
             ConfigKey.ofString(PATH_COMMAND_WORLD_TIER_PERMISSION, DEFAULT_COMMAND_WORLD_TIER_PERMISSION);
+    public static final ConfigKey<String> COMMAND_ADMIN_UI_NAME =
+            ConfigKey.ofString(PATH_COMMAND_ADMIN_UI_NAME, DEFAULT_COMMAND_ADMIN_UI_NAME);
+    public static final ConfigKey<List<String>> COMMAND_ADMIN_UI_ALIASES =
+            ConfigKey.ofStringList(PATH_COMMAND_ADMIN_UI_ALIASES, DEFAULT_COMMAND_ADMIN_UI_ALIASES);
+    public static final ConfigKey<String> COMMAND_ADMIN_UI_PERMISSION =
+            ConfigKey.ofString(PATH_COMMAND_ADMIN_UI_PERMISSION, DEFAULT_COMMAND_ADMIN_UI_PERMISSION);
     public static final ConfigKey<String> COMMAND_DEBUG_CLEAR_ENTITIES_NAME =
             ConfigKey.ofString(PATH_COMMAND_DEBUG_CLEAR_ENTITIES_NAME, DEFAULT_COMMAND_DEBUG_CLEAR_ENTITIES_NAME);
     public static final ConfigKey<List<String>> COMMAND_DEBUG_CLEAR_ENTITIES_ALIASES =
