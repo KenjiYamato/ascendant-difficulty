@@ -1,4 +1,11 @@
 <!-- markdownlint-disable MD033 MD041 -->
+
+> [!WARNING]
+>
+> 
+> This repository has been archived and is no longer maintained.  
+> No further updates, fixes, or features will be added here.
+
 <a id="top"></a>
 <div align="center">
 
